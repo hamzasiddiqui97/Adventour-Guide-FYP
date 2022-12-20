@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_geocoder/geocoder.dart';
+import 'package:geocoding/geocoding.dart';
 
 class CreateLatLongToAddress extends StatefulWidget {
   const CreateLatLongToAddress({super.key});
@@ -9,6 +9,8 @@ class CreateLatLongToAddress extends StatefulWidget {
 }
 
 class _CreateLatLongToAddressState extends State<CreateLatLongToAddress> {
+  String stAddress = '', stPlace = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,17 +22,20 @@ class _CreateLatLongToAddressState extends State<CreateLatLongToAddress> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Text(stAddress),
+          Text(stPlace),
           GestureDetector(
             onTap: () async {
-              final coordinates =
-                  new Coordinates(24.923585987640987, 67.11612881703357);
-              var address = await Geocoder.local
-                  .findAddressesFromCoordinates(coordinates);
-              var first = address.first;
+              // final coordinates = new Coordinates(24.923585987640987, 67.11612881703357);
+              List<Location> locations =
+                  await locationFromAddress("Gronausestraat 710, Enschede");
 
-              print("Address" +
-                  first.featureName.toString() +
-                  first.addressLine.toString());
+              List<Placemark> placemarks =
+                  await placemarkFromCoordinates(52.2165157, 6.9437819);
+              setState(() {
+                stAddress = locations.last.longitude.toString();
+                stPlace = placemarks.reversed.last.country.toString();
+              });
             },
             child: Padding(
               padding: const EdgeInsets.all(8),
