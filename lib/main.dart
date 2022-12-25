@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/search_places_api.dart';
-import 'package:google_maps_basics/views/bottom_nav.dart';
+import 'package:google_maps_basics/views/bottom_nav/main_page.dart';
 import 'convert_lnglat_to_address.dart';
-import 'home_screen.dart';
-// import 'pages/welcome/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: const CreateLatLongToAddress(),
-      home: NavigationPage(),
+      home: const NavigationPage(),
     );
   }
 }
