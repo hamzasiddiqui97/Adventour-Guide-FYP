@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_basics/views/bottom_nav/feedback_page.dart';
-import 'package:google_maps_basics/views/bottom_nav/home_page.dart';
-import 'package:google_maps_basics/views/bottom_nav/maps_page.dart';
-import 'package:google_maps_basics/views/bottom_nav/my_plan.dart';
+import 'package:google_maps_basics/representation/screens/bottom_nav/feedback_page.dart';
+import 'package:google_maps_basics/representation/screens/bottom_nav/home_page.dart';
+import 'package:google_maps_basics/representation/screens/bottom_nav/maps_page.dart';
+import 'package:google_maps_basics/representation/screens/bottom_nav/my_plan.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({Key? key}) : super(key: key);

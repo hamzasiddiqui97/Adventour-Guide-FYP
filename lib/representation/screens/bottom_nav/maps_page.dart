@@ -35,7 +35,7 @@ class _HomePageGoogleMapState extends State<HomePageGoogleMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: GoogleMap(
           markers: Set<Marker>.of(_marker),
           compassEnabled: true,

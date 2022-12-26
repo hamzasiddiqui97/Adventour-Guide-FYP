@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/representation/screens/bottom_nav/main_page.dart';
+import 'package:google_maps_basics/routes.dart';
 import 'package:google_maps_basics/search_places_api.dart';
-import 'package:google_maps_basics/views/bottom_nav/main_page.dart';
 import 'convert_lnglat_to_address.dart';
 
 void main() {
@@ -13,10 +15,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter demo',
+      title: 'Adventour',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: ColorPalette.primaryColor,
       ),
+      routes: routes,
+      debugShowCheckedModeBanner: false,
       // home: const CreateLatLongToAddress(),
       home: const NavigationPage(),
     );
