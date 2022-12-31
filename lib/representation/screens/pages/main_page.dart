@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_basics/representation/screens/bottom_nav/feedback_page.dart';
-import 'package:google_maps_basics/representation/screens/bottom_nav/home_page.dart';
-import 'package:google_maps_basics/representation/screens/bottom_nav/maps_page.dart';
-import 'package:google_maps_basics/representation/screens/bottom_nav/my_plan.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/representation/screens/pages/my_account.dart';
+import 'package:google_maps_basics/representation/screens/pages/home_view.dart';
+import 'package:google_maps_basics/representation/screens/pages/maps_view.dart';
+import 'package:google_maps_basics/representation/screens/pages/myplan_view.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({Key? key}) : super(key: key);
@@ -13,17 +14,17 @@ class NavigationPage extends StatefulWidget {
 
 class _NavigationPageState extends State<NavigationPage> {
 
-  List pages = const[
+  List pages = const [
     HomePageNavBar(),
-    HomePageGoogleMap(),
+    HomePageGoogleMaps(),
     MyPlan(),
-    FeedbackPage(),
+    MyAccount(),
   ];
 
-  int currentIndex = 0;
+  int _currentIndex = 0;
   void onTap(int index){
     setState(() {
-      currentIndex = index;
+      _currentIndex = index;
     });
   }
 
@@ -32,13 +33,13 @@ class _NavigationPageState extends State<NavigationPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: pages[currentIndex],
+        body: pages[_currentIndex],
         bottomNavigationBar: BottomNavigationBar(
           onTap: onTap,
-          currentIndex: currentIndex,
+          currentIndex: _currentIndex,
           showUnselectedLabels: true,
           unselectedItemColor: Colors.grey,
-          selectedItemColor: Colors.black,
+          selectedItemColor: ColorPalette.secondaryColor,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
@@ -56,8 +57,8 @@ class _NavigationPageState extends State<NavigationPage> {
               label: "My Plans",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.feedback,),
-              label: "Feedback",
+              icon: Icon(Icons.person,),
+              label: "Profile",
             ),
           ],
         ),
