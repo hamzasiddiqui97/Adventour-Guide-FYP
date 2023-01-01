@@ -20,9 +20,7 @@ class SearchBar extends StatelessWidget {
           color: ColorPalette.primaryColor,
           borderRadius: BorderRadius.circular(6)),
       child: const TextField(
-        // onChanged: (){
-        //
-        // },
+        // onChanged: (){},
         decoration: InputDecoration(
           prefixIcon: Icon(
             Icons.search,
