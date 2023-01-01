@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 
@@ -75,6 +76,12 @@ class _SearchPlacesAPIScreenState extends State<SearchPlacesAPIScreen> {
                     itemCount: _placesList.length,
                     itemBuilder: (context, index){
                       return ListTile(
+                        onTap: ()async{
+                          List<Location> locations = await locationFromAddress(_placesList[index]['description']);
+  
+                          print(locations.last.latitude);
+                          print(locations.last.longitude);
+                        },
                         title: Text(_placesList[index]['description']),
                   );
                 } ))

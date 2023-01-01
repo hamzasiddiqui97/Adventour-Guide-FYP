@@ -14,12 +14,14 @@ class HomePageGoogleMaps extends StatefulWidget {
     zoom: 14.4746,
   );
 
+  static const CameraPosition targetPosition = CameraPosition(target: LatLng(37.42796133580664, -122.085749655962),zoom: 14.4746,bearing: 192.0,tilt: 60);
+
   @override
   State<HomePageGoogleMaps> createState() => _HomePageGoogleMapsState();
 }
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
-  Completer<GoogleMapController> _controller = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
 
   @override
   Widget build(BuildContext context) {
@@ -56,16 +58,22 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             child: FloatingActionButton(
               backgroundColor: ColorPalette.secondaryColor,
               onPressed: () {
-                // current location code goes here
+                currentLocation();
               },
               child: const Icon(
                 Icons.location_on,
                 color: ColorPalette.primaryColor,
               ),
             ),
+
           ),
         ],
       ),
     );
+  }
+
+  Future<void> currentLocation() async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(HomePageGoogleMaps.targetPosition));
   }
 }
