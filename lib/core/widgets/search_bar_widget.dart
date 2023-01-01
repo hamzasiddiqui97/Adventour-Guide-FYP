@@ -6,9 +6,7 @@ class SearchBar extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  // Color containerColor;
-  // double borderRadius;
-  // int containerHeight;
+
   // String hintText;
   // Icon icon;
 

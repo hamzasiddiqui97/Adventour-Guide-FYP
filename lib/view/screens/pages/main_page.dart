@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/representation/screens/pages/my_account.dart';
-import 'package:google_maps_basics/representation/screens/pages/home_view.dart';
-import 'package:google_maps_basics/representation/screens/pages/maps_view.dart';
-import 'package:google_maps_basics/representation/screens/pages/myplan_view.dart';
+import 'package:google_maps_basics/view/screens/pages/my_account.dart';
+import 'package:google_maps_basics/view/screens/pages/home_view.dart';
+import 'package:google_maps_basics/view/screens/pages/maps_view.dart';
+import 'package:google_maps_basics/view/screens/pages/myplan_view.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({Key? key}) : super(key: key);
