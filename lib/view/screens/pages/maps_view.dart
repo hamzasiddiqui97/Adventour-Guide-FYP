@@ -67,6 +67,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     // final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+
       body: Stack(
         children: [
           GoogleMap(
