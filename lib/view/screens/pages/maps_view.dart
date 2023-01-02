@@ -23,7 +23,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final Mode _mode = Mode.overlay;
 
-
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(24.921780, 67.117981),
     zoom: 14.4746,
