@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/routes.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
+import 'package:google_maps_basics/view/screens/splash_screen.dart';
 
 
 void main() {
@@ -14,11 +14,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/splashScreen',
+      routes: {
+        '/splashScreen': (context) => SplashScreen(),
+        '/home': (context) => const NavigationPage(),
+      },
       title: 'Adventour',
       theme: ThemeData(
         primaryColor: ColorPalette.primaryColor,
       ),
-      routes: routes,
       debugShowCheckedModeBanner: false,
       // home: const CreateLatLongToAddress(),
       home: const NavigationPage(),
