@@ -13,7 +13,7 @@ class HomePageNavBar extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(
+          SliverAppBar(
             floating: true,
             backgroundColor: ColorPalette.primaryColor,
             expandedHeight: 100,
@@ -21,7 +21,7 @@ class HomePageNavBar extends StatelessWidget {
 
             background: Padding(
               padding: EdgeInsets.only(top: 20,),
-              child: SearchBar(),
+              child: SearchBar(onPress: (){}),
             ),
           ),
           ),
