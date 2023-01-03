@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/search_bar_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,7 +17,7 @@ class HomePageGoogleMaps extends StatefulWidget {
 }
 
 
-const kGoogleApiKey = 'AIzaSyDBTvInL-0BgjzaCa4S92L4mFqtv4DkQ80';
+const kGoogleApiKey = googleApiKey;
 final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
@@ -67,18 +68,18 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   Future<void> _handlePressButton() async {
     Prediction? p = await PlacesAutocomplete.show(
-      context: context,
-      apiKey: kGoogleApiKey,
-      onError: onError,
-      mode: _mode,
-      language: "en",
-      strictbounds: false,
-      types: [""],
-      decoration: InputDecoration(hintText: "Search Places",
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-      borderSide: BorderSide(color: ColorPalette.primaryColor),)),
-    components: [Component(Component.country,"pk")]);
+        context: context,
+        apiKey: kGoogleApiKey,
+        onError: onError,
+        mode: _mode,
+        language: "en",
+        strictbounds: false,
+        types: [""],
+        decoration: InputDecoration(hintText: "Search Places",
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(color: ColorPalette.primaryColor),)),
+        components: [Component(Component.country,"pk")]);
 
     displayPrediction(p!, homeScaffoldKey.currentState);
   }
@@ -100,7 +101,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
     _markers.clear();
     _markers.add(Marker(markerId: const MarkerId("0"),position: LatLng(lat, lng), infoWindow: InfoWindow(title: detail.result.name)));
-  setState(() {});
+    setState(() {});
 
     googleMapController.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat,lng), 15.0));
 
@@ -152,9 +153,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                 _currentLocation().then((value) async{
                   _markers.add(Marker(markerId: MarkerId(
                       'current location'),
-                      position: LatLng(value.latitude,value.longitude),
-                  infoWindow: InfoWindow(
-                      title: "Your Location"),
+                    position: LatLng(value.latitude,value.longitude),
+                    infoWindow: InfoWindow(
+                        title: "Your Location"),
                   )
                   );
 
@@ -168,7 +169,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   setState(() {});
 
                 });
-                },
+              },
 
               child: const Icon(
                 Icons.location_on,

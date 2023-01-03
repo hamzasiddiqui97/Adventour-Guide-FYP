@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/search_bar_widget.dart';
+import 'package:google_maps_basics/view/screens/pages/main_page.dart';
+import 'package:google_maps_basics/view/screens/pages/maps_view.dart';
 
 class HomePageNavBar extends StatelessWidget {
   const HomePageNavBar({Key? key}) : super(key: key);
@@ -20,8 +22,12 @@ class HomePageNavBar extends StatelessWidget {
           flexibleSpace: FlexibleSpaceBar(
 
             background: Padding(
-              padding: EdgeInsets.only(top: 20,),
-              child: SearchBar(onPress: (){}),
+              padding: const EdgeInsets.only(top: 20,),
+              child: SearchBar(onPress: (){
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => const HomePageGoogleMaps()));
+              }),
             ),
           ),
           ),

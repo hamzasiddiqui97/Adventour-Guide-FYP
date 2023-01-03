@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
+import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -20,24 +21,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // double height = MediaQuery.of(context).size.height;
-    // double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
-        child: Column(
-          children: [
-            Container(
-              color: Colors.white,
-              height: 550,
-              width: 490,
-              // height: double.infinity,
-              // width: double.infinity,
-              child: Image.asset('assets/images/splash_screen.png',
-              fit: BoxFit.cover,)
-              ),
-            const CircularProgressIndicator(),
-          ],
-        ),
+        child: Container(
+          color: Colors.white,
+          height: height,
+          width: width,
+          child: LottieBuilder.asset("assets/splash_screen_animation/splashScreen.json"),
+          ),
       ),
     );
   }

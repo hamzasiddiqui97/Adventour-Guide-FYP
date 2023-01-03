@@ -39,6 +39,7 @@ dependencies:
   geocoding: ^2.0.5
   geolocator: ^9.0.2
   flutter_google_places: ^0.3.0
+  lottie:
 
   uuid: ^3.0.7
   http:
@@ -71,6 +72,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/splash_screen_animation/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
