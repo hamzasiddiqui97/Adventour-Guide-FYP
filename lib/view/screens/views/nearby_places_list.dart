@@ -14,7 +14,7 @@ class NearByPlacesScreen extends StatefulWidget {
 class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
 
   String apiKey = googleApiKey;
-  String radius = "2500";
+  String radius = "30";
 
   double latitude =  24.921780;
   double longitude = 67.117981;
@@ -50,15 +50,17 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
 
   void getNearbyPlaces() async {
 
-    var url = Uri.parse('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=$radius&type=gas_station&key=$apiKey'
+    // for specific area type       &type=gas_station
+    var url = Uri.parse('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=$radius&key=$apiKey'
     );
 
     var response = await http.post(url);
 
     nearbyPlacesResponse = NearbyPlacesResponse.fromJson(jsonDecode(response.body));
 
-    setState(() {});
 
+
+    setState(() {});
   }
 
   Widget nearbyPlacesWidget(Results results) {
@@ -73,6 +75,9 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
           Text("Name: ${results.name!}"),
           Text("Location: ${results.geometry!.location!.lat} , ${results.geometry!.location!.lng}"),
           Text(results.openingHours != null ? "Open" : "Closed"),
+          ElevatedButton(onPressed: (){
+
+          }, child: const Text('Navigate')),
         ],
       ),
     );

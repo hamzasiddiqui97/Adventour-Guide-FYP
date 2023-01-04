@@ -236,7 +236,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
                   );
 
-
                   CameraPosition cameraPosition = CameraPosition(
                       zoom: 15,
                       target: LatLng(value.latitude,value.longitude));
@@ -259,6 +258,5 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       ),
     );
   }
-
 
 }
