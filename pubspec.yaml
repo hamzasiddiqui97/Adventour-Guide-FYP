@@ -42,7 +42,7 @@ dependencies:
   lottie:
 
   uuid: ^3.0.7
-  http:
+  http: ^0.13.5
 
   # flutter_geocoder: ^0.2.2-nullsafety
   # geocode: ^1.0.2

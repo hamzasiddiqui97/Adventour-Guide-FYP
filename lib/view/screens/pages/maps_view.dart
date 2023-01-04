@@ -1,13 +1,18 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/search_bar_widget.dart';
+import 'package:google_maps_basics/model/NearbyResponse.dart';
+import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
+
+import 'package:http/http.dart' as http;
 
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key}) : super(key: key);
@@ -16,11 +21,13 @@ class HomePageGoogleMaps extends StatefulWidget {
   State<HomePageGoogleMaps> createState() => _HomePageGoogleMapsState();
 }
 
-
 const kGoogleApiKey = googleApiKey;
 final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
+
+  String totalDistance = '';
+  String totalTime = '';
 
   final Mode _mode = Mode.overlay;
 
@@ -33,6 +40,48 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final List<Marker> _markers = [];
 
+
+  // polyline Code from git
+
+  // LatLng origin = const LatLng(24.92467020467566, 67.11490186889257);
+  // LatLng destination = const LatLng(24.927715525776858, 67.10870060173293);
+
+//   void drawPolyline() async {
+//     var response = await http.post(Uri.parse("https://maps.googleapis.com/maps/api/directions/json?key=" +
+//         googleApiKey +
+//         "&units=metric&origin=" +
+//         origin.latitude.toString() +
+//         "," +
+//         origin.longitude.toString() +
+//         "&destination=" +
+//         destination.latitude.toString() +
+//         "," +
+//         destination.longitude.toString() +
+//         "&mode=driving"));
+//
+//     print(response.body);
+//
+//     polylineResponse = PolylineResponse.fromJson(jsonDecode(response.body));
+//
+//     totalDistance = polylineResponse.routes![0].legs![0].distance!.text!;
+//     totalTime = polylineResponse.routes![0].legs![0].duration!.text!;
+//
+//     for (int i = 0; i < polylineResponse.routes![0].legs![0].steps!.length; i++) {
+//       polylinePoints.add(Polyline(polylineId: PolylineId(polylineResponse.routes![0].legs![0].steps![i].polyline!.points!), points: [
+//         LatLng(
+//             polylineResponse.routes![0].legs![0].steps![i].startLocation!.lat!, polylineResponse.routes![0].legs![0].steps![i].startLocation!.lng!),
+//         LatLng(polylineResponse.routes![0].legs![0].steps![i].endLocation!.lat!, polylineResponse.routes![0].legs![0].steps![i].endLocation!.lng!),
+//       ],width: 3,color: Colors.red));
+//     }
+//
+//     setState(() {});
+//   }
+// }
+
+  // polyline ended here
+
+
+
   // current location started
   loadData(){
     _currentLocation().then((value) async{
@@ -41,7 +90,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         position: LatLng(value.latitude,value.longitude),
         infoWindow: InfoWindow(
             title: "Your Location"),
-      )
+      ),
       );
       CameraPosition cameraPosition = CameraPosition(
           zoom: 15,
@@ -52,6 +101,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       setState(() {});
     });
   }
+
 
 
   Future<Position> _currentLocation() async {
@@ -78,7 +128,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         decoration: InputDecoration(hintText: "Search Places",
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide(color: ColorPalette.primaryColor),)),
+              borderSide: const BorderSide(color: ColorPalette.primaryColor),)),
         components: [Component(Component.country,"pk")]);
 
     displayPrediction(p!, homeScaffoldKey.currentState);
@@ -107,12 +157,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    loadData();
-  }
+
   @override
   Widget build(BuildContext context) {
     // final screenHeight = MediaQuery.of(context).size.height;
@@ -136,6 +181,36 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             myLocationButtonEnabled: false,
             markers: Set<Marker>.of(_markers),
           ),
+
+          Positioned(
+              child: ElevatedButton(
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NearByPlacesScreen()),
+                  );
+                },
+                child: const Text('Get Nearby Places'),
+              )
+          ),
+
+          Positioned(
+            top: 100,
+            left: 5,
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
+              color: ColorPalette.primaryColor,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Total distance: $totalDistance"),
+                  Text("Total time: $totalTime"),
+                ],
+              ),
+            ),
+          ),
           Positioned(
             top: 50,
             left: 20,
@@ -154,9 +229,11 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   _markers.add(Marker(markerId: MarkerId(
                       'current location'),
                     position: LatLng(value.latitude,value.longitude),
-                    infoWindow: InfoWindow(
+                    infoWindow: const InfoWindow(
                         title: "Your Location"),
-                  )
+                  ),
+
+
                   );
 
 
