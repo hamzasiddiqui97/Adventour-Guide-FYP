@@ -21,7 +21,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
   double latitude =  24.921780;
   double longitude = 67.117981;
 
-  final placeTypes = ['gas_station', 'restaurant', 'cafe', 'bank', 'atm'];
+  final placeTypes = ['All','gas_station', 'restaurant', 'cafe', 'bank', 'atm'];
 
   NearbyPlacesResponse nearbyPlacesResponse = NearbyPlacesResponse();
 
@@ -31,73 +31,90 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorPalette.secondaryColor,
-        title: const Text('Nearby Places',style: TextStyle(color: ColorPalette.primaryColor),),
-        centerTitle: true,
-      ),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: ColorPalette.secondaryColor,
+          title: const Text('Nearby Places',style: TextStyle(color: ColorPalette.primaryColor),),
+          centerTitle: true,
+        ),
 
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Text('Area Type:'),
+                    DropdownButton(
+                      hint: Text(placeType == '' ? 'All' : placeType),
+                      items: placeTypes.map((placeType) => DropdownMenuItem(
+                        value: placeType == 'All' ? '' : placeType,
+                        child: Text(placeType),
+                      )).toList(),
 
-            DropdownButton(
-              hint: Text(placeType),
-              items: placeTypes.map((placeType) => DropdownMenuItem(
-                value: placeType,
-                child: Text(placeType),
-              )).toList(),
+                      onChanged: (String? newPlaceType) {
+                        setState(() => placeType = newPlaceType!);
+                      },
+                      enableFeedback: true,
+                    ),
 
-              onChanged: (String? newPlaceType) {
-                setState(() => placeType = newPlaceType!);
-            },
-              enableFeedback: true,
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                decoration: const InputDecoration(
-                  hintText: "Enter radius",
-                  contentPadding: EdgeInsets.all(20),
-                ),
-                onChanged: (newRadius) => setRadius(newRadius),
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            ElevatedButton(
-              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor)),
-
-              onPressed: (){
-
-              getNearbyPlaces();
-
-            },
-
-              child: const Text("Nearby Places",
-                style: TextStyle(
-                    color: ColorPalette.primaryColor,
+                  ],
                 ),
 
-              ),
-            ),
-            if(nearbyPlacesResponse.results == null || nearbyPlacesResponse.results!.isEmpty)
-              const Center(child: Text("No results found")),
-            if(nearbyPlacesResponse.results != null)
-              for(int i = 0 ; i < nearbyPlacesResponse.results!.length; i++)
-                nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
-          ],
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  child: TextField(
 
+                    decoration: const InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: ColorPalette.secondaryColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      prefixIcon: Icon(Icons.radar,color: ColorPalette.secondaryColor),
+                      hintText: "Enter radius",
+                      contentPadding: EdgeInsets.all(20),
+                    ),
+                    onChanged: (newRadius) => setRadius(newRadius),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor)),
+
+                  onPressed: (){
+
+                  getNearbyPlaces();
+
+                },
+
+                  child: const Text("Nearby Places",
+                    style: TextStyle(
+                        color: ColorPalette.primaryColor,
+                    ),
+
+                  ),
+                ),
+                if(nearbyPlacesResponse.results == null || nearbyPlacesResponse.results!.isEmpty)
+                  const Center(child: Text("No results found")),
+                if(nearbyPlacesResponse.results != null)
+                  for(int i = 0 ; i < nearbyPlacesResponse.results!.length; i++)
+                    nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
+              ],
+
+            ),
+          ),
         ),
       ),
     );
   }
-
 
   // if radius value is negative this will show up on screen
   void showErrorDialog(String message) {
@@ -143,21 +160,29 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
         width: MediaQuery.of(context).size.width,
         margin: const EdgeInsets.only(top: 10,left: 10,right: 10),
         padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(border: Border.all(color: ColorPalette.secondaryColor),borderRadius: BorderRadius.circular(10)),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Name: ${results.name!}"),
             // Text("Location: ${results.geometry!.location!.lat} , ${results.geometry!.location!.lng}"),
-            Text(results.openingHours != null ? "Open" : "Closed"),
-            ElevatedButton(
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor)),
-                onPressed: (){  },
-                child: const Text('Navigate')),
+            Text("""Place Status: ${results.openingHours != null ? "Open" : "Closed"}"""),
+            Center(
+              child: ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor)),
+                  onPressed: (){  },
+                  child: const Text('Navigate')),
+            ),
+
           ],
         ),
+
+
       ),
+
     );
+
 
 
   }

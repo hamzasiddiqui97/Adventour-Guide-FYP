@@ -86,7 +86,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   // current location started
   loadData(){
     _currentLocation().then((value) async{
-      _markers.add(Marker(markerId: MarkerId(
+      _markers.add(Marker(markerId: const MarkerId(
           'current location'),
         position: LatLng(value.latitude,value.longitude),
         infoWindow: InfoWindow(
@@ -152,7 +152,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     setState(() {});
 
     googleMapController.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat,lng), 15.0));
-
   }
 
 
@@ -186,12 +185,13 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               child: ElevatedButton(
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor)),
                 onPressed: (){
+                  _currentLocation();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const NearByPlacesScreen()),
                   );
                 },
-                child: const Text('Get Nearby Places'),
+                child: const Text('Nearby Places'),
               )
           ),
 
@@ -227,7 +227,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               backgroundColor: ColorPalette.secondaryColor,
               onPressed: () async{
                 _currentLocation().then((value) async{
-                  _markers.add(Marker(markerId: MarkerId(
+                  _markers.add(Marker(markerId: const MarkerId(
                       'current location'),
                     position: LatLng(value.latitude,value.longitude),
                     infoWindow: const InfoWindow(
