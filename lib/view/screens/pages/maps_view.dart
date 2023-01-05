@@ -14,6 +14,8 @@ import 'package:google_api_headers/google_api_headers.dart';
 
 import 'package:http/http.dart' as http;
 
+import '../../../model/PolylineResponse.dart';
+
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key}) : super(key: key);
 
@@ -43,9 +45,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   // polyline Code from git
 
-  // LatLng origin = const LatLng(24.92467020467566, 67.11490186889257);
-  // LatLng destination = const LatLng(24.927715525776858, 67.10870060173293);
-
+//   LatLng origin = const LatLng(24.92467020467566, 67.11490186889257);
+//   LatLng destination = const LatLng(24.927715525776858, 67.10870060173293);
+//
 //   void drawPolyline() async {
 //     var response = await http.post(Uri.parse("https://maps.googleapis.com/maps/api/directions/json?key=" +
 //         googleApiKey +
@@ -81,7 +83,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   // polyline ended here
 
 
-
   // current location started
   loadData(){
     _currentLocation().then((value) async{
@@ -102,12 +103,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     });
   }
 
-
-
   Future<Position> _currentLocation() async {
     await Geolocator.requestPermission().then((value){
     }).onError((error, stackTrace){
-      print("error"+ error.toString());
+      print("error: $error");
     });
     return await Geolocator.getCurrentPosition();
   }
@@ -115,7 +114,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
 
   // search places function started
-
   Future<void> _handlePressButton() async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
@@ -183,7 +181,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
           ),
 
           Positioned(
+            bottom: 30,
+              left: 10,
               child: ElevatedButton(
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor)),
                 onPressed: (){
                   Navigator.push(
                     context,
@@ -258,5 +259,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       ),
     );
   }
+
 
 }
