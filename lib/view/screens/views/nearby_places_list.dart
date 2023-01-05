@@ -16,12 +16,12 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
 
   String apiKey = googleApiKey;
   String radius = "50";
-  String placeType = 'bank';
+  String placeType = 'All';
 
   double latitude =  24.921780;
   double longitude = 67.117981;
 
-  final placeTypes = ['All','gas_station', 'restaurant', 'cafe', 'bank', 'atm'];
+  final placeTypes = ['All','tourist_attraction','gas_station', 'restaurant', 'cafe', 'hospital','police', 'atm','parking','bank','car_rental','embassy'];
 
   NearbyPlacesResponse nearbyPlacesResponse = NearbyPlacesResponse();
 
@@ -54,6 +54,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                     DropdownButton(
                       hint: Text(placeType == '' ? 'All' : placeType),
                       items: placeTypes.map((placeType) => DropdownMenuItem(
+
                         value: placeType == 'All' ? '' : placeType,
                         child: Text(placeType),
                       )).toList(),
@@ -62,7 +63,9 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                         setState(() => placeType = newPlaceType!);
                       },
                       enableFeedback: true,
+                      menuMaxHeight: 200.0,
                     ),
+
 
                   ],
                 ),
@@ -165,8 +168,10 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             Text("Name: ${results.name!}"),
             // Text("Location: ${results.geometry!.location!.lat} , ${results.geometry!.location!.lng}"),
+            Text("Rating: ${results.rating ?? "Not Available"}"),
             Text("""Place Status: ${results.openingHours != null ? "Open" : "Closed"}"""),
             Center(
               child: ElevatedButton(
