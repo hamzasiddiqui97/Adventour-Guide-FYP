@@ -21,7 +21,7 @@ class UnderlineButton extends StatelessWidget {
         onTap: onPress,
         child: Container(
           width: width,
-          height: 60,
+          height: 30,
           decoration: BoxDecoration(
             color: color,
             border: const Border(

@@ -7,11 +7,11 @@ class MyPlan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: const Text("My Trips"),
-          centerTitle: true,
-
-      backgroundColor: ColorPalette.secondaryColor),
+      // appBar: AppBar(
+      //     title: const Text("My Trips"),
+      //     centerTitle: true,
+      // backgroundColor: ColorPalette.secondaryColor),
+      body: const Center(child: Text('My Trips Screen')),
     );
   }
 }

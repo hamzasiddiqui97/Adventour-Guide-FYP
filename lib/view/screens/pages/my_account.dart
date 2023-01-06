@@ -9,10 +9,7 @@ class MyAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    //
-    // final screenHeight = MediaQuery.of(context).size.height;
-    // final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: SafeArea(
@@ -32,12 +29,12 @@ class MyAccount extends StatelessWidget {
                 ],
               ),
               const Text('Login for better Experience', style: TextStyle(fontSize: 16.0),),
-              RoundedButton(name: 'Sign In', color: ColorPalette.secondaryColor,width: 200.0,),
-              UnderlineButton(name: 'All my plans', color: Colors.transparent,textColor: Colors.black, width:  300.0,),
-              UnderlineButton(name: 'Contact us', color: Colors.transparent,textColor: Colors.black, width:  300.0,),
-              UnderlineButton(name: 'Privacy policy', color: Colors.transparent,textColor: Colors.black, width:  300.0,),
-              UnderlineButton(name: 'Terms and Condition', color: Colors.transparent,textColor: Colors.black, width:  300.0,),
-              UnderlineButton(name: 'Delete my account', color: Colors.transparent,textColor: Colors.black, width:  300.0,),
+              RoundedButton(name: 'Login', color: ColorPalette.secondaryColor,width: 200.0,),
+              UnderlineButton(name: 'All my plans', color: Colors.transparent,textColor: Colors.black, width:  screenWidth,),
+              UnderlineButton(name: 'Contact us', color: Colors.transparent,textColor: Colors.black, width:  screenWidth,),
+              UnderlineButton(name: 'Privacy policy', color: Colors.transparent,textColor: Colors.black, width:screenWidth,),
+              UnderlineButton(name: 'Terms and Condition', color: Colors.transparent,textColor: Colors.black, width:  screenWidth,),
+              UnderlineButton(name: 'Delete my account', color: Colors.transparent,textColor: Colors.black, width:  screenWidth,),
             ],
 
           ),

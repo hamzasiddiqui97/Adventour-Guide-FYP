@@ -5,6 +5,14 @@ class PlacesDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Stack(
+      children: [
+        IconButton(
+          onPressed: (){
+            print("Button Pressed");
+          },
+          icon: Icon(Icons.arrow_back_ios),),
+      ],
+    );
   }
 }

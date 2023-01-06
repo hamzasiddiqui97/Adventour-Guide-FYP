@@ -6,17 +6,20 @@ class SearchBar extends StatelessWidget {
   VoidCallback? onPress;
   String? hintText;
   Icon? icon;
+  double? width;
 
   SearchBar({
     this.onPress,
     this.icon,
     this.hintText,
+    this.width,
     });
 
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width,
       height: 50,
       decoration: BoxDecoration(
           color: ColorPalette.primaryColor,

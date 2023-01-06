@@ -63,7 +63,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                         setState(() => placeType = newPlaceType!);
                       },
                       enableFeedback: true,
-                      menuMaxHeight: 200.0,
+                      menuMaxHeight: 250.0,
                     ),
 
 
@@ -73,8 +73,8 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                 Container(
                   width: MediaQuery.of(context).size.width / 1.5,
                   child: TextField(
-
                     decoration: const InputDecoration(
+                      labelText: "Radius",
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: ColorPalette.secondaryColor),
                       ),
