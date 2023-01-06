@@ -57,6 +57,7 @@ class OnboardingScreen extends StatelessWidget {
                       size: 50,
                       color: ColorPalette.secondaryColor,
                     ))),
+
           ]),
         ),
       ),
