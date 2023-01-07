@@ -46,18 +46,16 @@ class OnboardingScreen extends StatelessWidget {
                       image: AssetImage("assets/images/splash_screen.png"),
                       fit: BoxFit.cover)),
             ),
-            Positioned(
-                left: 60,
-                right: 60,
-                bottom: 120,
-                child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 50,
-                      color: ColorPalette.secondaryColor,
-                    ))),
+            IconButton(
+                onPressed: () {
 
+                  Navigator.pushReplacementNamed(context, '/loginMainPage');
+                },
+                icon: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 50,
+                  color: ColorPalette.secondaryColor,
+                )),
           ]),
         ),
       ),

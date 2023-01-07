@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_maps_basics/view/screens/login.dart';
+import 'package:google_maps_basics/view/screens/login_main_page.dart';
 import 'package:google_maps_basics/view/screens/onboarding_screen.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:google_maps_basics/view/screens/sign_up.dart';
@@ -20,9 +22,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/splashScreen',
       routes: {
-        '/onBoardingScreen': (context) => const OnboardingScreen(),
-        '/signUp': (context) => SignupPage(),
         '/splashScreen': (context) => SplashScreen(),
+        '/onBoardingScreen': (context) => const OnboardingScreen(),
+        '/loginMainPage':  (context) => LoginScreen(),
+        '/signIn': (context) => SignIn(),
+        '/signUp': (context) => SignupPage(),
         '/home': (context) => const NavigationPage(),
       },
       title: 'Adventour',

@@ -39,6 +39,7 @@ dependencies:
   geocoding: ^2.0.5
   geolocator: ^9.0.2
   flutter_google_places: ^0.3.0
+  google_sign_in: ^5.4.2
   firebase_core:
   firebase_auth:
   firebase_database:

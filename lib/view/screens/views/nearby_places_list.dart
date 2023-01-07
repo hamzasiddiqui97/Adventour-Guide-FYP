@@ -69,7 +69,6 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
 
                   ],
                 ),
-
                 Container(
                   width: MediaQuery.of(context).size.width / 1.5,
                   child: TextField(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/core/widgets/heading_text.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -23,6 +25,7 @@ class _SignupPageState extends State<SignupPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              HeadingText(text: 'Sign Up', style: const TextStyle(fontSize: 30,fontWeight: FontWeight.bold)),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Name'),
                 validator: (value) {
@@ -69,6 +72,7 @@ class _SignupPageState extends State<SignupPage> {
                         Navigator.pushReplacementNamed(context, '/home');
                       }
                     } catch (e) {
+                      showErrorDialog('Email already in use');
                       print(e);
                     }
                   }
@@ -78,6 +82,25 @@ class _SignupPageState extends State<SignupPage> {
           ),
         ),
       ),
+    );
+  }
+  void showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor)),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK',style: TextStyle(color: ColorPalette.primaryColor),),
+
+            ),
+          ],
+        );
+      },
     );
   }
 }
