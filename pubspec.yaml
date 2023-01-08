@@ -41,6 +41,7 @@ dependencies:
   flutter_google_places: ^0.3.0
   flutter_polyline_points: ^1.0.0
   google_sign_in: ^5.4.2
+  cloud_firestore: ^4.3.1
   firebase_core:
   firebase_auth:
   firebase_database:

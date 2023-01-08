@@ -12,7 +12,6 @@ class OnboardingScreen extends StatelessWidget {
 
     return Scaffold(
       body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
         child: Container(
           alignment: Alignment.center,
           color: Colors.white,
@@ -30,7 +29,7 @@ class OnboardingScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 30, color: Colors.black)),
                   ),
                   Align(
-                    alignment: Alignment.topRight,
+                    alignment: Alignment.center,
                     child: HeadingText(
                         text: "Adventour & Guide",
                         style: TextStyle(fontSize: 30, color: Colors.black)),

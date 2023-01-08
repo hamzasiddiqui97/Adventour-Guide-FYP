@@ -110,7 +110,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       // GoogleMapController controller =await _controller.future;
       googleMapController
           .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-      setState(() {});
+      setState(() {}
+      );
     });
   }
 
@@ -136,6 +137,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         language: "en",
         strictbounds: false,
         types: [""],
+
         decoration: InputDecoration(
             hintText: "Search Places",
             focusedBorder: OutlineInputBorder(
@@ -159,7 +161,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       apiHeaders: await const GoogleApiHeaders().getHeaders(),
     );
 
-
     PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
 
     final lat = detail.result.geometry!.location.lat;
@@ -177,7 +178,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     setPolylines();
     setState(() {});
 
-
     googleMapController
         .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
   }
@@ -190,6 +190,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     return Scaffold(
       key: homeScaffoldKey,
       body: Stack(
+        alignment: Alignment.center,
         children: [
           GoogleMap(
             zoomControlsEnabled: false,
