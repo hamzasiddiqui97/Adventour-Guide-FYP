@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_maps_basics/view/screens/login.dart';
-import 'package:google_maps_basics/view/screens/login_main_page.dart';
-import 'package:google_maps_basics/view/screens/onboarding_screen.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/login.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/login_main_page.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/onboarding_screen.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/sign_up.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/splash_screen.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
-import 'package:google_maps_basics/view/screens/sign_up.dart';
-import 'package:google_maps_basics/view/screens/splash_screen.dart';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

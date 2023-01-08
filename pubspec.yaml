@@ -39,12 +39,12 @@ dependencies:
   geocoding: ^2.0.5
   geolocator: ^9.0.2
   flutter_google_places: ^0.3.0
+  flutter_polyline_points: ^1.0.0
   google_sign_in: ^5.4.2
   firebase_core:
   firebase_auth:
   firebase_database:
   lottie:
-
   uuid: ^3.0.7
   http: ^0.13.5
 
@@ -75,7 +75,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-    - assets/icons/
     - assets/splash_screen_animation/
 
   # An image asset can refer to one or more resolution-specific "variants", see
