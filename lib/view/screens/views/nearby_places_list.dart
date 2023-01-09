@@ -1,13 +1,13 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/NearbyResponse.dart';
+import 'package:google_maps_basics/view/screens/pages/maps_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-
-
 
 
 class NearByPlacesScreen extends StatefulWidget {
@@ -19,14 +19,12 @@ class NearByPlacesScreen extends StatefulWidget {
 
 class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
 
-
-
   String apiKey = googleApiKey;
-  String radius = "50";
+  String radius = "5";
   String placeType = 'All';
 
-  double latitude= 24.86567779487795;
-  double longitude= 67.02628335561303;
+  double latitude = 24.86567779487795;
+  double longitude = 67.02628335561303;
 
   final placeTypes = [
     'All',
@@ -79,7 +77,10 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                 const SizedBox(height: 10,),
 
                 Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width / 1.5,
                   child: TextField(
                     decoration: const InputDecoration(
                       labelText: "Radius",
@@ -110,10 +111,11 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                     DropdownButton(
                       hint: Text(placeType == '' ? 'All' : placeType),
                       items: placeTypes
-                          .map((placeType) => DropdownMenuItem(
-                        value: placeType == 'All' ? '' : placeType,
-                        child: Text(placeType),
-                      ))
+                          .map((placeType) =>
+                          DropdownMenuItem(
+                            value: placeType == 'All' ? '' : placeType,
+                            child: Text(placeType),
+                          ))
                           .toList(),
                       onChanged: (String? newPlaceType) {
                         setState(() => placeType = newPlaceType!);
@@ -195,8 +197,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
     nearbyPlacesResponse =
         NearbyPlacesResponse.fromJson(jsonDecode(response.body));
 
-    setState(() {
-    });
+    setState(() {});
   }
 
 
@@ -217,7 +218,10 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
   Widget nearbyPlacesWidget(Results results) {
     return Center(
       child: Container(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
@@ -230,7 +234,9 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
             // Text("Location: ${results.geometry!.location!.lat} , ${results.geometry!.location!.lng}"),
             Text("Rating: ${results.rating ?? "Not Available"}"),
             Text(
-                """Place Status: ${results.openingHours != null ? "Open" : "Closed"}"""),
+                """Place Status: ${results.openingHours != null
+                    ? "Open"
+                    : "Closed"}"""),
             Center(
               child: ElevatedButton(
                   style: ButtonStyle(
@@ -238,8 +244,19 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                           ColorPalette.secondaryColor)),
                   onPressed: () {
                     setState(() {
-                      latitude = results.geometry!.location!.lat!;
-                      longitude = results.geometry!.location!.lng!;
+                      log('llllllll ${results.geometry?.location?.lat}');
+                      log('nnnn ${results.geometry?.location?.lng}');
+
+                      // Navigator.()(context, '/onBoardingScreen');
+
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => HomePageGoogleMaps(
+                          lat: results.geometry?.location?.lat,
+                          long: results.geometry?.location?.lng,)
+                      ));
+
+                      // latitude = results.geometry!.location!.lat!;
+                      // longitude = results.geometry!.location!.lng!;
                     });
                   },
                   child: const Text('Navigate')),

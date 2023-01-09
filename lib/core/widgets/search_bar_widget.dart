@@ -7,14 +7,17 @@ class SearchBar extends StatelessWidget {
   String? hintText;
   Icon? icon;
   double? width;
+  IconButton? suffixIcon;
+  TextEditingController? controller;
 
   SearchBar({
     this.onPress,
     this.icon,
     this.hintText,
     this.width,
+    this.suffixIcon,
+    this.controller,
     });
-
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +28,17 @@ class SearchBar extends StatelessWidget {
           color: ColorPalette.primaryColor,
           borderRadius: BorderRadius.circular(6)),
       child: TextField(
+        controller: controller,
         onTap: onPress,
         // onChanged: (){},
         decoration: InputDecoration(
+          suffixIcon: suffixIcon,
           prefixIcon: Icon(
             Icons.search,
             color: ColorPalette.searchBarColor,
+            size: 28,
           ),
-          hintText: "Search Places",
+          hintText: hintText,
           border: InputBorder.none,
         ),
 

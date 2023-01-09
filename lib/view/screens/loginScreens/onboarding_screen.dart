@@ -16,7 +16,7 @@ class OnboardingScreen extends StatelessWidget {
           alignment: Alignment.center,
           color: Colors.white,
           width: screenWidth,
-          height: screenHeight,
+          // height: screenHeight,
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Padding(
               padding: const EdgeInsets.all(50.0),
@@ -47,7 +47,7 @@ class OnboardingScreen extends StatelessWidget {
             ),
             IconButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/loginMainPage');
+                  Navigator.pushReplacementNamed(context, '/home');
                 },
                 icon: const Icon(
                   Icons.arrow_forward_ios,
