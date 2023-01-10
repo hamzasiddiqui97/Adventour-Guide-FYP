@@ -49,7 +49,7 @@ class HomePageNavBar extends StatelessWidget {
                           MaterialPageRoute(builder: (context) => const MyAccount()),
                         );
                       },
-                      icon: Icon(Icons.person,color: ColorPalette.secondaryColor,size: 40,))
+                      icon: const Icon(Icons.person,color: ColorPalette.secondaryColor,size: 40,))
                 ],
               ),
               const SizedBox(height: 25,),

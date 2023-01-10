@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
 
 class NewsWeatherScreen extends StatefulWidget {
   const NewsWeatherScreen({ super.key });
@@ -28,30 +29,40 @@ class _NewsWeatherScreen extends State<NewsWeatherScreen> with SingleTickerProvi
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text(_buildTitle())),
-        bottom: TabBar(
-          onTap: (index) {
-            setState(() {
-              _tabController.index = index;
-            });
-          },
-          controller: _tabController,
-          tabs: myTabs,
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: myTabs.map((Tab tab) {
-          final String label = tab.text!.toLowerCase();
-          return Center(
-            child: Text(
-              'This is the $label tab',
-              style: const TextStyle(fontSize: 36),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: ColorPalette.secondaryColor,
+          centerTitle: true,
+          title: Text(_buildTitle()),
+          bottom: TabBar(
+            indicator: const BoxDecoration(
+              color: Colors.white,
+              border: Border(
+            bottom: BorderSide(color: ColorPalette.secondaryColor),
+          ),
             ),
-          );
-        }).toList(),
+            onTap: (index) {
+              setState(() {
+                _tabController.index = index;
+              });
+            },
+            controller: _tabController,
+            tabs: myTabs,
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: myTabs.map((Tab tab) {
+            final String label = tab.text!.toLowerCase();
+            return Center(
+              child: Text(
+                'This is the $label tab',
+                style: const TextStyle(fontSize: 36),
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
