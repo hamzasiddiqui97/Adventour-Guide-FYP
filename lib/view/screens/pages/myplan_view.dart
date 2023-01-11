@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/view/screens/views/my_trip_tab.dart';
 
 class MyPlan extends StatelessWidget {
   const MyPlan({Key? key}) : super(key: key);
@@ -7,11 +7,9 @@ class MyPlan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //     title: const Text("My Trips"),
-      //     centerTitle: true,
-      // backgroundColor: ColorPalette.secondaryColor),
-      body: const Center(child: Text('My Trips Screen')),
+      body: Container(
+          child: const MyTripTab()
+      )
     );
   }
 }

@@ -115,13 +115,11 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   }
 
   Future<Position> _currentLocation() async {
-    // setPolylines();
     await Geolocator.requestPermission()
         .then((value) {})
         .onError((error, stackTrace) {
       print("error: $error");
     });
-
     return await Geolocator.getCurrentPosition();
   }
   // current location ended
@@ -129,7 +127,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   // search places function started
 
   // source search autocomplete button
-
   Future<void> _handlePressButtonSource() async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
@@ -278,7 +275,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                         builder: (context) => const NearByPlacesScreen()),
                   );
                 },
-                child: const Text('Nearby Places'),
+                child: const Text('Nearby Places',style: TextStyle(color: ColorPalette.primaryColor),),
               )),
           // Positioned(
           //   top: 100,

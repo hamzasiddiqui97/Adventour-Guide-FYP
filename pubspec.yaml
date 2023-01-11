@@ -48,6 +48,7 @@ dependencies:
   lottie:
   uuid: ^3.0.7
   http: ^0.13.5
+  fab_circular_menu: ^1.0.2
 
   # flutter_geocoder: ^0.2.2-nullsafety
   # geocode: ^1.0.2

@@ -61,10 +61,10 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          foregroundColor: ColorPalette.primaryColor,
           backgroundColor: ColorPalette.secondaryColor,
           title: const Text(
             'Nearby Places',
-            style: TextStyle(color: ColorPalette.primaryColor),
           ),
           centerTitle: true,
         ),
@@ -75,7 +75,6 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
               children: [
 
                 const SizedBox(height: 10,),
-
                 Container(
                   width: MediaQuery
                       .of(context)

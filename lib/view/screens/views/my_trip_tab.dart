@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 
-class NewsWeatherScreen extends StatefulWidget {
-  const NewsWeatherScreen({ super.key });
+class MyTripTab extends StatefulWidget {
+  const MyTripTab({ super.key });
   @override
-  State<NewsWeatherScreen> createState() => _NewsWeatherScreen();
+  State<MyTripTab> createState() => _MyTripTab();
 }
 
-class _NewsWeatherScreen extends State<NewsWeatherScreen> with SingleTickerProviderStateMixin {
+class _MyTripTab extends State<MyTripTab> with SingleTickerProviderStateMixin {
   static const List<Tab> myTabs = <Tab>[
-    Tab(text: 'News'),
-    Tab(text: 'Weather'),
+    Tab(text: 'Trips'),
+    Tab(text: 'Booking'),
   ];
 
   late TabController _tabController;
@@ -32,7 +32,7 @@ class _NewsWeatherScreen extends State<NewsWeatherScreen> with SingleTickerProvi
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-        backgroundColor: ColorPalette.secondaryColor,
+          backgroundColor: ColorPalette.secondaryColor,
           foregroundColor: ColorPalette.primaryColor,
           centerTitle: true,
           title: Text(_buildTitle()),
@@ -41,8 +41,8 @@ class _NewsWeatherScreen extends State<NewsWeatherScreen> with SingleTickerProvi
             indicator: const BoxDecoration(
               color: Colors.white,
               border: Border(
-            bottom: BorderSide(color: ColorPalette.secondaryColor),
-          ),
+                bottom: BorderSide(color: ColorPalette.secondaryColor),
+              ),
             ),
             onTap: (index) {
               setState(() {

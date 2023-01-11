@@ -10,10 +10,15 @@ class MyAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: ColorPalette.secondaryColor,
+          foregroundColor: ColorPalette.primaryColor,
+          title: const Text('Account Details'),
+          centerTitle: true,
+        ),
+        body: SingleChildScrollView(
           child: Column(
             children: [
               Row(
