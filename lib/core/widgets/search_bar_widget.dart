@@ -2,29 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 
 class SearchBar extends StatelessWidget {
-  const SearchBar({
-    Key? key,
-  }) : super(key: key);
 
+  VoidCallback? onPress;
+  String? hintText;
+  Icon? icon;
+  double? width;
+  IconButton? suffixIcon;
+  TextEditingController? controller;
 
-  // String hintText;
-  // Icon icon;
+  SearchBar({
+    this.onPress,
+    this.icon,
+    this.hintText,
+    this.width,
+    this.suffixIcon,
+    this.controller,
+    });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width,
       height: 50,
       decoration: BoxDecoration(
           color: ColorPalette.primaryColor,
           borderRadius: BorderRadius.circular(6)),
-      child: const TextField(
+      child: TextField(
+        controller: controller,
+        onTap: onPress,
         // onChanged: (){},
         decoration: InputDecoration(
+          suffixIcon: suffixIcon,
           prefixIcon: Icon(
             Icons.search,
             color: ColorPalette.searchBarColor,
+            size: 28,
           ),
-          hintText: "Search Places",
+          hintText: hintText,
           border: InputBorder.none,
         ),
 

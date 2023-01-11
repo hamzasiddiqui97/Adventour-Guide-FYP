@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/representation/screens/pages/main_page.dart';
-import 'package:google_maps_basics/routes.dart';
-import 'package:google_maps_basics/search_places_api.dart';
-import 'convert_lnglat_to_address.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/login.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/login_main_page.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/onboarding_screen.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/sign_up.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/splash_screen.dart';
+import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -15,14 +19,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/splashScreen',
+      routes: {
+        '/splashScreen': (context) => SplashScreen(),
+        '/onBoardingScreen': (context) => const OnboardingScreen(),
+        '/loginMainPage':  (context) => LoginScreen(),
+        '/signIn': (context) => SignIn(),
+        '/signUp': (context) => SignupPage(),
+        '/home': (context) => const NavigationPage(),
+      },
       title: 'Adventour',
       theme: ThemeData(
-        primaryColor: ColorPalette.primaryColor,
+        primarySwatch: Colors.orange,
+        scaffoldBackgroundColor: Colors.white,
       ),
-      routes: routes,
       debugShowCheckedModeBanner: false,
-      // home: const CreateLatLongToAddress(),
-      home: const NavigationPage(),
+      home: const OnboardingScreen(),
     );
   }
 }
