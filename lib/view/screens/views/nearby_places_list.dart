@@ -241,21 +241,21 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                       backgroundColor: MaterialStateProperty.all(
                           ColorPalette.secondaryColor)),
                   onPressed: () {
-                    setState(() {
-                      log('llllllll ${results.geometry?.location?.lat}');
-                      log('nnnn ${results.geometry?.location?.lng}');
-
-                      // Navigator.()(context, '/onBoardingScreen');
-
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => HomePageGoogleMaps(
-                          lat: results.geometry?.location?.lat,
-                          long: results.geometry?.location?.lng,)
-                      ));
-
-                      // latitude = results.geometry!.location!.lat!;
-                      // longitude = results.geometry!.location!.lng!;
-                    });
+                    // setState(() {
+                    //   log('llllllll ${results.geometry?.location?.lat}');
+                    //   log('nnnn ${results.geometry?.location?.lng}');
+                    //
+                    //   // Navigator.()(context, '/onBoardingScreen');
+                    //
+                    //   Navigator.push(context, MaterialPageRoute(
+                    //     builder: (context) => HomePageGoogleMaps(
+                    //       lat: results.geometry?.location?.lat,
+                    //       long: results.geometry?.location?.lng,)
+                    //   ));
+                    //
+                    //   // latitude = results.geometry!.location!.lat!;
+                    //   // longitude = results.geometry!.location!.lng!;
+                    // });
                   },
                   child: const Text('Navigate')),
             ),
