@@ -10,9 +10,6 @@ import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
-import 'package:google_maps_webservice/directions.dart' as dir;
-
-import '../../../popular_places_along_route.dart';
 
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key, this.long, this.lat}) : super(key: key);
@@ -116,7 +113,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         markerId: MarkerId(place.placeId),
         position: LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
       ));
       setState(() {
       });
