@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -11,6 +10,9 @@ import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
+import 'package:google_maps_webservice/directions.dart' as dir;
+
+import '../../../popular_places_along_route.dart';
 
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key, this.long, this.lat}) : super(key: key);
@@ -28,12 +30,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   final sourceController = TextEditingController();
   final destinationController = TextEditingController();
   bool showSearchField = false;
-
   String totalDistance = '';
   String totalTime = '';
-
-  late GoogleMapController googleMapController;
   final Mode _mode = Mode.overlay;
+  late GoogleMapController googleMapController;
+
+  @override
+  void dispose() {
+    googleMapController.dispose();
+    super.dispose();
+  }
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(24.921780, 67.117981),
@@ -65,6 +71,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   List<LatLng> polylineCoordinates = [];
   late PolylinePoints polylinePoints;
 
+
   //variables for the source and destinations
   late LatLng destination;
   late LatLng source;
@@ -75,10 +82,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         PointLatLng(destination.latitude, destination.longitude));
 
     if (result.status == 'OK') {
-      // show distance and time
-
-      // end
-
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
@@ -89,6 +92,33 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             polylineId: const PolylineId('polyLine'),
             color: ColorPalette.secondaryColor,
             points: polylineCoordinates));
+        });
+      final places = GoogleMapsPlaces(apiKey: googleApiKey);
+      getTouristAttractionsAlongPolyline(polylineCoordinates, places);
+
+    }
+  }
+
+  void getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places) async {
+    final touristAttractions = <PlacesSearchResult>[];
+    for (final point in polylineCoordinates) {
+      final nearbySearch = await places.searchNearbyWithRadius(
+        Location(lat: point.latitude, lng: point.longitude),
+        200,
+        type: 'restaurant',
+      );
+      touristAttractions.addAll(nearbySearch.results);
+    }
+
+    // print the names of the tourist attractions
+    for (final place in touristAttractions) {
+      _markers.add(Marker(
+        markerId: MarkerId(place.placeId),
+        position: LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+        infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      ));
+      setState(() {
       });
     }
   }
@@ -224,7 +254,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     destinationController.text =
         detail.result.name; // update the source field's text
 
-    _markers.clear();
+    // _markers.clear();    // removed this to make sure marker is not clear for source when dest is selected
     _polylines.clear();
     _markers.add(Marker(
         markerId: const MarkerId("destination"),
@@ -258,7 +288,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             // current location
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
-            markers: Set<Marker>.of(_markers),
+            markers: _markers.toSet(),
           ),
           Positioned(
               bottom: 30,
@@ -275,7 +305,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                         builder: (context) => const NearByPlacesScreen()),
                   );
                 },
-                child: const Text('Nearby Places',style: TextStyle(color: ColorPalette.primaryColor),),
+                child: const Text(
+                  'Nearby Places',
+                  style: TextStyle(color: ColorPalette.primaryColor),
+                ),
               )),
           // Positioned(
           //   top: 100,
@@ -300,8 +333,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               top: 30,
               right: 30,
               child: Container(
-                decoration:BoxDecoration(color: ColorPalette.secondaryColor,
-                borderRadius: BorderRadius.circular(40),
+                decoration: BoxDecoration(
+                  color: ColorPalette.secondaryColor,
+                  borderRadius: BorderRadius.circular(40),
                 ),
                 height: 60,
                 width: 60,
@@ -312,7 +346,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                       showSearchField = !showSearchField;
                     });
                   },
-                  child: const Icon(Icons.search,color: Colors.white,),
+                  child: const Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -322,11 +359,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               left: 20,
               right: 20,
               child: SearchBar(
-                suffixIcon: IconButton(onPressed: (){
-                  setState(() {
-                    showSearchField = false;
-                  });
-                }, icon: const Icon(Icons.close_outlined),),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        showSearchField = false;
+                      });
+                    },
+                    icon: const Icon(Icons.close_outlined),
+                  ),
                   controller: sourceController,
                   hintText: 'Search Source',
                   onPress: () {
@@ -339,11 +379,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               left: 20,
               right: 20,
               child: SearchBar(
-                  suffixIcon: IconButton(onPressed: (){
-                    setState(() {
-                      showSearchField = false;
-                    });
-                  }, icon: const Icon(Icons.close_outlined),),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        showSearchField = false;
+                      });
+                    },
+                    icon: const Icon(Icons.close_outlined),
+                  ),
                   controller: destinationController,
                   hintText: 'Search Destination',
                   onPress: () {
@@ -388,4 +431,36 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       ),
     );
   }
+
+  // void getPlacesAlongPolyline() async {
+  //   final directions = dir.GoogleMapsDirections(apiKey: kGoogleApiKey);
+  //   final places = GoogleMapsPlaces(apiKey: googleApiKey);
+  //   final waypoints = polylineCoordinates
+  //       .map((latLng) => dir.Waypoint(value: latLng.toString()))
+  //       .toList();
+  //   final result = await directions.directionsWithLocation(
+  //     Location(lat: source.latitude, lng: source.longitude),
+  //     Location(lat: destination.latitude, lng: destination.longitude),
+  //     waypoints: waypoints,
+  //     travelMode: dir.TravelMode.driving,
+  //   );
+  //
+  //   final route = result.routes[0].legs[0];
+  //   for (final step in route.steps) {
+  //     final nearbySearch = await places.searchNearbyWithRadius(step.startLocation, 500);
+  //     for (final place in nearbySearch.results) {
+  //       if (place != null) {
+  //         _markers.add(Marker(
+  //         markerId: MarkerId(place.placeId),
+  //         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+  //         anchor: const Offset(0.5,1),
+  //         position: LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+  //         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
+  //       ));
+  //     }
+  //     }
+  //   }
+  //   setState(() {});
+  // }
+
 }

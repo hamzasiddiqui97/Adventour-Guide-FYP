@@ -203,7 +203,6 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
   Future<void> updateLocation() async {
     // First, request permission to access the user's location
     await Geolocator.requestPermission();
-
     // Then, get the current position
     final position = await Geolocator.getCurrentPosition();
 
