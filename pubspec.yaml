@@ -20,7 +20,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.18.2 <3.0.0"
+  sdk: ">=2.12.2 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -48,6 +48,14 @@ dependencies:
   lottie:
   uuid: ^3.0.7
   http: ^0.13.5
+  intl: ^0.18.0
+  provider: ^6.0.5
+  location: ^4.4.0
+  latlong2: ^0.8.1
+  supercharged: ^2.1.1
+  material_design_icons_flutter: ^6.0.7096
+  smooth_page_indicator: ^1.0.0+2
+  simple_animations: ^5.0.0+3
   fab_circular_menu: ^1.0.2
   google_directions_api: ^0.9.1
 

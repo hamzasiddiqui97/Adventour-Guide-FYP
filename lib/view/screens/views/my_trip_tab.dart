@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 
 class MyTripTab extends StatefulWidget {
-  const MyTripTab({ super.key });
+  // const MyTripTab({ super.key });
   @override
   State<MyTripTab> createState() => _MyTripTab();
 }
