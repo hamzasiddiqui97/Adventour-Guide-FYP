@@ -9,6 +9,7 @@ import 'package:google_maps_basics/view/screens/pages/maps_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
+import 'nearby_on_maps.dart';
 
 class NearByPlacesScreen extends StatefulWidget {
   const NearByPlacesScreen({Key? key}) : super(key: key);
@@ -18,7 +19,6 @@ class NearByPlacesScreen extends StatefulWidget {
 }
 
 class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
-
   String apiKey = googleApiKey;
   String radius = "5";
   String placeType = 'All';
@@ -49,7 +49,6 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
     updateLocation();
   }
 
-
   void setRadius(String newRadius) {
     setState(() {
       radius = newRadius;
@@ -73,25 +72,23 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-
-                const SizedBox(height: 10,),
+                const SizedBox(
+                  height: 10,
+                ),
                 Container(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 1.5,
+                  width: MediaQuery.of(context).size.width / 1.5,
                   child: TextField(
                     decoration: const InputDecoration(
                       labelText: "Radius",
                       focusedBorder: OutlineInputBorder(
                         borderSide:
-                        BorderSide(color: ColorPalette.secondaryColor),
+                            BorderSide(color: ColorPalette.secondaryColor),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                       prefixIcon:
-                      Icon(Icons.radar, color: ColorPalette.secondaryColor),
+                          Icon(Icons.radar, color: ColorPalette.secondaryColor),
                       hintText: "Enter radius",
                       contentPadding: EdgeInsets.all(20),
                     ),
@@ -99,22 +96,19 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                     keyboardType: TextInputType.number,
                     maxLength: 4,
                     expands: false,
-
                   ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-
                     const Text('Area Type:'),
                     DropdownButton(
                       hint: Text(placeType == '' ? 'All' : placeType),
                       items: placeTypes
-                          .map((placeType) =>
-                          DropdownMenuItem(
-                            value: placeType == 'All' ? '' : placeType,
-                            child: Text(placeType),
-                          ))
+                          .map((placeType) => DropdownMenuItem(
+                                value: placeType == 'All' ? '' : placeType,
+                                child: Text(placeType),
+                              ))
                           .toList(),
                       onChanged: (String? newPlaceType) {
                         setState(() => placeType = newPlaceType!);
@@ -165,7 +159,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
             ElevatedButton(
               style: ButtonStyle(
                   backgroundColor:
-                  MaterialStateProperty.all(ColorPalette.secondaryColor)),
+                      MaterialStateProperty.all(ColorPalette.secondaryColor)),
               onPressed: () => Navigator.of(context).pop(),
               child: const Text(
                 'OK',
@@ -199,7 +193,6 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
     setState(() {});
   }
 
-
   Future<void> updateLocation() async {
     // First, request permission to access the user's location
     await Geolocator.requestPermission();
@@ -214,52 +207,46 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
   }
 
   Widget nearbyPlacesWidget(Results results) {
-    return Center(
-      child: Container(
-        width: MediaQuery
-            .of(context)
-            .size
-            .width,
-        margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-            border: Border.all(color: ColorPalette.secondaryColor),
-            borderRadius: BorderRadius.circular(10)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Name: ${results.name!}"),
-            // Text("Location: ${results.geometry!.location!.lat} , ${results.geometry!.location!.lng}"),
-            Text("Rating: ${results.rating ?? "Not Available"}"),
-            Text(
-                """Place Status: ${results.openingHours != null
-                    ? "Open"
-                    : "Closed"}"""),
-            Center(
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          ColorPalette.secondaryColor)),
-                  onPressed: () {
-                    // setState(() {
-                    //   log('llllllll ${results.geometry?.location?.lat}');
-                    //   log('nnnn ${results.geometry?.location?.lng}');
-                    //
-                    //   // Navigator.()(context, '/onBoardingScreen');
-                    //
-                    //   Navigator.push(context, MaterialPageRoute(
-                    //     builder: (context) => HomePageGoogleMaps(
-                    //       lat: results.geometry?.location?.lat,
-                    //       long: results.geometry?.location?.lng,)
-                    //   ));
-                    //
-                    //   // latitude = results.geometry!.location!.lat!;
-                    //   // longitude = results.geometry!.location!.lng!;
-                    // });
-                  },
-                  child: const Text('Navigate')),
-            ),
-          ],
+    return SafeArea(
+      child: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: ColorPalette.secondaryColor),
+              borderRadius: BorderRadius.circular(10)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Name: ${results.name!}"),
+              // Text("Location: ${results.geometry!.location!.lat} , ${results.geometry!.location!.lng}"),
+              Text("Rating: ${results.rating ?? "Not Available"}"),
+              Text(
+                  """Place Status: ${results.openingHours != null ? "Open" : "Closed"}"""),
+              Center(
+                child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            ColorPalette.secondaryColor)),
+                    onPressed: () {
+                      setState(() {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MapsViewScreen(
+                                      latitude: results.geometry!.location!.lat!,
+                                      longitude: results.geometry!.location!.lng!,
+                                      title: results.name!,
+                                    )
+                            )
+                        );
+                      });
+                    },
+                    child: const Text('Navigate')),
+              ),
+            ],
+          ),
         ),
       ),
     );

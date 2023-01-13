@@ -12,10 +12,8 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
 class HomePageGoogleMaps extends StatefulWidget {
-  const HomePageGoogleMaps({Key? key, this.long, this.lat}) : super(key: key);
+  const HomePageGoogleMaps({Key? key}) : super(key: key);
 
-  final double? long;
-  final double? lat;
   @override
   State<HomePageGoogleMaps> createState() => _HomePageGoogleMapsState();
 }
@@ -24,6 +22,25 @@ const kGoogleApiKey = googleApiKey;
 final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
+
+  String _placeType = "cafe";
+  int _selectedIndex = 0;
+
+  final List<String> _placeTypes = [
+    "All",
+    "tourist_attraction",
+    "gas_station",
+    "restaurant",
+    "cafe",
+    "hospital",
+    "police",
+    "atm",
+    "parking",
+    "bank",
+    "car_rental",
+    "embassy"
+  ];
+
   final sourceController = TextEditingController();
   final destinationController = TextEditingController();
   bool showSearchField = false;
@@ -55,18 +72,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     destinationController.text = 'Destination';
   }
 
-  final List<Marker> _markers = [
-    // Marker(
-    // markerId: const MarkerId('current location'),
-    // position: LatLng(24.9277448, 67.1088845),
-    // infoWindow: const InfoWindow(title: "Current Location"),
-    // ),
-  ];
+
+  // final List<Marker> _markersPolylinePlaces = []; for adding markers along polyline
+
+  final List<Marker> _markers = [];
 
   // polylines
   final Set<Polyline> _polylines = <Polyline>{};
   List<LatLng> polylineCoordinates = [];
   late PolylinePoints polylinePoints;
+
 
 
   //variables for the source and destinations
@@ -91,18 +106,30 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             points: polylineCoordinates));
         });
       final places = GoogleMapsPlaces(apiKey: googleApiKey);
-      getTouristAttractionsAlongPolyline(polylineCoordinates, places);
+      getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
 
     }
   }
 
-  void getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places) async {
+  void updateMapWithSelectedPlaceType(String placeType) {
+    // Clear previous markers
+    _markers.clear();
+    // Get new markers based on selected place type
+    final places = GoogleMapsPlaces(apiKey: googleApiKey);
+
+    getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
+    // Update the map
+    setState(() {});
+  }
+
+
+  void getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
     final touristAttractions = <PlacesSearchResult>[];
     for (final point in polylineCoordinates) {
       final nearbySearch = await places.searchNearbyWithRadius(
         Location(lat: point.latitude, lng: point.longitude),
         200,
-        type: 'restaurant',
+        type: placeType,
       );
       touristAttractions.addAll(nearbySearch.results);
     }
@@ -119,7 +146,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       });
     }
   }
-
   // current location started
   loadData() async {
     _currentLocation().then((value) async {
@@ -287,6 +313,60 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             myLocationButtonEnabled: false,
             markers: _markers.toSet(),
           ),
+
+          if (showSearchField)
+            Positioned(
+            top: 140,
+            right: 0,
+            left: 0,
+            child: Container(
+              decoration: const BoxDecoration(color: Colors.transparent),
+              height: MediaQuery.of(context).size.height / 13,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _placeTypes.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var textPainter = TextPainter(
+                    text: TextSpan(
+                        text: _placeTypes[index],
+                        style: Theme.of(context).textTheme.button),
+                    textDirection: TextDirection.ltr,
+                  );
+                  textPainter.layout();
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+
+                      width: textPainter.width + 40,
+                      child: InkWell(
+                        splashColor: Colors.white,
+                        onTap: (){
+                          setState(() {
+                            _placeType = _placeTypes[index];
+                          });
+                          updateMapWithSelectedPlaceType(_placeType);
+                        },
+
+                        child: FloatingActionButton(
+                          backgroundColor:  _selectedIndex == index ? ColorPalette.secondaryColor : Colors.black54,
+                          foregroundColor: ColorPalette.primaryColor,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),),
+                          onPressed: () {
+                            setState(() {
+                              _selectedIndex = index;
+                              _placeType = _placeTypes[index];
+                            });
+                            updateMapWithSelectedPlaceType(_placeType);
+                          },
+                          child: Text(_placeTypes[index]),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
           Positioned(
               bottom: 30,
               left: 10,
@@ -390,6 +470,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                     _handlePressButtonDestination();
                   }),
             ),
+
           Positioned(
             right: 30,
             bottom: 30,
@@ -424,40 +505,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               ),
             ),
           ),
+
         ],
       ),
     );
   }
-
-  // void getPlacesAlongPolyline() async {
-  //   final directions = dir.GoogleMapsDirections(apiKey: kGoogleApiKey);
-  //   final places = GoogleMapsPlaces(apiKey: googleApiKey);
-  //   final waypoints = polylineCoordinates
-  //       .map((latLng) => dir.Waypoint(value: latLng.toString()))
-  //       .toList();
-  //   final result = await directions.directionsWithLocation(
-  //     Location(lat: source.latitude, lng: source.longitude),
-  //     Location(lat: destination.latitude, lng: destination.longitude),
-  //     waypoints: waypoints,
-  //     travelMode: dir.TravelMode.driving,
-  //   );
-  //
-  //   final route = result.routes[0].legs[0];
-  //   for (final step in route.steps) {
-  //     final nearbySearch = await places.searchNearbyWithRadius(step.startLocation, 500);
-  //     for (final place in nearbySearch.results) {
-  //       if (place != null) {
-  //         _markers.add(Marker(
-  //         markerId: MarkerId(place.placeId),
-  //         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
-  //         anchor: const Offset(0.5,1),
-  //         position: LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
-  //         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-  //       ));
-  //     }
-  //     }
-  //   }
-  //   setState(() {});
-  // }
-
 }
