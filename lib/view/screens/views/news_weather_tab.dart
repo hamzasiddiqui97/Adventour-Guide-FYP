@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 
 class NewsWeatherScreen extends StatefulWidget {
-  const NewsWeatherScreen({ super.key });
+  const NewsWeatherScreen({ Key?key }): super(key:key);
   @override
   State<NewsWeatherScreen> createState() => _NewsWeatherScreen();
 }

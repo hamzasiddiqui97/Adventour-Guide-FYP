@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/view/screens/views/NewsScreen.dart';
 import 'package:google_maps_basics/view/screens/views/news_weather_tab.dart';
 
 class CustomGrid extends StatelessWidget {
@@ -86,14 +87,14 @@ class CustomGrid extends StatelessWidget {
                       child: IconButton(
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => const NewsWeatherScreen()),
+                              builder: (context) => const NewsScreen()),
                           );
                         },
                         icon: const Icon(
                           Icons.newspaper, color: ColorPalette.secondaryColor,
                           size: 30,),),
                     ),
-                    const Text('News &\nWeather', textAlign: TextAlign.center),
+                    const Text('News ', textAlign: TextAlign.center),
                   ],
                 ),
                 Column(
