@@ -23,7 +23,7 @@ final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
-  String _placeType = "cafe";
+  String _placeType = "gas_station";
   int _selectedIndex = 0;
 
   final List<String> _placeTypes = [
@@ -140,7 +140,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         markerId: MarkerId(place.placeId),
         position: LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
       ));
       setState(() {
       });
@@ -348,8 +348,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                         },
 
                         child: FloatingActionButton(
-                          backgroundColor:  _selectedIndex == index ? ColorPalette.secondaryColor : Colors.black54,
-                          foregroundColor: ColorPalette.primaryColor,
+                          backgroundColor:  _selectedIndex == index ? ColorPalette.secondaryColor : Colors.white,
+                          foregroundColor: _selectedIndex == index ? ColorPalette.primaryColor : Colors.black,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),),
                           onPressed: () {
                             setState(() {
