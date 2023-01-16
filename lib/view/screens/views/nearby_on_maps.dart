@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 class MapsViewScreen extends StatefulWidget {
   final double latitude;
@@ -23,11 +24,13 @@ class _MapsViewScreenState extends State<MapsViewScreen> {
           appBar: AppBar(
             centerTitle: true,
             title: const Text('Near You'),
+            foregroundColor: ColorPalette.primaryColor,
+            backgroundColor: ColorPalette.secondaryColor,
           ),
           body: GoogleMap(
             initialCameraPosition: CameraPosition(
               target: LatLng(widget.latitude, widget.longitude),
-              zoom: 15,
+              zoom: 18,
             ),
             markers: {
               Marker(

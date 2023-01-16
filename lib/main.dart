@@ -6,6 +6,7 @@ import 'package:google_maps_basics/view/screens/loginScreens/onboarding_screen.d
 import 'package:google_maps_basics/view/screens/loginScreens/sign_up.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/splash_screen.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
+import 'package:google_maps_basics/view/screens/views/news_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,22 +20,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/splashScreen',
-      routes: {
-        '/splashScreen': (context) => SplashScreen(),
-        '/onBoardingScreen': (context) => const OnboardingScreen(),
-        '/loginMainPage':  (context) => LoginScreen(),
-        '/signIn': (context) => SignIn(),
-        '/signUp': (context) => SignupPage(),
-        '/home': (context) => const NavigationPage(),
-      },
+      // initialRoute: '/splashScreen',
+      // routes: {
+      //   '/splashScreen': (context) => SplashScreen(),
+      //   '/onBoardingScreen': (context) => const OnboardingScreen(),
+      //   '/loginMainPage':  (context) => LoginScreen(),
+      //   '/signIn': (context) => SignIn(),
+      //   '/signUp': (context) => SignupPage(),
+      //   '/home': (context) => const NavigationPage(),
+      // },
       title: 'Adventour',
       theme: ThemeData(
         primarySwatch: Colors.orange,
         scaffoldBackgroundColor: Colors.white,
       ),
       debugShowCheckedModeBanner: false,
-      home: const OnboardingScreen(),
+      // home: const OnboardingScreen(),
+      home: const NewsScreen(),
     );
+
   }
 }

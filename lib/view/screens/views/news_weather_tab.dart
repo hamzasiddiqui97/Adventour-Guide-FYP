@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/view/screens/views/news_view.dart';
 
 class NewsWeatherScreen extends StatefulWidget {
   const NewsWeatherScreen({ super.key });
@@ -58,16 +59,20 @@ class _NewsWeatherScreen extends State<NewsWeatherScreen> with SingleTickerProvi
           child: TabBarView(
             controller: _tabController,
             children: myTabs.map((Tab tab) {
-              final String label = tab.text!.toLowerCase();
-              return Center(
-                child: Text(
-                  'This is the $label tab',
-                  style: const TextStyle(fontSize: 36),
-                ),
-              );
+              if (tab.text == 'News') {
+                return const NewsScreen();
+              } else {
+                return Center(
+                  child: Text(
+                    'This is the ${tab.text!.toLowerCase()} tab',
+                    style: const TextStyle(fontSize: 36),
+                  ),
+                );
+              }
             }).toList(),
           ),
         ),
+
       ),
     );
   }

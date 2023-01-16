@@ -50,6 +50,7 @@ dependencies:
   http: ^0.13.5
   fab_circular_menu: ^1.0.2
   google_directions_api: ^0.9.1
+  shared_preferences: ^2.0.16
 
   # flutter_geocoder: ^0.2.2-nullsafety
   # geocode: ^1.0.2

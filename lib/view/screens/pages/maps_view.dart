@@ -10,6 +10,7 @@ import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key}) : super(key: key);
@@ -71,7 +72,33 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     sourceController.text = 'Source';
     destinationController.text = 'Destination';
   }
-
+  //
+  // Future<void> _loadPreferences() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final double sourceLatitude = prefs.getDouble("sourceLatitude");
+  //   final double sourceLongitude = prefs.getDouble("sourceLongitude");
+  //   final String sourceName = prefs.getString("sourceName") ?? '';
+  //   final double destinationLatitude = prefs.getDouble("destinationLatitude");
+  //   final double destinationLongitude = prefs.getDouble("destinationLongitude");
+  //   final String destinationName = prefs.getString("destinationName") ?? '';
+  //   final String polylineRoute = prefs.getString("polylineRoute") ?? '';
+  //   if (sourceLatitude != null && sourceLongitude != null) {
+  //     source = LatLng(sourceLatitude, sourceLongitude);
+  //     sourceController.text = sourceName;
+  //   }
+  //   if (destinationLatitude != null && destinationLongitude != null) {
+  //     destination = LatLng(destinationLatitude, destinationLongitude);
+  //     destinationController.text = destinationName;
+  //   }
+  //   if (polylineRoute.isNotEmpty) {
+  //     List<LatLng> polylineList = polylineFromEncoded(polylineRoute);
+  //     polylineCoordinates = polylineList;
+  //   }
+  //   if (source != null && destination != null) {
+  //     setPolylines();
+  //   }
+  // }
+  //
 
   // final List<Marker> _markersPolylinePlaces = []; for adding markers along polyline
 
