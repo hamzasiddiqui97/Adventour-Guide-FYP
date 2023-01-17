@@ -146,7 +146,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
     getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
     // Update the map
-    setState(() {});
+    setState(() {
+    });
   }
 
 
@@ -190,7 +191,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       // GoogleMapController controller =await _controller.future;
       googleMapController
           .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-      setState(() {});
+      setState(() {
+
+      });
     });
   }
 
@@ -318,6 +321,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
   }
 
+  late bool _loading = true;
   @override
   Widget build(BuildContext context) {
     // final screenHeight = MediaQuery.of(context).size.height;
@@ -325,7 +329,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
     return Scaffold(
       key: homeScaffoldKey,
-      body: Stack(
+      body:
+      _loading ? const Center(
+        child: CircularProgressIndicator(
+        ),
+
+      ):
+
+      Stack(
         alignment: Alignment.center,
         children: [
           GoogleMap(

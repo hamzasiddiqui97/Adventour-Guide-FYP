@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/view/screens/views/news_view.dart';
 import 'package:google_maps_basics/view/screens/views/news_weather_tab.dart';
 
 class CustomGrid extends StatelessWidget {
@@ -51,11 +52,15 @@ class CustomGrid extends StatelessWidget {
                     Container(
                       color: Colors.white,
                       child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.local_gas_station,
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => const NewsScreen()),
+                          );
+                        },
+                        icon: const Icon(Icons.newspaper,
                           color: ColorPalette.secondaryColor, size: 30,),),
                     ),
-                    const Text('Fuel\nStations', textAlign: TextAlign.center,),
+                    const Text('News', textAlign: TextAlign.center,),
                   ],
                 ),
               ],
@@ -85,15 +90,12 @@ class CustomGrid extends StatelessWidget {
                       color: Colors.white,
                       child: IconButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => const NewsWeatherScreen()),
-                          );
                         },
                         icon: const Icon(
-                          Icons.newspaper, color: ColorPalette.secondaryColor,
+                          Icons.sunny, color: ColorPalette.secondaryColor,
                           size: 30,),),
                     ),
-                    const Text('News &\nWeather', textAlign: TextAlign.center),
+                    const Text('Weather', textAlign: TextAlign.center),
                   ],
                 ),
                 Column(
