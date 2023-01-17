@@ -4,6 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../helper/utils.dart';
+import 'package:google_maps_basics/screens/homeScreen.dart';
+import 'package:google_maps_basics/screens/hourlyWeatherScreen.dart';
+import 'package:google_maps_basics/screens/weeklyWeatherScreen.dart';
+
+
 
 class SevenDayForecast extends StatelessWidget {
   Widget dailyWidget(dynamic weather, BuildContext context) {
@@ -112,6 +117,40 @@ class SevenDayForecast extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+
+
+class viewfront extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => WeatherProvider(),
+      child: MaterialApp(
+        title: 'Flutter Weather',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          appBarTheme: AppBarTheme(
+            iconTheme: IconThemeData(
+              color: Colors.orange,
+            ),
+            elevation: 0,
+          ),
+          scaffoldBackgroundColor: Colors.white,
+          primaryColor: Colors.orange,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          colorScheme:
+          ColorScheme.fromSwatch().copyWith(secondary: Colors.orange),
+        ),
+        home: HomeScreen(),
+        routes: {
+          WeeklyScreen.routeName: (myCtx) => WeeklyScreen(),
+          HourlyScreen.routeName: (myCtx) => HourlyScreen(),
+        },
+      ),
     );
   }
 }
