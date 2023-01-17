@@ -45,7 +45,7 @@ class _SearchBarState extends State<SearchBar> {
                 padding: const EdgeInsets.only(left: 10),
                 child: Icon(
                   Icons.search,
-                  color: Colors.blue,
+                  color: Colors.orange,
                 ),
               ),
               contentPadding: EdgeInsets.only(

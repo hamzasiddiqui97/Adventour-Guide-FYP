@@ -16,7 +16,7 @@ class WeatherDetail extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: Colors.blue,
+              color: Colors.orange,
               size: 35,
             ),
             const SizedBox(width: 15.0),

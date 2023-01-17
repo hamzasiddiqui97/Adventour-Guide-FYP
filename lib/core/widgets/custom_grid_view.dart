@@ -6,6 +6,7 @@ import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/screens/homeScreen.dart';
 // import 'package:google_maps_basics/view/screens/views/news_weather_tab.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
+import 'package:google_maps_basics/widgets/sevenDayForecast.dart';
 
 
 class CustomGrid extends StatelessWidget {
@@ -94,7 +95,7 @@ class CustomGrid extends StatelessWidget {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) => Provider<WeatherProvider>(
                                 create: (context) => WeatherProvider(),
-                                child: HomeScreen()
+                                child: viewfront()
                             ),
                           ));
                         },

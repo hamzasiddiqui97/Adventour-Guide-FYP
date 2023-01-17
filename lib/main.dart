@@ -6,7 +6,7 @@ import 'package:google_maps_basics/view/screens/loginScreens/onboarding_screen.d
 import 'package:google_maps_basics/view/screens/loginScreens/sign_up.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/splash_screen.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
-import 'package:google_maps_basics/provider/weatherProvider.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

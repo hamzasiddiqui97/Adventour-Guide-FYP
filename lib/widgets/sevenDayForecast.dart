@@ -143,7 +143,7 @@ class viewfront extends StatelessWidget {
           primaryColor: Colors.orange,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           colorScheme:
-          ColorScheme.fromSwatch().copyWith(secondary: Colors.orange),
+          ColorScheme.fromSwatch().copyWith(secondary: Colors.white),
         ),
         home: HomeScreen(),
         routes: {

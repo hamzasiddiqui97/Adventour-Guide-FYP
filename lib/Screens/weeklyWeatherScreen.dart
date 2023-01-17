@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../helper/utils.dart';
 import '../provider/weatherProvider.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
 
 class WeeklyScreen extends StatelessWidget {
   static const routeName = '/weeklyScreen';
@@ -24,7 +25,7 @@ class WeeklyScreen extends StatelessWidget {
               Text(
                 dayOfWeek,
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.orange,
                   fontSize: 20,
                   fontWeight: FontWeight.w400,
                 ),
@@ -44,7 +45,7 @@ class WeeklyScreen extends StatelessWidget {
               ),
             ],
           ),
-          Divider(color: Colors.black),
+          Divider(color: Colors.orange),
         ],
       ),
     );
@@ -59,10 +60,10 @@ class WeeklyScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.orange,
           title: Text(
             'Next 7 Days',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.orange),
           ),
         ),
         body: Container(

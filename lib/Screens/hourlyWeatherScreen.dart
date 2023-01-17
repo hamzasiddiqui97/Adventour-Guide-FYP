@@ -57,7 +57,7 @@ class HourlyScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           title: Text(
             'Next 24 Hours',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.orange),
           ),
         ),
         body: Container(
