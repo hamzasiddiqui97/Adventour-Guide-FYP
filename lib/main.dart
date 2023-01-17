@@ -7,6 +7,7 @@ import 'package:google_maps_basics/view/screens/loginScreens/sign_up.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/splash_screen.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -14,7 +15,9 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}): super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -23,6 +23,7 @@ final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
+  
   String _placeType = "gas_station";
   int _selectedIndex = 0;
 
@@ -348,6 +349,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                         },
 
                         child: FloatingActionButton(
+
                           backgroundColor:  _selectedIndex == index ? ColorPalette.secondaryColor : Colors.white,
                           foregroundColor: _selectedIndex == index ? ColorPalette.primaryColor : Colors.black,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),),

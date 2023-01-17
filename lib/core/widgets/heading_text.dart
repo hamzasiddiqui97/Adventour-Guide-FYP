@@ -4,7 +4,7 @@ class HeadingText extends StatelessWidget {
   final String text;
   final TextStyle style;
   HeadingText({
-    super.key,
+    // super.key,
     required this.text,
     required this.style,
   });
