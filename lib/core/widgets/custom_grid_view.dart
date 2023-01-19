@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_basics/view/screens/views/news_view.dart';
 import 'package:provider/provider.dart';
 
 import 'package:google_maps_basics/Screens/weeklyWeatherScreen.dart';
@@ -58,11 +59,17 @@ class CustomGrid extends StatelessWidget {
                     Container(
                       color: Colors.white,
                       child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.local_gas_station,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const NewsScreen()),
+                          );
+                        },
+                        icon: const Icon(Icons.newspaper,
                           color: ColorPalette.secondaryColor, size: 30,),),
                     ),
-                    const Text('Fuel\nStations', textAlign: TextAlign.center,),
+                    const Text('News', textAlign: TextAlign.center,),
                   ],
                 ),
               ],
