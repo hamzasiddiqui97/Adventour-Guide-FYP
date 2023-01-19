@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:google_maps_basics/Screens/weeklyWeatherScreen.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/screens/homeScreen.dart';
-// import 'package:google_maps_basics/view/screens/views/news_weather_tab.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:google_maps_basics/widgets/sevenDayForecast.dart';
 
@@ -107,7 +106,7 @@ class CustomGrid extends StatelessWidget {
                           ));
                         },
                         icon: const Icon(
-                          Icons.newspaper, color: ColorPalette.secondaryColor,
+                          Icons.sunny_snowing, color: ColorPalette.secondaryColor,
                           size: 30,),),
                     ),
                     const Text(''
