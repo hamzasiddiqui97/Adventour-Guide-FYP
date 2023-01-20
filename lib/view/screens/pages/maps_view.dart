@@ -10,6 +10,8 @@ import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
+import 'package:easy_debounce/easy_debounce.dart';
+
 
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key}) : super(key: key);
@@ -189,6 +191,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         mode: _mode,
         language: "en",
         strictbounds: false,
+        logo: const Text(''),
         types: [""],
         decoration: InputDecoration(
             hintText: "Search source",
@@ -244,6 +247,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         onError: onError,
         mode: _mode,
         language: "en",
+        logo: const Text(''),
         strictbounds: false,
         types: [""],
         decoration: InputDecoration(
@@ -432,6 +436,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                 ),
               ),
             ),
+
+
           if (showSearchField)
             Positioned(
               top: 20,
@@ -450,7 +456,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   hintText: 'Search Source',
                   onPress: () {
                     _handlePressButtonSource();
-                  }),
+                  }
+                  ),
             ),
           if (showSearchField)
             Positioned(
