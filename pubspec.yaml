@@ -59,6 +59,7 @@ dependencies:
   fab_circular_menu: ^1.0.2
   google_directions_api: ^0.9.1
   cached_network_image: ^3.2.3
+  easy_debounce: ^2.0.3
 
   # flutter_geocoder: ^0.2.2-nullsafety
   # geocode: ^1.0.2
