@@ -10,7 +10,6 @@ import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
-import 'package:easy_debounce/easy_debounce.dart';
 
 
 class HomePageGoogleMaps extends StatefulWidget {
@@ -91,6 +90,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   late LatLng destination;
   late LatLng source;
   void setPolylines() async {
+    _polylines.clear();
+    polylineCoordinates.clear();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         googleApiKey,
         PointLatLng(source.latitude, source.longitude),
@@ -124,7 +125,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     // Update the map
     setState(() {});
   }
-
 
   void getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
     final touristAttractions = <PlacesSearchResult>[];
@@ -208,7 +208,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     homeScaffoldKey.currentState!
         .showSnackBar(SnackBar(content: Text(response.errorMessage!)));
   }
-
   Future<void> displayPredictionSource(
       Prediction p, ScaffoldMessengerState? currentState) async {
     GoogleMapsPlaces places = GoogleMapsPlaces(
@@ -222,22 +221,47 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     final lng = detail.result.geometry!.location.lng;
 
     source = LatLng(lat, lng);
-    sourceController.text =
-        detail.result.name; // update the source field's text
-
-    _markers.clear();
-    _polylines.clear();
+    sourceController.text = detail.result.name;
     _markers.add(Marker(
         markerId: const MarkerId("source"),
-        // position: LatLng(lat, lng),
         position: source,
         infoWindow: InfoWindow(title: detail.result.name)));
     setPolylines();
     setState(() {});
-
     googleMapController
-        .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 13.0));
+        .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
   }
+
+
+  // Future<void> displayPredictionSource(
+  //     Prediction p, ScaffoldMessengerState? currentState) async {
+  //   GoogleMapsPlaces places = GoogleMapsPlaces(
+  //     apiKey: kGoogleApiKey,
+  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
+  //   );
+  //
+  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
+  //
+  //   final lat = detail.result.geometry!.location.lat;
+  //   final lng = detail.result.geometry!.location.lng;
+  //
+  //   source = LatLng(lat, lng);
+  //   sourceController.text =
+  //       detail.result.name; // update the source field's text
+  //
+  //   _markers.clear();
+  //   _polylines.clear();
+  //   _markers.add(Marker(
+  //       markerId: const MarkerId("source"),
+  //       // position: LatLng(lat, lng),
+  //       position: source,
+  //       infoWindow: InfoWindow(title: detail.result.name)));
+  //   setPolylines();
+  //   setState(() {});
+  //
+  //   googleMapController
+  //       .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 13.0));
+  // }
 
   // destination search autocomplete button
   Future<void> _handlePressButtonDestination() async {
@@ -279,22 +303,46 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     final lng = detail.result.geometry!.location.lng;
 
     destination = LatLng(lat, lng);
-    destinationController.text =
-        detail.result.name; // update the source field's text
-
-    // _markers.clear();    // removed this to make sure marker is not clear for source when dest is selected
-    _polylines.clear();
+    destinationController.text = detail.result.name;
     _markers.add(Marker(
         markerId: const MarkerId("destination"),
-        // position: LatLng(lat, lng),
         position: destination,
         infoWindow: InfoWindow(title: detail.result.name)));
     setPolylines();
     setState(() {});
-
     googleMapController
         .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
   }
+
+  // Future<void> displayPredictionDestination(
+  //     Prediction p, ScaffoldMessengerState? currentState) async {
+  //   GoogleMapsPlaces places = GoogleMapsPlaces(
+  //     apiKey: kGoogleApiKey,
+  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
+  //   );
+  //
+  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
+  //
+  //   final lat = detail.result.geometry!.location.lat;
+  //   final lng = detail.result.geometry!.location.lng;
+  //
+  //   destination = LatLng(lat, lng);
+  //   destinationController.text =
+  //       detail.result.name; // update the source field's text
+  //
+  //   // _markers.clear();    // removed this to make sure marker is not clear for source when dest is selected
+  //   _polylines.clear();
+  //   _markers.add(Marker(
+  //       markerId: const MarkerId("destination"),
+  //       // position: LatLng(lat, lng),
+  //       position: destination,
+  //       infoWindow: InfoWindow(title: detail.result.name)));
+  //   setPolylines();
+  //   setState(() {});
+  //
+  //   googleMapController
+  //       .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -455,7 +503,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   controller: sourceController,
                   hintText: 'Search Source',
                   onPress: () {
-                    _handlePressButtonSource();
+
+                    Timer(const Duration(milliseconds: 500), (){
+                      _handlePressButtonSource();
+                    });
                   }
                   ),
             ),
