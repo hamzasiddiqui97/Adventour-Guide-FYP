@@ -11,7 +11,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
-
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key}) : super(key: key);
 
@@ -24,7 +23,7 @@ final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
-  
+
   String _placeType = "gas_station";
   int _selectedIndex = 0;
 
@@ -74,7 +73,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     destinationController.text = 'Destination';
   }
 
-
   // final List<Marker> _markersPolylinePlaces = []; for adding markers along polyline
 
   final List<Marker> _markers = [];
@@ -83,12 +81,13 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   final Set<Polyline> _polylines = <Polyline>{};
   List<LatLng> polylineCoordinates = [];
   late PolylinePoints polylinePoints;
-
+  final Map<String, List<PlacesSearchResult>> _placesCache = {};
 
 
   //variables for the source and destinations
   late LatLng destination;
   late LatLng source;
+
   void setPolylines() async {
     _polylines.clear();
     polylineCoordinates.clear();
@@ -108,10 +107,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             polylineId: const PolylineId('polyLine'),
             color: ColorPalette.secondaryColor,
             points: polylineCoordinates));
-        });
+      });
       final places = GoogleMapsPlaces(apiKey: googleApiKey);
-      getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
-
+      getTouristAttractionsAlongPolyline(
+          polylineCoordinates, places, _placeType);
     }
   }
 
@@ -121,12 +120,32 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     // Get new markers based on selected place type
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
 
-    getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
-    // Update the map
+    if (_placesCache.containsKey(placeType)) {
+      // Use cached results if available
+      getTouristAttractionsAlongPolyline(
+          polylineCoordinates, places, _placesCache[placeType].toString());
+    } else {
+      // Get new results and store them in the cache
+      getTouristAttractionsAlongPolyline(polylineCoordinates, places, placeType)
+          .then((result) {
+        _placesCache[placeType] = result;
+      });
+    }
     setState(() {});
+
   }
 
-  void getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
+  // getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
+  //   final touristAttractions = <PlacesSearchResult>[];
+  //   for (final point in polylineCoordinates) {
+  //     final nearbySearch = await places.searchNearbyWithRadius(
+  //       Location(lat: point.latitude, lng: point.longitude),
+  //       200,
+  //       type: placeType,
+  //     );
+  //     touristAttractions.addAll(nearbySearch.results);
+  //   }
+  Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
     final touristAttractions = <PlacesSearchResult>[];
     for (final point in polylineCoordinates) {
       final nearbySearch = await places.searchNearbyWithRadius(
@@ -136,7 +155,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       );
       touristAttractions.addAll(nearbySearch.results);
     }
-
     // print the names of the tourist attractions
     for (final place in touristAttractions) {
       _markers.add(Marker(
@@ -148,6 +166,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       setState(() {
       });
     }
+    return touristAttractions;
   }
   // current location started
   loadData() async {
