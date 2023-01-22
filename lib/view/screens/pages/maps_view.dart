@@ -33,6 +33,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     "gas_station",
     "restaurant",
     "cafe",
+    "airport",
+    "museum",
+    "stadium",
     "hospital",
     "police",
     "atm",
@@ -91,6 +94,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   void setPolylines() async {
     _polylines.clear();
     polylineCoordinates.clear();
+
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         googleApiKey,
         PointLatLng(source.latitude, source.longitude),
@@ -116,7 +120,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   void updateMapWithSelectedPlaceType(String placeType) {
     // Clear previous markers
-    _markers.clear();
+    // _markers.clear();
     // Get new markers based on selected place type
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
 
@@ -132,19 +136,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       });
     }
     setState(() {});
-
   }
 
-  // getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
-  //   final touristAttractions = <PlacesSearchResult>[];
-  //   for (final point in polylineCoordinates) {
-  //     final nearbySearch = await places.searchNearbyWithRadius(
-  //       Location(lat: point.latitude, lng: point.longitude),
-  //       200,
-  //       type: placeType,
-  //     );
-  //     touristAttractions.addAll(nearbySearch.results);
-  //   }
   Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
     final touristAttractions = <PlacesSearchResult>[];
     for (final point in polylineCoordinates) {
@@ -166,6 +159,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       setState(() {
       });
     }
+
     return touristAttractions;
   }
   // current location started
@@ -440,7 +434,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               ),
             ),
           ),
-          Positioned(
+
+          if (!showSearchField)
+            Positioned(
               bottom: 30,
               left: 10,
               child: ElevatedButton(
@@ -456,7 +452,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   );
                 },
                 child: const Text(
-                  'Nearby Places',
+                  'Nearby Me',
                   style: TextStyle(color: ColorPalette.primaryColor),
                 ),
               )),
@@ -550,6 +546,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   }),
             ),
 
+
+          if (!showSearchField)
           Positioned(
             right: 30,
             bottom: 30,
