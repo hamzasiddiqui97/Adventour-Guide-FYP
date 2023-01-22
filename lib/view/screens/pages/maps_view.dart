@@ -11,7 +11,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
-
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key}) : super(key: key);
 
@@ -24,7 +23,7 @@ final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
-  
+
   String _placeType = "gas_station";
   int _selectedIndex = 0;
 
@@ -34,6 +33,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     "gas_station",
     "restaurant",
     "cafe",
+    "airport",
+    "museum",
+    "stadium",
     "hospital",
     "police",
     "atm",
@@ -74,7 +76,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     destinationController.text = 'Destination';
   }
 
-
   // final List<Marker> _markersPolylinePlaces = []; for adding markers along polyline
 
   final List<Marker> _markers = [];
@@ -83,15 +84,17 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   final Set<Polyline> _polylines = <Polyline>{};
   List<LatLng> polylineCoordinates = [];
   late PolylinePoints polylinePoints;
-
+  final Map<String, List<PlacesSearchResult>> _placesCache = {};
 
 
   //variables for the source and destinations
   late LatLng destination;
   late LatLng source;
+
   void setPolylines() async {
     _polylines.clear();
     polylineCoordinates.clear();
+
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         googleApiKey,
         PointLatLng(source.latitude, source.longitude),
@@ -108,25 +111,34 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             polylineId: const PolylineId('polyLine'),
             color: ColorPalette.secondaryColor,
             points: polylineCoordinates));
-        });
+      });
       final places = GoogleMapsPlaces(apiKey: googleApiKey);
-      getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
-
+      getTouristAttractionsAlongPolyline(
+          polylineCoordinates, places, _placeType);
     }
   }
 
   void updateMapWithSelectedPlaceType(String placeType) {
     // Clear previous markers
-    _markers.clear();
+    // _markers.clear();
     // Get new markers based on selected place type
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
 
-    getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
-    // Update the map
+    if (_placesCache.containsKey(placeType)) {
+      // Use cached results if available
+      getTouristAttractionsAlongPolyline(
+          polylineCoordinates, places, _placesCache[placeType].toString());
+    } else {
+      // Get new results and store them in the cache
+      getTouristAttractionsAlongPolyline(polylineCoordinates, places, placeType)
+          .then((result) {
+        _placesCache[placeType] = result;
+      });
+    }
     setState(() {});
   }
 
-  void getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
+  Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
     final touristAttractions = <PlacesSearchResult>[];
     for (final point in polylineCoordinates) {
       final nearbySearch = await places.searchNearbyWithRadius(
@@ -136,7 +148,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       );
       touristAttractions.addAll(nearbySearch.results);
     }
-
     // print the names of the tourist attractions
     for (final place in touristAttractions) {
       _markers.add(Marker(
@@ -148,6 +159,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       setState(() {
       });
     }
+
+    return touristAttractions;
   }
   // current location started
   loadData() async {
@@ -421,7 +434,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               ),
             ),
           ),
-          Positioned(
+
+          if (!showSearchField)
+            Positioned(
               bottom: 30,
               left: 10,
               child: ElevatedButton(
@@ -437,7 +452,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   );
                 },
                 child: const Text(
-                  'Nearby Places',
+                  'Nearby Me',
                   style: TextStyle(color: ColorPalette.primaryColor),
                 ),
               )),
@@ -531,6 +546,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   }),
             ),
 
+
+          if (!showSearchField)
           Positioned(
             right: 30,
             bottom: 30,
