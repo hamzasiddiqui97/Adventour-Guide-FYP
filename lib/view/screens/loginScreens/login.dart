@@ -24,6 +24,17 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
+  void validateInputs() {
+    setState(() {
+      _emailError = emailController.text.isEmpty || !emailController.text.contains('@')
+          ? 'Please enter a valid email'
+          : null;
+
+      _passwordError = passwordController.text.isEmpty ? 'Please enter your password' : null;
+    });
+  }
+
+
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -47,15 +58,18 @@ class _SignInState extends State<SignIn> {
                     errorText: _emailError,
                     prefixIcon: const Icon(Icons.email),
                   ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
+                  onChanged: (value) {
+                    validateInputs();
                   },
+                  // validator: (value) {
+                  //   if (value!.isEmpty) {
+                  //     return 'Please enter your email';
+                  //   }
+                  //   if (!value.contains('@')) {
+                  //     return 'Please enter a valid email';
+                  //   }
+                  //   return null;
+                  // },
                 ),
                 const SizedBox(
                   height: 12,
@@ -77,12 +91,15 @@ class _SignInState extends State<SignIn> {
                     ),
                   ),
                   obscureText: _isObscure,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    return null;
+                  onChanged: (value) {
+                    validateInputs();
                   },
+                  // validator: (value) {
+                  //   if (value!.isEmpty) {
+                  //     return 'Please enter your password';
+                  //   }
+                  //   return null;
+                  // },
                 ),
                 const SizedBox(
                   height: 16,
