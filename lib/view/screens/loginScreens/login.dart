@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/core/widgets/rounded_button.dart';
 import 'package:google_maps_basics/main.dart';
 
 class SignIn extends StatefulWidget {
@@ -107,8 +106,8 @@ class _SignInState extends State<SignIn> {
                 ElevatedButton(
                   onPressed: signIn,
                   style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
-                      foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
+                    backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
+                    foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
                   ),
                   child: const Text('Sign In'),
                 ),
@@ -126,8 +125,8 @@ class _SignInState extends State<SignIn> {
           context: context,
           barrierDismissible: false,
           builder: (context) => const Center(
-                child: CircularProgressIndicator(),
-              ));
+            child: CircularProgressIndicator(),
+          ));
 
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
