@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/core/widgets/rounded_button.dart';
+import 'package:google_maps_basics/main.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -7,62 +10,89 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
-  final _auth = FirebaseAuth.instance;
-  late String _email;
-  late String _password;
+  String? _emailError;
+  String? _passwordError;
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(20.0),
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(30),
           child: Form(
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                const Text('Login or Sign Up', style: TextStyle(fontSize: 30),),
+                const SizedBox(height: 20,),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  controller: emailController,
+                  cursorColor: Colors.black,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    errorText: _emailError,
+                    prefixIcon: const Icon(Icons.email),
+                  ),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter an email';
+                      return 'Please enter your email';
+                    }
+                    if (!value.contains('@')) {
+                      return 'Please enter a valid email';
                     }
                     return null;
                   },
-                  onSaved: (value) => _email = value!,
+                ),
+                const SizedBox(
+                  height: 12,
                 ),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  controller: passwordController,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    errorText: _passwordError,
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: _isObscure,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter a password';
+                      return 'Please enter your password';
                     }
                     return null;
                   },
-                  onSaved: (value) => _password = value!,
-                  obscureText: true,
                 ),
-                const SizedBox(height: 20.0),
+                const SizedBox(
+                  height: 16,
+                ),
                 ElevatedButton(
-                  child: const Text('Login'),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      try {
-                        final user = await _auth.signInWithEmailAndPassword(
-                          email: _email,
-                          password: _password,
-                        );
-                        if (user != null) {
-                          Navigator.pushReplacementNamed(context, '/home');
-                        }
-                      } catch (e) {
-                        print(e);
-                      }
-                    }
-                  },
+                  onPressed: signIn,
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
+                      foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
+                  ),
+                  child: const Text('Sign In'),
                 ),
               ],
             ),
@@ -70,5 +100,71 @@ class _SignInState extends State<SignIn> {
         ),
       ),
     );
+  }
+
+  Future signIn() async {
+    if (_formKey.currentState!.validate()) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+                child: CircularProgressIndicator(),
+              ));
+
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim());
+      } on FirebaseAuthException catch (e) {
+        print(e);
+        if (e.code == 'user-not-found') {
+          setState(() {
+            _emailError = 'User not found';
+          });
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Sign In Failed'),
+                content: const Text(
+                    'The email address you entered does not belong to an account.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        } else if (e.code == 'wrong-password') {
+          setState(() {
+            _passwordError = 'Incorrect password';
+          });
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Sign In Failed'),
+                content: const Text('The password you entered is incorrect.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          setState(() {
+            _emailError = 'Unknown error occurred';
+          });
+        }
+      }
+      navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    }
   }
 }
