@@ -36,6 +36,7 @@ class _SignInState extends State<SignIn> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text('Login or Sign Up', style: TextStyle(fontSize: 30),),
+
                 const SizedBox(height: 20,),
                 TextFormField(
                   controller: emailController,
