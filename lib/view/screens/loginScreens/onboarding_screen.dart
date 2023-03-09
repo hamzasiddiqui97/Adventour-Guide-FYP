@@ -51,6 +51,7 @@ class OnboardingScreen extends StatelessWidget {
               child: IconButton
                 (
                   onPressed: () {
+
                     Navigator.pushReplacementNamed(context, '/signIn');
                   },
                   icon: const Icon(
