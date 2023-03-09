@@ -5,7 +5,6 @@ import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:lottie/lottie.dart';
-import 'onboarding_screen.dart';
 
 class SignUp extends StatefulWidget {
   final VoidCallback onClickSignIn;

@@ -37,16 +37,16 @@ class _SignInState extends State<SignIn> {
   void validateInputs() {
     setState(() {
       _emailError =
-      emailController.text.isEmpty || !emailController.text.contains('@')
-          ? _emailError != null && emailController.text.isEmpty
-          ? _emailError
-          : null
-          : null;
+          emailController.text.isEmpty || !emailController.text.contains('@')
+              ? _emailError != null && emailController.text.isEmpty
+                  ? _emailError
+                  : null
+              : null;
 
       _passwordError = passwordController.text.isEmpty
           ? _passwordError != null && passwordController.text.isEmpty
-          ? _passwordError
-          : null
+              ? _passwordError
+              : null
           : null;
     });
   }
@@ -120,7 +120,12 @@ class _SignInState extends State<SignIn> {
                 SizedBox(
                   width: 150,
                   child: ElevatedButton(
-                    onPressed: signIn,
+                    onPressed: () {
+                      validateInputs();
+                      if (_formKey.currentState!.validate()) {
+                        signIn();
+                      }
+                    },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
                           ColorPalette.secondaryColor),
@@ -159,14 +164,13 @@ class _SignInState extends State<SignIn> {
   }
 
   Future signIn() async {
-    validateInputs();
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState == null || _formKey.currentState!.validate()) {
       showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) => const Center(
-            child: CircularProgressIndicator(),
-          ));
+                child: CircularProgressIndicator(),
+              ));
 
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(

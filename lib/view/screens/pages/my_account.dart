@@ -13,36 +13,7 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  late SharedPreferences _prefs;
-  String? _displayName;
-
-  @override
-  void initState() {
-    super.initState();
-    _initSharedPreferences();
-  }
-
-  void _initSharedPreferences() async {
-    _prefs = await SharedPreferences.getInstance();
-    final displayName = _prefs.getString('displayName');
-    if (displayName != null) {
-      setState(() {
-        _displayName = displayName;
-      });
-    }
-  }
-
-  void _setDisplayName(String displayName) {
-    setState(() {
-      _displayName = displayName;
-      try {
-        _prefs.setString('displayName', displayName);
-      } catch (e) {
-        // Handle any exceptions that occur while saving
-        print('Error saving display name: $e');
-      }
-    });
-  }
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +22,7 @@ class _MyAccountState extends State<MyAccount> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: ColorPalette.secondaryColor,
           foregroundColor: ColorPalette.primaryColor,
           title: const Text('Account Details'),
@@ -74,7 +46,7 @@ class _MyAccountState extends State<MyAccount> {
               ),
               if (user != null) ...[
                 const SizedBox(height: 20),
-                Text('Logged in as ${_displayName ?? user.displayName ?? user.email}', style: const TextStyle(fontSize: 16.0)),
+                Text('Logged in as ${user.email!}', style: const TextStyle(fontSize: 16.0,)),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
@@ -98,7 +70,7 @@ class _MyAccountState extends State<MyAccount> {
 // Open login page and set display name on successful login
                     Navigator.pushNamed(context, '/login').then((displayName) {
                       if (displayName != null) {
-                        _setDisplayName(displayName.toString());
+                        // _setDisplayName(displayName.toString());
                       }
                     });
                   },

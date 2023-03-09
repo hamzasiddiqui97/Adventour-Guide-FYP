@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_basics/Screens/hourlyWeatherScreen.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../screens/hourlyWeatherScreen.dart';
 import '../helper/utils.dart';
 
 class HourlyForecast extends StatelessWidget {
