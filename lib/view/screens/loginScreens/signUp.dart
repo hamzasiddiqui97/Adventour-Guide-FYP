@@ -7,19 +7,19 @@ import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:lottie/lottie.dart';
 import 'onboarding_screen.dart';
 
-class SignIn extends StatefulWidget {
-  final VoidCallback onClickSignUp;
+class SignUp extends StatefulWidget {
+  final VoidCallback onClickSignIn;
 
-  const SignIn({
+  const SignUp({
     Key? key,
-    required this.onClickSignUp,
+    required this.onClickSignIn,
   }) : super(key: key);
 
   @override
-  _SignInState createState() => _SignInState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignUpState extends State<SignUp> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool _isObscure = true;
@@ -38,15 +38,11 @@ class _SignInState extends State<SignIn> {
     setState(() {
       _emailError =
       emailController.text.isEmpty || !emailController.text.contains('@')
-          ? _emailError != null && emailController.text.isEmpty
-          ? _emailError
-          : null
+          ? 'Please enter a valid email address'
           : null;
 
-      _passwordError = passwordController.text.isEmpty
-          ? _passwordError != null && passwordController.text.isEmpty
-          ? _passwordError
-          : null
+      _passwordError = passwordController.text.length < 6
+          ? 'Password must be at least 6 characters'
           : null;
     });
   }
@@ -120,14 +116,14 @@ class _SignInState extends State<SignIn> {
                 SizedBox(
                   width: 150,
                   child: ElevatedButton(
-                    onPressed: signIn,
+                    onPressed: signUp,
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
                           ColorPalette.secondaryColor),
                       foregroundColor: MaterialStateProperty.all<Color>(
                           ColorPalette.primaryColor),
                     ),
-                    child: const Text('Sign In'),
+                    child: const Text('Sign Up'),
                   ),
                 ),
                 const SizedBox(
@@ -136,12 +132,12 @@ class _SignInState extends State<SignIn> {
                 RichText(
                   text: TextSpan(
                     style: TextStyle(color: Colors.black, fontSize: 16),
-                    text: 'No Account?  ',
+                    text: 'Already have an account?  ',
                     children: [
                       TextSpan(
                         recognizer: TapGestureRecognizer()
-                          ..onTap = widget.onClickSignUp,
-                        text: 'Sign Up',
+                          ..onTap = widget.onClickSignIn,
+                        text: 'Log In',
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                           color: ColorPalette.secondaryColor,
@@ -158,8 +154,9 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  Future signIn() async {
-    validateInputs();
+  Future signUp() async {
+    final isValid = _formKey.currentState!.validate();
+    if (!isValid) return;
     if (_formKey.currentState!.validate()) {
       showDialog(
           context: context,
@@ -169,35 +166,13 @@ class _SignInState extends State<SignIn> {
           ));
 
       try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text.trim(),
-            password: passwordController.text.trim());
-        // Check if the sign-in was successful
-        if (FirebaseAuth.instance.currentUser != null) {
-          // Navigate to the onboarding screen
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => const OnboardingScreen()));
-        } else {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Sign In Failed'),
-                content: const Text('The password you entered is incorrect.'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('OK'),
-                  ),
-                ],
-              );
-            },
-          );
-        }
+            password: passwordController.text.trim(),
+        );
       } on FirebaseAuthException catch (e) {
         Utils.showSnackBar(e.message);
       }
-
       navigatorKey.currentState!.popUntil((route) => route.isFirst);
     }
   }

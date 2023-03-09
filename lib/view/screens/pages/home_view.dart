@@ -55,25 +55,25 @@ class HomePageNavBar extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SearchBar(hintText: 'Search', width: screenWidth / 1.3),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MyAccount()),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.person,
-                        color: ColorPalette.secondaryColor,
-                        size: 40,
-                      ))
-                ],
-              ),
+              // Row(
+              //   crossAxisAlignment: CrossAxisAlignment.end,
+              //   children: [
+              //     // SearchBar(hintText: 'Search', width: screenWidth / 1.3),
+              //     IconButton(
+              //         onPressed: () {
+              //           Navigator.push(
+              //             context,
+              //             MaterialPageRoute(
+              //                 builder: (context) => const MyAccount()),
+              //           );
+              //         },
+              //         icon: const Icon(
+              //           Icons.person,
+              //           color: ColorPalette.secondaryColor,
+              //           size: 40,
+              //         ))
+              //   ],
+              // ),
               const SizedBox(
                 height: 25,
               ),

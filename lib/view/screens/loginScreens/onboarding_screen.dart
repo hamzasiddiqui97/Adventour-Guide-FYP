@@ -45,15 +45,20 @@ class OnboardingScreen extends StatelessWidget {
                       image: AssetImage("assets/images/splash_screen.png"),
                       fit: BoxFit.cover)),
             ),
-            IconButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
-                icon: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 50,
-                  color: ColorPalette.secondaryColor,
-                )),
+            Ink(
+              color: Colors.grey,
+
+              child: IconButton
+                (
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/signIn');
+                  },
+                  icon: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 50,
+                    color: ColorPalette.secondaryColor,
+                  )),
+            ),
           ]),
         ),
       ),
