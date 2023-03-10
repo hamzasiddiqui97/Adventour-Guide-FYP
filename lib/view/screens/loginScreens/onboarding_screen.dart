@@ -47,7 +47,6 @@ class OnboardingScreen extends StatelessWidget {
             ),
             Ink(
               color: Colors.grey,
-
               child: IconButton
                 (
                   onPressed: () {

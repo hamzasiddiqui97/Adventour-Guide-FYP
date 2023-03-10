@@ -64,7 +64,7 @@ class _SignUpState extends State<SignUp> {
                       'assets/splash_screen_animation/login-hello.json'),
                 ),
                 const Text(
-                  'Login or Sign Up',
+                  'Sign Up',
                   style: TextStyle(fontSize: 30),
                 ),
                 const SizedBox(

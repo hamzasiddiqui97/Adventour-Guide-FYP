@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/forgot_password.dart';
 import 'package:lottie/lottie.dart';
 import 'onboarding_screen.dart';
 
@@ -69,7 +70,7 @@ class _SignInState extends State<SignIn> {
                       'assets/splash_screen_animation/login-hello.json'),
                 ),
                 const Text(
-                  'Login or Sign Up',
+                  'Login',
                   style: TextStyle(fontSize: 30),
                 ),
                 const SizedBox(
@@ -79,6 +80,7 @@ class _SignInState extends State<SignIn> {
                   controller: emailController,
                   cursorColor: Colors.black,
                   textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     errorText: _emailError,
@@ -115,7 +117,24 @@ class _SignInState extends State<SignIn> {
                   },
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 10,
+                ),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    child: const Text('Forgot Password?',
+                      style: TextStyle(
+                        fontSize: 16,
+                        decoration: TextDecoration.underline,
+                        color: ColorPalette.secondaryColor,
+                      ),
+                    ),
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ForgotPasswordPage()))
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 10,
                 ),
                 SizedBox(
                   width: 150,
@@ -135,19 +154,20 @@ class _SignInState extends State<SignIn> {
                     child: const Text('Sign In'),
                   ),
                 ),
+
                 const SizedBox(
                   height: 20,
                 ),
                 RichText(
                   text: TextSpan(
-                    style: TextStyle(color: Colors.black, fontSize: 16),
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
                     text: 'No Account?  ',
                     children: [
                       TextSpan(
                         recognizer: TapGestureRecognizer()
                           ..onTap = widget.onClickSignUp,
                         text: 'Sign Up',
-                        style: TextStyle(
+                        style: const TextStyle(
                           decoration: TextDecoration.underline,
                           color: ColorPalette.secondaryColor,
                         ),
