@@ -5,7 +5,6 @@ import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:lottie/lottie.dart';
-import 'onboarding_screen.dart';
 
 class SignUp extends StatefulWidget {
   final VoidCallback onClickSignIn;
@@ -65,7 +64,7 @@ class _SignUpState extends State<SignUp> {
                       'assets/splash_screen_animation/login-hello.json'),
                 ),
                 const Text(
-                  'Login or Sign Up',
+                  'Sign Up',
                   style: TextStyle(fontSize: 30),
                 ),
                 const SizedBox(

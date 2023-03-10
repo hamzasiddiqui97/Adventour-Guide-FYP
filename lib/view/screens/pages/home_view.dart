@@ -112,14 +112,15 @@ class HomePageNavBar extends StatelessWidget {
               const CustomGrid(),
               Center(
                   child: RoundedButton(
-                    onPress: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CreateCustomTrip()),
-                      );
-                    },
+                onPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CreateCustomTrip()),
+                  );
+                },
                 name: 'Create Trip',
+                textColor: Colors.white,
                 color: ColorPalette.secondaryColor,
                 width: 200,
               )),

@@ -2,12 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
-import 'package:google_maps_basics/view/screens/loginScreens/login.dart';
-import 'package:google_maps_basics/view/screens/loginScreens/login_main_page.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/onboarding_screen.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/auth_page.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/splash_screen.dart';
-import 'package:google_maps_basics/view/screens/pages/home_view.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 
 
@@ -27,7 +24,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scaffoldMessengerKey: Utils.messengerKey,
       navigatorKey: navigatorKey,
-      // initialRoute: '/splashScreen',
       initialRoute: '/splashScreen',
       routes: {
         '/splashScreen': (context) => StreamBuilder<User?>(
@@ -45,7 +41,7 @@ class MyApp extends StatelessWidget {
             }
           },
         ),
-        '/onBoardingScreen': (context) => const OnboardingScreen(),
+        // '/onBoardingScreen': (context) => const OnboardingScreen(),
         // '/loginMainPage':  (context) => LoginScreen(),
         '/signIn': (context) => StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),

@@ -47,10 +47,10 @@ class OnboardingScreen extends StatelessWidget {
             ),
             Ink(
               color: Colors.grey,
-
               child: IconButton
                 (
                   onPressed: () {
+
                     Navigator.pushReplacementNamed(context, '/signIn');
                   },
                   icon: const Icon(
