@@ -36,7 +36,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: Form(
-
             key: formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -73,15 +72,22 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(height: 20,),
                 ElevatedButton(
                   onPressed: resetPassword,
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        ColorPalette.secondaryColor),
-                    foregroundColor: MaterialStateProperty.all<Color>(
-                        ColorPalette.primaryColor),
+                  // style: ButtonStyle(
+                  //   backgroundColor: MaterialStateProperty.all<Color>(
+                  //       ColorPalette.secondaryColor),
+                  //   foregroundColor: MaterialStateProperty.all<Color>(
+                  //       ColorPalette.primaryColor),
+                  // ),
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.secondaryColor,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 40),
                   ),
+
                   child: const Text(
                     'Reset Password', style: TextStyle(color: Colors.white,),),
                 ),
@@ -96,8 +102,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Future resetPassword() async {
 
     showDialog(
-        context: context,
-        builder: (context) => const Center(child: CircularProgressIndicator(),),);
+      context: context,
+      builder: (context) => const Center(child: CircularProgressIndicator(),),);
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(
           email: emailController.text.trim());

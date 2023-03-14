@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/bottom_underlined_custom_button.dart';
 import 'package:google_maps_basics/core/widgets/rounded_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({Key? key}) : super(key: key);
@@ -22,6 +21,7 @@ class _MyAccountState extends State<MyAccount> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          elevation: 0,
           automaticallyImplyLeading: false,
           backgroundColor: ColorPalette.secondaryColor,
           foregroundColor: ColorPalette.primaryColor,
@@ -48,15 +48,19 @@ class _MyAccountState extends State<MyAccount> {
                 const SizedBox(height: 20),
                 Text('Logged in as ${user.email!}', style: const TextStyle(fontSize: 16.0,)),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.pushNamedAndRemoveUntil(context, '/signIn', (route) => false);
-                  },
-                  child: const Text('Sign Out', ),
-                  style: ElevatedButton.styleFrom(
-                    primary: ColorPalette.secondaryColor,
-                    onPrimary: ColorPalette.primaryColor,
+                SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushNamedAndRemoveUntil(context, '/signIn', (route) => false);
+                    },
+
+                    child: const Text('Sign Out', ),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: ColorPalette.primaryColor,
+                      backgroundColor: ColorPalette.secondaryColor,
+                    ),
                   ),
                 ),
               ] else ...[

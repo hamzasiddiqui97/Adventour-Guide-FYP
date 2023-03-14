@@ -29,15 +29,15 @@ class MyApp extends StatelessWidget {
         '/splashScreen': (context) => StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return SplashScreen();
-            }
+            // if (snapshot.connectionState == ConnectionState.waiting) {
+            //   return SplashScreen();
+            // }
             if (snapshot.hasData) {
               // User is authenticated, show NavigationPage
               return const NavigationPage();
             } else {
-              // User is not authenticated, show OnboardingScreen
-              return const OnboardingScreen();
+              // User is not authenticated, show sign in screen
+              return const AuthPage();
             }
           },
         ),

@@ -5,8 +5,10 @@ import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/forgot_password.dart';
+import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:lottie/lottie.dart';
 import 'onboarding_screen.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignIn extends StatefulWidget {
   final VoidCallback onClickSignUp;
@@ -122,41 +124,55 @@ class _SignInState extends State<SignIn> {
                 Container(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
-                    child: const Text('Forgot Password?',
-                      style: TextStyle(
-                        fontSize: 16,
-                        decoration: TextDecoration.underline,
-                        color: ColorPalette.secondaryColor,
+                      child: const Text(
+                        'Forgot Password?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          decoration: TextDecoration.underline,
+                          color: ColorPalette.secondaryColor,
+                        ),
                       ),
-                    ),
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ForgotPasswordPage()))
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 150,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      validateInputs();
-                      if (_formKey.currentState!.validate()) {
-                        signIn();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          ColorPalette.secondaryColor),
-                      foregroundColor: MaterialStateProperty.all<Color>(
-                          ColorPalette.primaryColor),
-                    ),
-                    child: const Text('Sign In'),
-                  ),
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const ForgotPasswordPage()))),
                 ),
 
                 const SizedBox(
                   height: 20,
+                ),
+
+                // ElevatedButton(
+                //   onPressed: () {
+                //     validateInputs();
+                //     if (_formKey.currentState!.validate()) {
+                //       signIn();
+                //     }
+                //   },
+                //   style: ButtonStyle(
+                //     backgroundColor: MaterialStateProperty.all<Color>(
+                //         ColorPalette.secondaryColor),
+                //     foregroundColor: MaterialStateProperty.all<Color>(
+                //         ColorPalette.primaryColor),
+                //   ),
+                //   child: const Text('Sign In'),
+                // ),
+
+                ElevatedButton(
+                  onPressed: () {
+                    validateInputs();
+                    if (_formKey.currentState!.validate()) {
+                      signIn();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.secondaryColor,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 40),
+                  ),
+                  child: const Text('Sign In'),
+                ),
+
+                const SizedBox(
+                  height: 10,
                 ),
                 RichText(
                   text: TextSpan(
@@ -175,6 +191,29 @@ class _SignInState extends State<SignIn> {
                     ],
                   ),
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Divider(
+                  thickness: 1.0,
+                ),
+                const Text('OR'),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    GoogleSignIn().signIn();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.secondaryColor,
+                    foregroundColor: ColorPalette.primaryColor,
+                    minimumSize: const Size(double.infinity, 40),
+                  ),
+                  icon: Image.asset(
+                    'assets/images/google_logo.png',
+                    width: 24,
+                    height: 24,
+                  ),
+                  label: const Text('Sign In with Google'),
+                ),
               ],
             ),
           ),
@@ -186,43 +225,71 @@ class _SignInState extends State<SignIn> {
   Future signIn() async {
     if (_formKey.currentState == null || _formKey.currentState!.validate()) {
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => const Center(
-                child: CircularProgressIndicator(),
-              ));
-
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController.text.trim());
-        // Check if the sign-in was successful
-        if (FirebaseAuth.instance.currentUser != null) {
-          // Navigate to the onboarding screen
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => const OnboardingScreen()));
-        } else {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Sign In Failed'),
-                content: const Text('The password you entered is incorrect.'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('OK'),
-                  ),
-                ],
-              );
-            },
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
           );
-        }
-      } on FirebaseAuthException catch (e) {
-        Utils.showSnackBar(e.message);
-      }
+        },
+      );
+    }
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-      // navigatorKey.currentState!.popUntil((route) => route.isFirst);
+      // Dismiss the loading widget
+      Navigator.of(context).pop();
+
+      // Check if the sign-in was successful
+      if (FirebaseAuth.instance.currentUser != null) {
+        // Navigate to the home screen
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const NavigationPage(),
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Sign In Failed'),
+              content: const Text('The password you entered is incorrect.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'User not found. Please check your email address.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'The password you entered is incorrect.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'The email address you entered is invalid.';
+          break;
+        default:
+          errorMessage = 'Sign in failed. Please try again later.';
+          break;
+      }
+      // Dismiss the loading widget
+      Navigator.of(context).pop();
+      Utils.showSnackBar(errorMessage);
+    } catch (e) {
+      // Dismiss the loading widget
+      Navigator.of(context).pop();
+      Utils.showSnackBar('Sign in failed. Please try again later.');
     }
   }
 }
