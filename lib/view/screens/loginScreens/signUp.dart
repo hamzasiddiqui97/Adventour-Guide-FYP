@@ -21,15 +21,20 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   bool _isObscure = true;
+  bool _isConfirmObscure = true;
+
   final _formKey = GlobalKey<FormState>();
   String? _emailError;
   String? _passwordError;
+  String? _confirmPasswordError;
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -42,6 +47,11 @@ class _SignUpState extends State<SignUp> {
 
       _passwordError = passwordController.text.length < 6
           ? 'Password must be at least 6 characters'
+          : null;
+
+      _confirmPasswordError =
+      passwordController.text != confirmPasswordController.text
+          ? 'Passwords do not match'
           : null;
     });
   }
@@ -109,21 +119,54 @@ class _SignUpState extends State<SignUp> {
                     validateInputs();
                   },
                 ),
+
                 const SizedBox(
-                  height: 16,
+                  height: 20,
                 ),
-                SizedBox(
-                  width: 150,
-                  child: ElevatedButton(
-                    onPressed: signUp,
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          ColorPalette.secondaryColor),
-                      foregroundColor: MaterialStateProperty.all<Color>(
-                          ColorPalette.primaryColor),
+
+                TextFormField(
+                  controller: confirmPasswordController,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    errorText: _confirmPasswordError,
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          _isConfirmObscure ? Icons.visibility_off : Icons
+                              .visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isConfirmObscure = !_isConfirmObscure;
+                        });
+                      },
                     ),
-                    child: const Text('Sign Up'),
                   ),
+                  obscureText: _isConfirmObscure,
+                  onChanged: (value) {
+                    validateInputs();
+                  },
+                ),
+
+                const SizedBox(
+                  height: 20,
+                ),
+
+                ElevatedButton(
+                  onPressed: signUp,
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.secondaryColor,
+                    foregroundColor: Colors.white,
+                    minimumSize: Size(double.infinity, 40),
+                  ),
+                  // style: ButtonStyle(
+                  //   backgroundColor: MaterialStateProperty.all<Color>(
+                  //       ColorPalette.secondaryColor),
+                  //   foregroundColor: MaterialStateProperty.all<Color>(
+                  //       ColorPalette.primaryColor),
+                  // ),
+                  child: const Text('Sign Up'),
                 ),
                 const SizedBox(
                   height: 20,
@@ -156,23 +199,46 @@ class _SignUpState extends State<SignUp> {
   Future signUp() async {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) return;
-    if (_formKey.currentState!.validate()) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => const Center(
-            child: CircularProgressIndicator(),
-          ));
 
-      try {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) =>
+        const Center(
+          child: CircularProgressIndicator(),
+        ));
+
+    try {
+      if (passwordController.text == confirmPasswordController.text) {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController.text.trim(),
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
         );
-      } on FirebaseAuthException catch (e) {
-        Utils.showSnackBar(e.message);
+        // User has been successfully registered
+        // Add any additional actions to be performed after successful registration
+
+      } else {
+        // Password and Confirm Password do not match
+        throw FirebaseAuthException(
+            code: "passwords-dont-match",
+            message: "Password and Confirm Password do not match.");
       }
-      navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = "An error occurred while signing up.";
+      if (e.code == "email-already-in-use") {
+        errorMessage = "The email address is already in use.";
+      } else if (e.code == "invalid-email") {
+        errorMessage = "The email address is invalid.";
+      } else if (e.code == "weak-password") {
+        errorMessage = "The password is too weak.";
+      } else if (e.code == "passwords-dont-match") {
+        errorMessage = "Password and Confirm Password do not match.";
+      }
+      Utils.showSnackBar(errorMessage);
+    } catch (e) {
+      Utils.showSnackBar("An error occurred while signing up.");
+    } finally {
+      Navigator.of(context).pop(); // Dismiss the progress dialog
     }
   }
 }
