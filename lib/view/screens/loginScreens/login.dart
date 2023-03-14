@@ -233,7 +233,6 @@ class _SignInState extends State<SignIn> {
         },
       );
     }
-
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
