@@ -379,61 +379,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             markers: _markers.toSet(),
           ),
 
-          if (showSearchField)
-            Positioned(
-            top: 140,
-            right: 0,
-            left: 0,
-            child: Container(
-              decoration: const BoxDecoration(color: Colors.transparent),
-              height: MediaQuery.of(context).size.height / 13,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _placeTypes.length,
-                itemBuilder: (BuildContext context, int index) {
-                  var textPainter = TextPainter(
-                    text: TextSpan(
-                        text: _placeTypes[index],
-                        style: Theme.of(context).textTheme.button),
-                    textDirection: TextDirection.ltr,
-                  );
-                  textPainter.layout();
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-
-                      width: textPainter.width + 40,
-                      child: InkWell(
-                        splashColor: Colors.white,
-                        onTap: (){
-                          setState(() {
-                            _placeType = _placeTypes[index];
-                          });
-                          updateMapWithSelectedPlaceType(_placeType);
-                        },
-
-                        child: FloatingActionButton(
-
-                          backgroundColor:  _selectedIndex == index ? ColorPalette.secondaryColor : Colors.white,
-                          foregroundColor: _selectedIndex == index ? ColorPalette.primaryColor : Colors.black,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),),
-                          onPressed: () {
-                            setState(() {
-                              _selectedIndex = index;
-                              _placeType = _placeTypes[index];
-                            });
-                            updateMapWithSelectedPlaceType(_placeType);
-                          },
-                          child: Text(_placeTypes[index]),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-
           if (!showSearchField)
             Positioned(
               bottom: 30,
@@ -500,6 +445,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             ),
 
 
+
           if (showSearchField)
             Positioned(
               top: 20,
@@ -524,26 +470,95 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   }
                   ),
             ),
+
+
+          // list of places types
           if (showSearchField)
             Positioned(
-              top: 90,
-              left: 20,
-              right: 20,
-              child: SearchBar(
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        showSearchField = false;
-                      });
-                    },
-                    icon: const Icon(Icons.close_outlined),
-                  ),
-                  controller: destinationController,
-                  hintText: 'Search Destination',
-                  onPress: () {
-                    _handlePressButtonDestination();
-                  }),
+              top: 140,
+              right: 0,
+              left: 0,
+              child: Container(
+                decoration: const BoxDecoration(color: Colors.transparent),
+                height: MediaQuery.of(context).size.height / 13,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _placeTypes.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var textPainter = TextPainter(
+                      text: TextSpan(
+                          text: _placeTypes[index],
+                          style: Theme.of(context).textTheme.button),
+                      textDirection: TextDirection.ltr,
+                    );
+                    textPainter.layout();
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+
+                        width: textPainter.width + 40,
+                        child: InkWell(
+                          splashColor: Colors.white,
+                          onTap: (){
+                            setState(() {
+                              _placeType = _placeTypes[index];
+                            });
+                            updateMapWithSelectedPlaceType(_placeType);
+                          },
+
+                          child: FloatingActionButton(
+
+                            backgroundColor:  _selectedIndex == index ? ColorPalette.secondaryColor : Colors.white,
+                            foregroundColor: _selectedIndex == index ? ColorPalette.primaryColor : Colors.black,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),),
+                            onPressed: () {
+                              setState(() {
+                                _selectedIndex = index;
+                                _placeType = _placeTypes[index];
+                              });
+                              updateMapWithSelectedPlaceType(_placeType);
+                            },
+                            child: Text(_placeTypes[index]),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
+
+
+
+
+
+
+          /////////////////////////// WORKING CODE ///////////////////////////////////
+
+          // if (showSearchField)
+          //   Positioned(
+          //     top: 90,
+          //     left: 20,
+          //     right: 20,
+          //     child: SearchBar(
+          //         suffixIcon: IconButton(
+          //           onPressed: () {
+          //             setState(() {
+          //               showSearchField = false;
+          //             });
+          //           },
+          //           icon: const Icon(Icons.close_outlined),
+          //         ),
+          //         controller: destinationController,
+          //         hintText: 'Search Destination',
+          //         onPress: () {
+          //           _handlePressButtonDestination();
+          //         }),
+          //   ),
+
+
+          /////////////////////////// WORKING CODE ///////////////////////////////////
+
 
 
           if (!showSearchField)
