@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/search_bar_widget.dart';
+import 'package:google_maps_basics/model/MultipleDestinations.dart';
 import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -22,7 +23,6 @@ const kGoogleApiKey = googleApiKey;
 final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
-
   String _placeType = "gas_station";
   int _selectedIndex = 0;
 
@@ -46,11 +46,18 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final sourceController = TextEditingController();
   final destinationController = TextEditingController();
+
   bool showSearchField = false;
   String totalDistance = '';
   String totalTime = '';
   final Mode _mode = Mode.overlay;
   late GoogleMapController googleMapController;
+
+
+
+  bool showMultipleSearchBars = false;
+  final List multipleDestinations = [];
+
 
   @override
   void dispose() {
@@ -85,37 +92,94 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   late PolylinePoints polylinePoints;
   final Map<String, List<PlacesSearchResult>> _placesCache = {};
 
-
   //variables for the source and destinations
   late LatLng destination;
   late LatLng source;
 
+  ///////////////////// NEW POLYLINE CODE FOR MULTIPLE DESTINATION //////////////////////
+
   void setPolylines() async {
-    _polylines.clear();
-    polylineCoordinates.clear();
+    PolylinePoints polylinePoints = PolylinePoints();
+    List<LatLng> polylineCoordinates = [];
 
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+    // Add the source location to the polyline coordinates
+    polylineCoordinates.add(source);
+
+    // Iterate through all the destinations and add their locations to the polyline coordinates
+    for (int i = 0; i < destinations.length; i++) {
+      Destination destination = destinations[i];
+      LatLng destinationLocation = destination.location;
+      double destinationLat = destinationLocation.latitude;
+      double destinationLng = destinationLocation.longitude;
+
+      // Get the route between the previous destination (or the source) and the current destination
+      LatLng originLocation = (i == 0) ? source : destinations[i-1].location;
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         googleApiKey,
-        PointLatLng(source.latitude, source.longitude),
-        PointLatLng(destination.latitude, destination.longitude));
+        PointLatLng(originLocation.latitude, originLocation.longitude),
+        PointLatLng(destinationLat, destinationLng),
+      );
 
-    if (result.status == 'OK') {
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-
-      setState(() {
-        _polylines.add(Polyline(
-            width: 9,
-            polylineId: const PolylineId('polyLine'),
-            color: ColorPalette.secondaryColor,
-            points: polylineCoordinates));
-      });
-      final places = GoogleMapsPlaces(apiKey: googleApiKey);
-      getTouristAttractionsAlongPolyline(
-          polylineCoordinates, places, _placeType);
+      // Add the points of the polyline result to the polyline coordinates
+      if (result.points.isNotEmpty) {
+        result.points.forEach((PointLatLng point) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        });
+      }
     }
+
+    // Define the polyline options
+    Polyline polyline = Polyline(
+      polylineId: PolylineId('poly'),
+      color: Colors.blue,
+      width: 3,
+      points: polylineCoordinates,
+    );
+
+    // Add the polyline to the map
+    setState(() {
+      _polylines.add(polyline);
+    });
+    final places = GoogleMapsPlaces(apiKey: googleApiKey);
+    getTouristAttractionsAlongPolyline(
+        polylineCoordinates, places, _placeType);
   }
+
+  ///////////////////////////////NEW POLYLINE CODE FOR MULTIPLE DESTINATION ///////////////// ENDED
+
+
+
+  //////////////////////////// WORKING CODE ///////////////////////////////
+  // void setPolylines() async {
+  //   _polylines.clear();
+  //   polylineCoordinates.clear();
+  //
+  //   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+  //       googleApiKey,
+  //       PointLatLng(source.latitude, source.longitude),
+  //       PointLatLng(destination.latitude, destination.longitude));
+
+  //   if (result.status == 'OK') {
+  //     result.points.forEach((PointLatLng point) {
+  //       polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+  //     });
+  //
+  //     setState(() {
+  //       _polylines.add(Polyline(
+  //           width: 9,
+  //           polylineId: const PolylineId('polyLine'),
+  //           color: ColorPalette.secondaryColor,
+  //           points: polylineCoordinates));
+  //     });
+  //     final places = GoogleMapsPlaces(apiKey: googleApiKey);
+  //     getTouristAttractionsAlongPolyline(
+  //         polylineCoordinates, places, _placeType);
+    // }
+  // }
+
+
+  //////////////////////////// WORKING CODE ENDED ///////////////////////////////
+
 
   void updateMapWithSelectedPlaceType(String placeType) {
     // Clear previous markers
@@ -137,7 +201,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     setState(() {});
   }
 
-  Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(List<LatLng> polylineCoordinates, GoogleMapsPlaces places, String placeType) async {
+  Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(
+      List<LatLng> polylineCoordinates,
+      GoogleMapsPlaces places,
+      String placeType) async {
     final touristAttractions = <PlacesSearchResult>[];
     for (final point in polylineCoordinates) {
       final nearbySearch = await places.searchNearbyWithRadius(
@@ -151,16 +218,17 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     for (final place in touristAttractions) {
       _markers.add(Marker(
         markerId: MarkerId(place.placeId),
-        position: LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+        position:
+            LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
       ));
-      setState(() {
-      });
+      setState(() {});
     }
 
     return touristAttractions;
   }
+
   // current location started
   loadData() async {
     _currentLocation().then((value) async {
@@ -220,6 +288,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     homeScaffoldKey.currentState!
         .showSnackBar(SnackBar(content: Text(response.errorMessage!)));
   }
+
   Future<void> displayPredictionSource(
       Prediction p, ScaffoldMessengerState? currentState) async {
     GoogleMapsPlaces places = GoogleMapsPlaces(
@@ -243,7 +312,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     googleMapController
         .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
   }
-
 
   // Future<void> displayPredictionSource(
   //     Prediction p, ScaffoldMessengerState? currentState) async {
@@ -302,6 +370,44 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         .showSnackBar(SnackBar(content: Text(response.errorMessage!)));
   }
 
+  //////////////// Working fine OLD CODE //////////////////////////////
+
+  // Future<void> displayPredictionDestination(
+  //     Prediction p, ScaffoldMessengerState? currentState) async {
+  //   GoogleMapsPlaces places = GoogleMapsPlaces(
+  //     apiKey: kGoogleApiKey,
+  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
+  //   );
+  //
+  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
+  //
+  //   final lat = detail.result.geometry!.location.lat;
+  //   final lng = detail.result.geometry!.location.lng;
+  //
+  //   destination = LatLng(lat, lng);
+  //   destinationController.text = detail.result.name;
+  //   _markers.add(Marker(
+  //       markerId: const MarkerId("destination"),
+  //       position: destination,
+  //       infoWindow: InfoWindow(title: detail.result.name)));
+  //   setPolylines();
+  //   setState(() {});
+  //   googleMapController
+  //       .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
+  // }
+
+
+
+  //////////////// Working fine OLD CODE //////////////////////////////
+
+
+
+
+
+
+  //////////////// new CODE //////////////////////////////
+  List<Destination> destinations = [];
+
   Future<void> displayPredictionDestination(
       Prediction p, ScaffoldMessengerState? currentState) async {
     GoogleMapsPlaces places = GoogleMapsPlaces(
@@ -314,17 +420,28 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     final lat = detail.result.geometry!.location.lat;
     final lng = detail.result.geometry!.location.lng;
 
-    destination = LatLng(lat, lng);
+    Destination newDestination = Destination(
+      name: detail.result.name,
+      location: LatLng(lat, lng),
+    );
+
+    setState(() {
+      destinations.add(newDestination);
+    });
+
     destinationController.text = detail.result.name;
     _markers.add(Marker(
-        markerId: const MarkerId("destination"),
-        position: destination,
-        infoWindow: InfoWindow(title: detail.result.name)));
+      markerId: MarkerId("destination ${destinations.length}"),
+      position: newDestination.location,
+      infoWindow: InfoWindow(title: newDestination.name),
+    ));
     setPolylines();
     setState(() {});
     googleMapController
-        .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
+        .animateCamera(CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
   }
+
+  //////////////// new CODE ////////////////////////////// ENDDD
 
   // Future<void> displayPredictionDestination(
   //     Prediction p, ScaffoldMessengerState? currentState) async {
@@ -381,25 +498,25 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
           if (!showSearchField)
             Positioned(
-              bottom: 30,
-              left: 10,
-              child: ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(ColorPalette.secondaryColor)),
-                onPressed: () {
-                  _currentLocation();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const NearByPlacesScreen()),
-                  );
-                },
-                child: const Text(
-                  'Nearby Me',
-                  style: TextStyle(color: ColorPalette.primaryColor),
-                ),
-              )),
+                bottom: 30,
+                left: 10,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          ColorPalette.secondaryColor)),
+                  onPressed: () {
+                    _currentLocation();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const NearByPlacesScreen()),
+                    );
+                  },
+                  child: const Text(
+                    'Nearby Me',
+                    style: TextStyle(color: ColorPalette.primaryColor),
+                  ),
+                )),
           // Positioned(
           //   top: 100,
           //   left: 5,
@@ -444,8 +561,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               ),
             ),
 
-
-
           if (showSearchField)
             Positioned(
               top: 20,
@@ -463,14 +578,11 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   controller: sourceController,
                   hintText: 'Search Source',
                   onPress: () {
-
-                    Timer(const Duration(milliseconds: 500), (){
+                    Timer(const Duration(milliseconds: 500), () {
                       _handlePressButtonSource();
                     });
-                  }
-                  ),
+                  }),
             ),
-
 
           // list of places types
           if (showSearchField)
@@ -495,22 +607,25 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
-
                         width: textPainter.width + 40,
                         child: InkWell(
                           splashColor: Colors.white,
-                          onTap: (){
+                          onTap: () {
                             setState(() {
                               _placeType = _placeTypes[index];
                             });
                             updateMapWithSelectedPlaceType(_placeType);
                           },
-
                           child: FloatingActionButton(
-
-                            backgroundColor:  _selectedIndex == index ? ColorPalette.secondaryColor : Colors.white,
-                            foregroundColor: _selectedIndex == index ? ColorPalette.primaryColor : Colors.black,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),),
+                            backgroundColor: _selectedIndex == index
+                                ? ColorPalette.secondaryColor
+                                : Colors.white,
+                            foregroundColor: _selectedIndex == index
+                                ? ColorPalette.primaryColor
+                                : Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                             onPressed: () {
                               setState(() {
                                 _selectedIndex = index;
@@ -529,73 +644,195 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             ),
 
 
+          ////////////////////////////////// TRYING MULTIPLE SEARCH BAR FIELD ////////////////////////
 
-
-
-
-          /////////////////////////// WORKING CODE ///////////////////////////////////
-
-          // if (showSearchField)
-          //   Positioned(
-          //     top: 90,
-          //     left: 20,
-          //     right: 20,
-          //     child: SearchBar(
-          //         suffixIcon: IconButton(
-          //           onPressed: () {
-          //             setState(() {
-          //               showSearchField = false;
-          //             });
-          //           },
-          //           icon: const Icon(Icons.close_outlined),
-          //         ),
-          //         controller: destinationController,
-          //         hintText: 'Search Destination',
-          //         onPress: () {
-          //           _handlePressButtonDestination();
-          //         }),
-          //   ),
-
-
-          /////////////////////////// WORKING CODE ///////////////////////////////////
-
-
-
-          if (!showSearchField)
-          Positioned(
-            right: 30,
-            bottom: 30,
-            child: FloatingActionButton(
-              backgroundColor: ColorPalette.secondaryColor,
-              onPressed: () async {
-                _currentLocation().then((value) async {
-                  setState(() {
-                    // source = LatLng(value.latitude, value.longitude);
-                  });
-                  _markers.add(
-                    Marker(
-                      markerId: const MarkerId('current location'),
-                      position: LatLng(value.latitude, value.longitude),
-                      infoWindow: const InfoWindow(title: "Current Location"),
+          if (showSearchField)
+            Positioned(
+              top: 80,
+              left: 20,
+              right: 20,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SearchBar(
+                            width: double.infinity,
+                            // suffixIcon: IconButton(
+                            //   onPressed: () {
+                            //     setState(() {
+                            //       showSearchField = false;
+                            //     });
+                            //   },
+                            //   icon: const Icon(Icons.close_outlined),
+                            // ),
+                            controller: destinationController,
+                            hintText: 'Search Destination',
+                            onPress: () {
+                              _handlePressButtonDestination();
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showMultipleSearchBars = true;
+                              multipleDestinations.add(destinationController.text);
+                              destinationController.text = "";
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.white,
+                            ),
+                            child: Icon(
+                              Icons.add,
+                              size: 40,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  );
-
-                  CameraPosition cameraPosition = CameraPosition(
-                      zoom: 15,
-                      target: LatLng(value.latitude, value.longitude));
-
-                  // GoogleMapController controller =await _controller.future;
-                  googleMapController.animateCamera(
-                      CameraUpdate.newCameraPosition(cameraPosition));
-                  setState(() {});
-                });
-              },
-              child: const Icon(
-                Icons.location_on,
-                color: ColorPalette.primaryColor,
+                    if (showMultipleSearchBars)
+                      Column(
+                        children: List.generate(
+                          multipleDestinations.length,
+                              (index) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: SearchBar(
+                                    width: double.infinity,
+                                    controller: TextEditingController(
+                                      text: multipleDestinations[index],
+                                    ),
+                                    hintText: 'Search Destination',
+                                    onPress: () {
+                                      _handlePressButtonDestination();
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      multipleDestinations.removeAt(index);
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white,
+                                    ),
+                                    child: Icon(
+                                      Icons.remove,
+                                      size: 40,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
+
+
+          /////////////////////////////////////////////////
+
+
+
+
+
+
+          /////////////////////////// WORKING CODE ///////////////////////////////////
+          // if (showSearchField)
+          //   Positioned(
+          //     top: 80,
+          //     left: 20,
+          //     right: 20,
+          //     child: Container(
+          //       width: MediaQuery.of(context).size.width,
+          //       child: Row(
+          //         children: [
+          //           Expanded(
+          //             child: SearchBar(
+          //               width: double.infinity,
+          //               suffixIcon: IconButton(
+          //                 onPressed: () {
+          //                   setState(() {
+          //                     showSearchField = false;
+          //                   });
+          //                 },
+          //                 icon: const Icon(Icons.close_outlined),
+          //               ),
+          //               controller: destinationController,
+          //               hintText: 'Search Destination',
+          //               onPress: () {
+          //                 _handlePressButtonDestination();
+          //               },
+          //             ),
+          //           ),
+          //           SizedBox(width: 10),
+          //           Container(
+          //             decoration: BoxDecoration(
+          //               borderRadius: BorderRadius.circular(20),
+          //               color: Colors.white,
+          //             ),
+          //             child: Icon(
+          //               Icons.add,
+          //               size: 40,
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          /////////////////////////// WORKING CODE ///////////////////////////////////
+
+          if (!showSearchField)
+            Positioned(
+              right: 30,
+              bottom: 30,
+              child: FloatingActionButton(
+                backgroundColor: ColorPalette.secondaryColor,
+                onPressed: () async {
+                  _currentLocation().then((value) async {
+                    setState(() {
+                      // source = LatLng(value.latitude, value.longitude);
+                    });
+                    _markers.add(
+                      Marker(
+                        markerId: const MarkerId('current location'),
+                        position: LatLng(value.latitude, value.longitude),
+                        infoWindow: const InfoWindow(title: "Current Location"),
+                      ),
+                    );
+
+                    CameraPosition cameraPosition = CameraPosition(
+                        zoom: 15,
+                        target: LatLng(value.latitude, value.longitude));
+
+                    // GoogleMapController controller =await _controller.future;
+                    googleMapController.animateCamera(
+                        CameraUpdate.newCameraPosition(cameraPosition));
+                    setState(() {});
+                  });
+                },
+                child: const Icon(
+                  Icons.location_on,
+                  color: ColorPalette.primaryColor,
+                ),
+              ),
+            ),
         ],
       ),
     );

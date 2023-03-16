@@ -9,6 +9,8 @@ class SearchBar extends StatelessWidget {
   double? width;
   IconButton? suffixIcon;
   TextEditingController? controller;
+  VoidCallback? onValueSubmitted;
+
 
   SearchBar({
     this.onPress,
@@ -28,6 +30,9 @@ class SearchBar extends StatelessWidget {
           color: ColorPalette.primaryColor,
           borderRadius: BorderRadius.circular(6)),
       child: TextField(
+        onSubmitted: (value) {
+          onValueSubmitted;
+        },
         controller: controller,
         onTap: onPress,
         // onChanged: (){},
