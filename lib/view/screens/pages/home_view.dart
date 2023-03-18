@@ -55,25 +55,25 @@ class HomePageNavBar extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SearchBar(hintText: 'Search', width: screenWidth / 1.3),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MyAccount()),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.person,
-                        color: ColorPalette.secondaryColor,
-                        size: 40,
-                      ))
-                ],
-              ),
+              // Row(
+              //   crossAxisAlignment: CrossAxisAlignment.end,
+              //   children: [
+              //     // SearchBar(hintText: 'Search', width: screenWidth / 1.3),
+              //     IconButton(
+              //         onPressed: () {
+              //           Navigator.push(
+              //             context,
+              //             MaterialPageRoute(
+              //                 builder: (context) => const MyAccount()),
+              //           );
+              //         },
+              //         icon: const Icon(
+              //           Icons.person,
+              //           color: ColorPalette.secondaryColor,
+              //           size: 40,
+              //         ))
+              //   ],
+              // ),
               const SizedBox(
                 height: 25,
               ),
@@ -100,7 +100,7 @@ class HomePageNavBar extends StatelessWidget {
                     width: 10.0,
                   ),
                   Text(
-                    "30 °C",
+                    "18 °C",
                     style: TextStyle(
                         color: ColorPalette.secondaryColor, fontSize: 25.0),
                   ),
@@ -112,20 +112,21 @@ class HomePageNavBar extends StatelessWidget {
               const CustomGrid(),
               Center(
                   child: RoundedButton(
-                    onPress: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CreateCustomTrip()),
-                      );
-                    },
+                onPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CreateCustomTrip()),
+                  );
+                },
                 name: 'Create Trip',
+                textColor: Colors.white,
                 color: ColorPalette.secondaryColor,
                 width: 200,
               )),
-              HeadingText(
-                  text: "Destinations",
-                  style: const TextStyle(fontSize: 30, color: Colors.black)),
+              // HeadingText(
+              //     text: "Destinations",
+              //     style: const TextStyle(fontSize: 30, color: Colors.black)),
               // Container(
               //   height: 350,
               //   child: GridView.count(

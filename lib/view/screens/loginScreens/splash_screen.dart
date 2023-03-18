@@ -10,14 +10,14 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
 
-  @override
-  void initState() {
-    super.initState();
-    // Use a future to delay the navigation to the home screen
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/onBoardingScreen');
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Use a future to delay the navigation to the home screen
+  //   // Future.delayed(const Duration(seconds: 3), () {
+  //   //   Navigator.pushReplacementNamed(context, '/onBoardingScreen');
+  //   // });
+  // }
 
   @override
   Widget build(BuildContext context) {
