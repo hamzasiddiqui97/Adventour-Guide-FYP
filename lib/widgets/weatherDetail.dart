@@ -17,9 +17,9 @@ class WeatherDetail extends StatelessWidget {
             Icon(
               icon,
               color: Colors.orange,
-              size: 35,
+              size: 30,
             ),
-            const SizedBox(width: 15.0),
+            const SizedBox(width: 10.0),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -29,14 +29,14 @@ class WeatherDetail extends StatelessWidget {
                     header,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 18,
+                      fontSize: 16,
                     ),
                   ),
                 ),
                 FittedBox(
                   child: Text(
                     body,
-                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15),
+                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13),
                   ),
                 ),
               ],
@@ -69,7 +69,7 @@ class WeatherDetail extends StatelessWidget {
             child: GridView(
               padding: EdgeInsets.all(15),
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 250,
+                maxCrossAxisExtent: 150,
                 childAspectRatio: 2 / 1,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,

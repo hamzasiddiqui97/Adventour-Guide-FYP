@@ -1,17 +1,54 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/core/widgets/heading_text.dart';
+// import 'package:google_maps_basics/core/widgets/heading_text.dart';
 import 'package:google_maps_basics/core/widgets/rounded_button.dart';
-import 'package:google_maps_basics/core/widgets/search_bar_widget.dart';
+// import 'package:google_maps_basics/core/widgets/search_bar_widget.dart';
 import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
-import 'package:google_maps_basics/view/screens/pages/my_account.dart';
+// import 'package:google_maps_basics/view/screens/pages/my_account.dart';
 import 'package:google_maps_basics/view/screens/views/create_custom_trip.dart';
+import 'package:location/location.dart';
+import '../../../helper/utils.dart';
+import '../../../models/weather.dart';
 
-class HomePageNavBar extends StatelessWidget {
+class HomePageNavBar extends StatefulWidget {
+
   const HomePageNavBar({Key? key}) : super(key: key);
 
   @override
+  _HomePageNavBarState createState() => _HomePageNavBarState();
+}
+
+class _HomePageNavBarState extends State<HomePageNavBar> {
+  String apiKey = '97f6f37816c2c554f9f209bd1b7b7afe';
+  Weather? _weather;
+  Location location = Location();
+
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWeather();
+  }
+
+  Future<void> _fetchWeather() async {
+    LocationData locationData = await location.getLocation();
+    final response = await http.get(Uri.parse('https://api.openweathermap.org/data/2.5/weather?lat=${locationData.latitude}&lon=${locationData.longitude}&appid=${apiKey}&units=metric'));
+    if (response.statusCode == 200) {
+      setState(() {
+        final jsonData = json.decode(response.body);
+        _weather = Weather.fromJson(jsonData);
+      });
+    } else {
+      throw Exception('Failed to load weather data');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+
     final List<Map<String, String>> destinations = [
       {
         'name': 'Amsterdam',
@@ -46,7 +83,7 @@ class HomePageNavBar extends StatelessWidget {
     );
 
     // final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+    // final screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
@@ -79,31 +116,38 @@ class HomePageNavBar extends StatelessWidget {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text("Karachi,", style: myTextStyle),
-                  SizedBox(
+                children: [
+
+                  if (_weather != null)
+                    Text(
+                      "${_weather!.cityName},",
+                      style: myTextStyle,
+                    ),
+                  const SizedBox(
                     width: 10.0,
                   ),
-                  Text(
-                    "Sindh",
-                    style: myTextStyle,
+
+                  // Icon(
+                  //   Icons.wb_sunny_outlined,
+                  //   size: 24.0,
+                  //   color: ColorPalette.secondaryColor,
+                  // ),
+
+                  MapString.mapStringToIcon(
+                    context,
+                    '${_weather?.currently}',
+                    30,
                   ),
-                  SizedBox(
-                    width: 15.0,
-                  ),
-                  Icon(
-                    Icons.wb_sunny_outlined,
-                    size: 24.0,
-                    color: ColorPalette.secondaryColor,
-                  ),
-                  SizedBox(
+
+                  const SizedBox(
                     width: 10.0,
                   ),
-                  Text(
-                    "18 °C",
-                    style: TextStyle(
-                        color: ColorPalette.secondaryColor, fontSize: 25.0),
-                  ),
+                  if (_weather != null)
+                    Text(
+                      "${_weather!.temp.round()} °C",
+                      style: const TextStyle(
+                          color: ColorPalette.secondaryColor, fontSize: 25.0),
+                    ),
                 ],
               ),
               const SizedBox(
@@ -160,6 +204,7 @@ class HomePageNavBar extends StatelessWidget {
               //     ),
               //   ),
               // ),
+
             ],
           ),
         ),
