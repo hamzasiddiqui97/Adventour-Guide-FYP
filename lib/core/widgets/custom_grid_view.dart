@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/view/screens/views/news_view.dart';
 import 'package:provider/provider.dart';
 
-import 'package:google_maps_basics/Screens/weeklyWeatherScreen.dart';
+// import 'package:google_maps_basics/Screens/weeklyWeatherScreen.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/screens/homeScreen.dart';
+// import 'package:google_maps_basics/screens/homeScreen.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:google_maps_basics/widgets/sevenDayForecast.dart';
 

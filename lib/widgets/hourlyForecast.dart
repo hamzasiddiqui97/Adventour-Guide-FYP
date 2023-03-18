@@ -3,7 +3,8 @@ import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../screens/hourlyWeatherScreen.dart';
+// import '../screens/hourlyWeatherScreen.dart';
+import '../Screens/hourlyWeatherScreen.dart';
 import '../helper/utils.dart';
 
 class HourlyForecast extends StatelessWidget {

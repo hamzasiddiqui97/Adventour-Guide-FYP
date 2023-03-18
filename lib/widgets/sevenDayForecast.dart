@@ -3,10 +3,13 @@ import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../Screens/homeScreen.dart';
+import '../Screens/hourlyWeatherScreen.dart';
+import '../Screens/weeklyWeatherScreen.dart';
 import '../helper/utils.dart';
-import 'package:google_maps_basics/screens/homeScreen.dart';
-import 'package:google_maps_basics/screens/hourlyWeatherScreen.dart';
-import 'package:google_maps_basics/screens/weeklyWeatherScreen.dart';
+// import 'package:google_maps_basics/screens/homeScreen.dart';
+// import 'package:google_maps_basics/screens/hourlyWeatherScreen.dart';
+// import 'package:google_maps_basics/screens/weeklyWeatherScreen.dart';
 
 
 
