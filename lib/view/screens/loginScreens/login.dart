@@ -2,12 +2,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/main.dart';
+// import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/forgot_password.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:lottie/lottie.dart';
-import 'onboarding_screen.dart';
+// import 'onboarding_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignIn extends StatefulWidget {
@@ -40,16 +40,16 @@ class _SignInState extends State<SignIn> {
   void validateInputs() {
     setState(() {
       _emailError =
-          emailController.text.isEmpty || !emailController.text.contains('@')
-              ? _emailError != null && emailController.text.isEmpty
-                  ? _emailError
-                  : null
-              : null;
+      emailController.text.isEmpty || !emailController.text.contains('@')
+          ? _emailError != null && emailController.text.isEmpty
+          ? _emailError
+          : null
+          : null;
 
       _passwordError = passwordController.text.isEmpty
           ? _passwordError != null && passwordController.text.isEmpty
-              ? _passwordError
-              : null
+          ? _passwordError
+          : null
           : null;
     });
   }
