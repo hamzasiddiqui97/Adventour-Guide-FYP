@@ -141,7 +141,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                     Center(child: CircularProgressIndicator()),
                   if (!_isWeatherDataLoading && _weather != null)
                     Text(
-                      "${_weather!.cityName},",
+                      "${_weather!.cityName}",
                       style: myTextStyle,
                     ),
                   const SizedBox(width: 10.0),

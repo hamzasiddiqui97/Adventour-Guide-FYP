@@ -33,10 +33,14 @@ class _MyAccountState extends State<MyAccount> {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   SizedBox(
                     height: 100,
-                    child: Icon(
+                    child: user?.photoURL != null
+                        ? CircleAvatar(
+                      backgroundImage: NetworkImage(user!.photoURL!),
+                      radius: 48,
+                    ) :const Icon(
                       Icons.person,
                       size: 70.0,
                       color: ColorPalette.secondaryColor,

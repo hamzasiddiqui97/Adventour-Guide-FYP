@@ -130,7 +130,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
     // Define the polyline options
     Polyline polyline = Polyline(
-      polylineId: PolylineId('poly'),
+      polylineId: const PolylineId('poly'),
       color: Colors.blue,
       width: 3,
       points: polylineCoordinates,
@@ -313,36 +313,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
   }
 
-  // Future<void> displayPredictionSource(
-  //     Prediction p, ScaffoldMessengerState? currentState) async {
-  //   GoogleMapsPlaces places = GoogleMapsPlaces(
-  //     apiKey: kGoogleApiKey,
-  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
-  //   );
-  //
-  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
-  //
-  //   final lat = detail.result.geometry!.location.lat;
-  //   final lng = detail.result.geometry!.location.lng;
-  //
-  //   source = LatLng(lat, lng);
-  //   sourceController.text =
-  //       detail.result.name; // update the source field's text
-  //
-  //   _markers.clear();
-  //   _polylines.clear();
-  //   _markers.add(Marker(
-  //       markerId: const MarkerId("source"),
-  //       // position: LatLng(lat, lng),
-  //       position: source,
-  //       infoWindow: InfoWindow(title: detail.result.name)));
-  //   setPolylines();
-  //   setState(() {});
-  //
-  //   googleMapController
-  //       .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 13.0));
-  // }
-
   // destination search autocomplete button
   Future<void> _handlePressButtonDestination() async {
     Prediction? p = await PlacesAutocomplete.show(
@@ -369,42 +339,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     homeScaffoldKey.currentState!
         .showSnackBar(SnackBar(content: Text(response.errorMessage!)));
   }
-
-  //////////////// Working fine OLD CODE //////////////////////////////
-
-  // Future<void> displayPredictionDestination(
-  //     Prediction p, ScaffoldMessengerState? currentState) async {
-  //   GoogleMapsPlaces places = GoogleMapsPlaces(
-  //     apiKey: kGoogleApiKey,
-  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
-  //   );
-  //
-  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
-  //
-  //   final lat = detail.result.geometry!.location.lat;
-  //   final lng = detail.result.geometry!.location.lng;
-  //
-  //   destination = LatLng(lat, lng);
-  //   destinationController.text = detail.result.name;
-  //   _markers.add(Marker(
-  //       markerId: const MarkerId("destination"),
-  //       position: destination,
-  //       infoWindow: InfoWindow(title: detail.result.name)));
-  //   setPolylines();
-  //   setState(() {});
-  //   googleMapController
-  //       .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
-  // }
-
-
-
-  //////////////// Working fine OLD CODE //////////////////////////////
-
-
-
-
-
-
   //////////////// new CODE //////////////////////////////
   List<Destination> destinations = [];
 
@@ -441,42 +375,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         .animateCamera(CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
   }
 
-  //////////////// new CODE ////////////////////////////// ENDDD
-
-  // Future<void> displayPredictionDestination(
-  //     Prediction p, ScaffoldMessengerState? currentState) async {
-  //   GoogleMapsPlaces places = GoogleMapsPlaces(
-  //     apiKey: kGoogleApiKey,
-  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
-  //   );
-  //
-  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
-  //
-  //   final lat = detail.result.geometry!.location.lat;
-  //   final lng = detail.result.geometry!.location.lng;
-  //
-  //   destination = LatLng(lat, lng);
-  //   destinationController.text =
-  //       detail.result.name; // update the source field's text
-  //
-  //   // _markers.clear();    // removed this to make sure marker is not clear for source when dest is selected
-  //   _polylines.clear();
-  //   _markers.add(Marker(
-  //       markerId: const MarkerId("destination"),
-  //       // position: LatLng(lat, lng),
-  //       position: destination,
-  //       infoWindow: InfoWindow(title: detail.result.name)));
-  //   setPolylines();
-  //   setState(() {});
-  //
-  //   googleMapController
-  //       .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // final screenHeight = MediaQuery.of(context).size.height;
-    // final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       key: homeScaffoldKey,
@@ -544,193 +444,182 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               ),
             ),
 
-          if (showSearchField)
-            Positioned(
-              top: 20,
-              left: 20,
-              right: 20,
-              child: SearchBar(
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        showSearchField = false;
-                      });
-                    },
-                    icon: const Icon(Icons.arrow_upward),
-                  ),
-                  controller: sourceController,
-                  hintText: 'Search Source',
-                  onPress: () {
-                    Timer(const Duration(milliseconds: 500), () {
-                      _handlePressButtonSource();
-                    });
-                  }),
-            ),
 
-          // list of places types
           if (showSearchField)
-            Positioned(
-              top: 140,
-              right: 0,
-              left: 0,
-              child: Container(
-                decoration: const BoxDecoration(color: Colors.transparent),
-                height: MediaQuery.of(context).size.height / 13,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _placeTypes.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    var textPainter = TextPainter(
-                      text: TextSpan(
-                          text: _placeTypes[index],
-                          style: Theme.of(context).textTheme.button),
-                      textDirection: TextDirection.ltr,
-                    );
-                    textPainter.layout();
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: textPainter.width + 40,
-                        child: InkWell(
-                          splashColor: Colors.white,
-                          onTap: () {
-                            setState(() {
-                              _placeType = _placeTypes[index];
-                            });
-                            updateMapWithSelectedPlaceType(_placeType);
-                          },
-                          child: FloatingActionButton(
-                            backgroundColor: _selectedIndex == index
-                                ? ColorPalette.secondaryColor
-                                : Colors.white,
-                            foregroundColor: _selectedIndex == index
-                                ? ColorPalette.primaryColor
-                                : Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _selectedIndex = index;
-                                _placeType = _placeTypes[index];
-                              });
-                              updateMapWithSelectedPlaceType(_placeType);
-                            },
-                            child: Text(_placeTypes[index]),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+          Positioned(
+          top: 0,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(40),
+                bottomRight: Radius.circular(40),
               ),
             ),
+            height: MediaQuery.of(context).size.height * 0.25,
+            width: MediaQuery.of(context).size.width,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
 
-
-          ////////////////////////////////// TRYING MULTIPLE SEARCH BAR FIELD ////////////////////////
-
-          if (showSearchField)
-            Positioned(
-              top: 80,
-              left: 20,
-              right: 20,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  children: [
+                  SizedBox(height: 20,),
+                  // search field and add more field button
+                  if (showSearchField)
                     Row(
-                      children: [
-                        // Expanded(
-                        //   child: SearchBar(
-                        //     width: double.infinity,
-                        //     // suffixIcon: IconButton(
-                        //     //   onPressed: () {
-                        //     //     setState(() {
-                        //     //       showSearchField = false;
-                        //     //     });
-                        //     //   },
-                        //     //   icon: const Icon(Icons.close_outlined),
-                        //     // ),
-                        //     controller: destinationController,
-                        //     hintText: 'Search Destination',
-                        //     onPress: () {
-                        //       _handlePressButtonDestination();
-                        //     },
-                        //   ),
-                        // ),
-                        // SizedBox(width: 10),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showMultipleSearchBars = true;
-                              multipleDestinations.add(destinationController.text);
-                              destinationController.text = "";
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.white,
-                            ),
-                            child: Icon(
-                              Icons.add,
-                              size: 40,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SearchBar(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showSearchField = false;
+                                  });
+                                },
+                                icon: const Icon(Icons.arrow_upward),
+                              ),
+
+                              controller: sourceController,
+                              hintText: 'Search Source',
+                              onPress: () {
+                                Timer(const Duration(milliseconds: 500), () {
+                                  _handlePressButtonSource();
+                                });
+                              }),
+                          const SizedBox(width: 10,),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                showMultipleSearchBars = true;
+                                multipleDestinations.add(destinationController.text);
+                                destinationController.text = '';
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                size: 40,
+                              ),
                             ),
                           ),
-                        ),
+                        ]
+                    ),
+
+                  ///// MULTIPLE SEARCH BAR FIELD /////
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      children: [
+                        if (showMultipleSearchBars)
+                          Column(
+                            children: List.generate(
+                              multipleDestinations.length,
+                                  (index) => Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: SearchBar(
+                                        width: double.infinity,
+                                        controller: TextEditingController(
+                                          text: multipleDestinations[index],
+                                        ),
+                                        hintText: 'Search Destination',
+                                        onPress: () {
+                                          _handlePressButtonDestination();
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          multipleDestinations.removeAt(index);
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(20),
+                                          color: Colors.white,
+                                        ),
+                                        child: const Icon(
+                                          Icons.remove,
+                                          size: 40,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                    if (showMultipleSearchBars)
-                      Column(
-                        children: List.generate(
-                          multipleDestinations.length,
-                              (index) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: SearchBar(
-                                    width: double.infinity,
-                                    controller: TextEditingController(
-                                      text: multipleDestinations[index],
-                                    ),
-                                    hintText: 'Search Destination',
-                                    onPress: () {
-                                      _handlePressButtonDestination();
-                                    },
+                  ),
+                  // list of places types
+                  if (showSearchField)
+                    Container(
+                      decoration: const BoxDecoration(color: Colors.transparent),
+                      height: MediaQuery.of(context).size.height / 13,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _placeTypes.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var textPainter = TextPainter(
+                            text: TextSpan(
+                                text: _placeTypes[index],
+                                style: Theme.of(context).textTheme.button),
+                            textDirection: TextDirection.ltr,
+                          );
+                          textPainter.layout();
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: textPainter.width + 40,
+                              child: InkWell(
+                                splashColor: Colors.white,
+                                onTap: () {
+                                  setState(() {
+                                    _placeType = _placeTypes[index];
+                                  });
+                                  updateMapWithSelectedPlaceType(_placeType);
+                                },
+                                child: FloatingActionButton(
+                                  backgroundColor: _selectedIndex == index
+                                      ? ColorPalette.secondaryColor
+                                      : Colors.white,
+                                  foregroundColor: _selectedIndex == index
+                                      ? ColorPalette.primaryColor
+                                      : Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
-                                ),
-                                SizedBox(width: 10),
-                                GestureDetector(
-                                  onTap: () {
+                                  onPressed: () {
                                     setState(() {
-                                      multipleDestinations.removeAt(index);
+                                      _selectedIndex = index;
+                                      _placeType = _placeTypes[index];
                                     });
+                                    updateMapWithSelectedPlaceType(_placeType);
                                   },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Colors.white,
-                                    ),
-                                    child: Icon(
-                                      Icons.remove,
-                                      size: 40,
-                                    ),
-                                  ),
+                                  child: Text(_placeTypes[index]),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
-                  ],
-                ),
+                    ),
+
+
+                ],
               ),
             ),
-
-
-          /////////////////////////////////////////////////
-
+          ),
+            ),
 
 
 
