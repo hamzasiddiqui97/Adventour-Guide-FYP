@@ -19,7 +19,7 @@ class SearchBar extends StatelessWidget {
     this.width,
     this.suffixIcon,
     this.controller,
-    });
+  });
 
   @override
   Widget build(BuildContext context) {

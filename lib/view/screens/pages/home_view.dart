@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/core/constant/color_constants.dart';
@@ -12,7 +14,11 @@ import 'package:location/location.dart';
 import '../../../helper/utils.dart';
 import '../../../models/weather.dart';
 
+
+
 class HomePageNavBar extends StatefulWidget {
+
+
 
   const HomePageNavBar({Key? key}) : super(key: key);
 
@@ -20,27 +26,35 @@ class HomePageNavBar extends StatefulWidget {
   _HomePageNavBarState createState() => _HomePageNavBarState();
 }
 
+
 class _HomePageNavBarState extends State<HomePageNavBar> {
+
+
   String apiKey = '97f6f37816c2c554f9f209bd1b7b7afe';
   Weather? _weather;
   Location location = Location();
 
-
   @override
   void initState() {
+
     super.initState();
-    _fetchWeather();
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user != null) {
+        _fetchWeather();
+      }
+    });
   }
+
 
   Future<void> _fetchWeather() async {
     LocationData locationData = await location.getLocation();
     final response = await http.get(Uri.parse('https://api.openweathermap.org/data/2.5/weather?lat=${locationData.latitude}&lon=${locationData.longitude}&appid=${apiKey}&units=metric'));
-    if (response.statusCode == 200) {
+    if (mounted && response.statusCode == 200) {
       setState(() {
         final jsonData = json.decode(response.body);
         _weather = Weather.fromJson(jsonData);
       });
-    } else {
+    } else if (mounted) {
       throw Exception('Failed to load weather data');
     }
   }

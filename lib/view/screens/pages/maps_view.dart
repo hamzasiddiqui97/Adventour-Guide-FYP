@@ -174,7 +174,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   //     final places = GoogleMapsPlaces(apiKey: googleApiKey);
   //     getTouristAttractionsAlongPolyline(
   //         polylineCoordinates, places, _placeType);
-    // }
+  // }
   // }
 
 
@@ -219,7 +219,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       _markers.add(Marker(
         markerId: MarkerId(place.placeId),
         position:
-            LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+        LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
       ));
@@ -355,7 +355,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         strictbounds: false,
         types: [""],
         decoration: InputDecoration(
-            hintText: "Search Places",
+            hintText: "Search Destination",
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(color: ColorPalette.primaryColor),
@@ -517,23 +517,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                     style: TextStyle(color: ColorPalette.primaryColor),
                   ),
                 )),
-          // Positioned(
-          //   top: 100,
-          //   left: 5,
-          //   child: Container(
-          //     margin: const EdgeInsets.all(20),
-          //     padding: const EdgeInsets.all(20),
-          //     color: ColorPalette.primaryColor,
-          //     child: Column(
-          //       mainAxisSize: MainAxisSize.min,
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: [
-          //         Text("Total distance: $totalDistance"),
-          //         Text("Total time: $totalTime"),
-          //       ],
-          //     ),
-          //   ),
-          // ),
 
           if (!showSearchField)
             Positioned(
@@ -573,7 +556,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                         showSearchField = false;
                       });
                     },
-                    icon: const Icon(Icons.close_outlined),
+                    icon: const Icon(Icons.arrow_upward),
                   ),
                   controller: sourceController,
                   hintText: 'Search Source',
@@ -657,25 +640,25 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   children: [
                     Row(
                       children: [
-                        Expanded(
-                          child: SearchBar(
-                            width: double.infinity,
-                            // suffixIcon: IconButton(
-                            //   onPressed: () {
-                            //     setState(() {
-                            //       showSearchField = false;
-                            //     });
-                            //   },
-                            //   icon: const Icon(Icons.close_outlined),
-                            // ),
-                            controller: destinationController,
-                            hintText: 'Search Destination',
-                            onPress: () {
-                              _handlePressButtonDestination();
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 10),
+                        // Expanded(
+                        //   child: SearchBar(
+                        //     width: double.infinity,
+                        //     // suffixIcon: IconButton(
+                        //     //   onPressed: () {
+                        //     //     setState(() {
+                        //     //       showSearchField = false;
+                        //     //     });
+                        //     //   },
+                        //     //   icon: const Icon(Icons.close_outlined),
+                        //     // ),
+                        //     controller: destinationController,
+                        //     hintText: 'Search Destination',
+                        //     onPress: () {
+                        //       _handlePressButtonDestination();
+                        //     },
+                        //   ),
+                        // ),
+                        // SizedBox(width: 10),
                         GestureDetector(
                           onTap: () {
                             setState(() {
@@ -751,52 +734,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
 
 
-
-
-          /////////////////////////// WORKING CODE ///////////////////////////////////
-          // if (showSearchField)
-          //   Positioned(
-          //     top: 80,
-          //     left: 20,
-          //     right: 20,
-          //     child: Container(
-          //       width: MediaQuery.of(context).size.width,
-          //       child: Row(
-          //         children: [
-          //           Expanded(
-          //             child: SearchBar(
-          //               width: double.infinity,
-          //               suffixIcon: IconButton(
-          //                 onPressed: () {
-          //                   setState(() {
-          //                     showSearchField = false;
-          //                   });
-          //                 },
-          //                 icon: const Icon(Icons.close_outlined),
-          //               ),
-          //               controller: destinationController,
-          //               hintText: 'Search Destination',
-          //               onPress: () {
-          //                 _handlePressButtonDestination();
-          //               },
-          //             ),
-          //           ),
-          //           SizedBox(width: 10),
-          //           Container(
-          //             decoration: BoxDecoration(
-          //               borderRadius: BorderRadius.circular(20),
-          //               color: Colors.white,
-          //             ),
-          //             child: Icon(
-          //               Icons.add,
-          //               size: 40,
-          //             ),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          /////////////////////////// WORKING CODE ///////////////////////////////////
 
           if (!showSearchField)
             Positioned(
