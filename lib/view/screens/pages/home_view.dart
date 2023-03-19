@@ -33,6 +33,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
   String apiKey = '97f6f37816c2c554f9f209bd1b7b7afe';
   Weather? _weather;
   Location location = Location();
+  bool _isWeatherDataLoading = true;
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
     final response = await http.get(Uri.parse('https://api.openweathermap.org/data/2.5/weather?lat=${locationData.latitude}&lon=${locationData.longitude}&appid=${apiKey}&units=metric'));
     if (mounted && response.statusCode == 200) {
       setState(() {
+        _isWeatherDataLoading = false;
         final jsonData = json.decode(response.body);
         _weather = Weather.fromJson(jsonData);
       });
@@ -128,39 +130,36 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
               const SizedBox(
                 height: 25,
               ),
+
+
+
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
-                  if (_weather != null)
+                  if (_isWeatherDataLoading)
+                    Center(child: CircularProgressIndicator()),
+                  if (!_isWeatherDataLoading && _weather != null)
                     Text(
                       "${_weather!.cityName},",
                       style: myTextStyle,
                     ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
+                  const SizedBox(width: 10.0),
 
-                  // Icon(
-                  //   Icons.wb_sunny_outlined,
-                  //   size: 24.0,
-                  //   color: ColorPalette.secondaryColor,
-                  // ),
-
-                  MapString.mapStringToIcon(
+                  if (!_isWeatherDataLoading && _weather != null)
+                    MapString.mapStringToIcon(
                     context,
                     '${_weather?.currently}',
                     30,
                   ),
-
-                  const SizedBox(
-                    width: 10.0,
-                  ),
+                  const SizedBox(width: 10.0),
                   if (_weather != null)
                     Text(
                       "${_weather!.temp.round()} °C",
                       style: const TextStyle(
-                          color: ColorPalette.secondaryColor, fontSize: 25.0),
+                        color: ColorPalette.secondaryColor,
+                        fontSize: 25.0,
+                      ),
                     ),
                 ],
               ),
