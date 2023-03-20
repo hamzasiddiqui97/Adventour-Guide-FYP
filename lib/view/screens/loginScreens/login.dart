@@ -317,8 +317,8 @@ class _SignInState extends State<SignIn> {
     // Sign in to Firebase Auth with the obtained Firebase Auth credentials
     final UserCredential userCredential = await _auth.signInWithCredential(credential);
 
+    print('username sign_in: ${userCredential.user?.displayName}');
     return userCredential.user;
   }
-
 
 }

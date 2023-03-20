@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/bottom_underlined_custom_button.dart';
 import 'package:google_maps_basics/core/widgets/rounded_button.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({Key? key}) : super(key: key);
@@ -56,10 +57,10 @@ class _MyAccountState extends State<MyAccount> {
                   width: 200,
                   child: ElevatedButton(
                     onPressed: () async {
+                      await GoogleSignIn().signOut();
                       await FirebaseAuth.instance.signOut();
                       Navigator.pushNamedAndRemoveUntil(context, '/signIn', (route) => false);
                     },
-
                     child: const Text('Sign Out', ),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: ColorPalette.primaryColor,
