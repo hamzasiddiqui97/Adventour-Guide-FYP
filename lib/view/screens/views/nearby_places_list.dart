@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'dart:developer';
+// import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/NearbyResponse.dart';
-import 'package:google_maps_basics/view/screens/pages/maps_view.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_basics/view/screens/pages/maps_view.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import 'nearby_on_maps.dart';
@@ -243,7 +243,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                         );
                       });
                     },
-                    child: const Text('Navigate')),
+                    child: const Text('Navigate',style: TextStyle(color: ColorPalette.primaryColor),)),
               ),
             ],
           ),

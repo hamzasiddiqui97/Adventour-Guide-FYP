@@ -200,7 +200,7 @@ class _SignInState extends State<SignIn> {
                 const Text('OR'),
                 ElevatedButton.icon(
                   onPressed: () {
-                    GoogleSignIn().signIn();
+                    signInWithGoogle();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.secondaryColor,
@@ -292,4 +292,33 @@ class _SignInState extends State<SignIn> {
       Utils.showSnackBar('Sign in failed. Please try again later.');
     }
   }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  Future<User?> signInWithGoogle() async {
+    // Trigger the Google Authentication flow
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+    if (googleUser == null) {
+      // User cancelled the Google Authentication flow
+      return null;
+    }
+
+    // Obtain the Google Auth credentials from the user's Google account
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    // Convert the Google Auth credentials to Firebase Auth credentials
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Sign in to Firebase Auth with the obtained Firebase Auth credentials
+    final UserCredential userCredential = await _auth.signInWithCredential(credential);
+
+    print('username sign_in: ${userCredential.user?.displayName}');
+    return userCredential.user;
+  }
+
 }
