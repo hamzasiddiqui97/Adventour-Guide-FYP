@@ -103,122 +103,126 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.end,
-              //   children: [
-              //     // SearchBar(hintText: 'Search', width: screenWidth / 1.3),
-              //     IconButton(
-              //         onPressed: () {
-              //           Navigator.push(
-              //             context,
-              //             MaterialPageRoute(
-              //                 builder: (context) => const MyAccount()),
-              //           );
-              //         },
-              //         icon: const Icon(
-              //           Icons.person,
-              //           color: ColorPalette.secondaryColor,
-              //           size: 40,
-              //         ))
-              //   ],
-              // ),
-              const SizedBox(
-                height: 25,
-              ),
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.end,
+                //   children: [
+                //     // SearchBar(hintText: 'Search', width: screenWidth / 1.3),
+                //     IconButton(
+                //         onPressed: () {
+                //           Navigator.push(
+                //             context,
+                //             MaterialPageRoute(
+                //                 builder: (context) => const MyAccount()),
+                //           );
+                //         },
+                //         icon: const Icon(
+                //           Icons.person,
+                //           color: ColorPalette.secondaryColor,
+                //           size: 40,
+                //         ))
+                //   ],
+                // ),
+                const SizedBox(
+                  height: 25,
+                ),
 
 
 
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (_isWeatherDataLoading)
-                    Center(child: CircularProgressIndicator()),
-                  if (!_isWeatherDataLoading && _weather != null)
-                    Text(
-                      "${_weather!.cityName}",
-                      style: myTextStyle,
-                    ),
-                  const SizedBox(width: 10.0),
-
-                  if (!_isWeatherDataLoading && _weather != null)
-                    MapString.mapStringToIcon(
-                    context,
-                    '${_weather?.currently}',
-                    30,
-                  ),
-                  const SizedBox(width: 10.0),
-                  if (_weather != null)
-                    Text(
-                      "${_weather!.temp.round()} °C",
-                      style: const TextStyle(
-                        color: ColorPalette.secondaryColor,
-                        fontSize: 25.0,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (_isWeatherDataLoading)
+                      Center(child: CircularProgressIndicator()),
+                    if (!_isWeatherDataLoading && _weather != null)
+                      Text(
+                        "${_weather!.cityName}",
+                        style: myTextStyle,
                       ),
-                    ),
-                ],
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              const CustomGrid(),
-              Center(
-                  child: RoundedButton(
-                onPress: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CreateCustomTrip()),
-                  );
-                },
-                name: 'Create Trip',
-                textColor: Colors.white,
-                color: ColorPalette.secondaryColor,
-                width: 200,
-              )),
-              // HeadingText(
-              //     text: "Destinations",
-              //     style: const TextStyle(fontSize: 30, color: Colors.black)),
-              // Container(
-              //   height: 350,
-              //   child: GridView.count(
-              //     scrollDirection: Axis.vertical,
-              //     crossAxisSpacing: 15.0,
-              //     mainAxisSpacing: 15.0,
-              //     shrinkWrap: true,
-              //     crossAxisCount: 2,
-              //     children: List.generate(
-              //       destinations.length,
-              //         (index) {
-              //         return Card(
-              //           child: Column(
-              //             children: [
-              //               Expanded(
-              //                 child: Image.network(
-              //                   destinations[index]['picture']!,
-              //                   height: 150,
-              //                   width: double.infinity,
-              //                   fit: BoxFit.cover,
-              //                 ),
-              //               ),
-              //               Text(
-              //                 destinations[index]['name']!,
-              //                 style: Theme.of(context).textTheme.headline4,
-              //               ),
-              //             ],
-              //           ),
-              //         );
-              //         }
-              //     ),
-              //   ),
-              // ),
+                    const SizedBox(width: 10.0),
 
-            ],
+                    if (!_isWeatherDataLoading && _weather != null)
+                      MapString.mapStringToIcon(
+                      context,
+                      '${_weather?.currently}',
+                      30,
+                    ),
+                    const SizedBox(width: 10.0),
+                    if (_weather != null)
+                      Text(
+                        "${_weather!.temp.round()} °C",
+                        style: const TextStyle(
+                          color: ColorPalette.secondaryColor,
+                          fontSize: 25.0,
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                const CustomGrid(),
+                Center(
+                    child: RoundedButton(
+                  onPress: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CreateCustomTrip()),
+                    );
+                  },
+                  name: 'Create Trip',
+                  textColor: Colors.white,
+                  color: ColorPalette.secondaryColor,
+                  width: 200,
+                )),
+                // HeadingText(
+                //     text: "Destinations",
+                //     style: const TextStyle(fontSize: 30, color: Colors.black)),
+                // Container(
+                //   height: 350,
+                //   child: GridView.count(
+                //     scrollDirection: Axis.vertical,
+                //     crossAxisSpacing: 15.0,
+                //     mainAxisSpacing: 15.0,
+                //     shrinkWrap: true,
+                //     crossAxisCount: 2,
+                //     children: List.generate(
+                //       destinations.length,
+                //         (index) {
+                //         return Card(
+                //           child: Column(
+                //             children: [
+                //               Expanded(
+                //                 child: Image.network(
+                //                   destinations[index]['picture']!,
+                //                   height: 150,
+                //                   width: double.infinity,
+                //                   fit: BoxFit.cover,
+                //                 ),
+                //               ),
+                //               Text(
+                //                 destinations[index]['name']!,
+                //                 style: Theme.of(context).textTheme.headline4,
+                //               ),
+                //             ],
+                //           ),
+                //         );
+                //         }
+                //     ),
+                //   ),
+                // ),
+
+              ],
+            ),
           ),
         ),
       ),

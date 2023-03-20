@@ -50,8 +50,9 @@ class _MyAccountState extends State<MyAccount> {
                 ],
               ),
               if (user != null) ...[
-                const SizedBox(height: 20),
-                Text('Logged in as ${user.email!}', style: const TextStyle(fontSize: 16.0,)),
+                const SizedBox(height: 15),
+                Text('Name: ${user.displayName!}',style: const TextStyle(fontSize: 16.0,)),
+                Text('Logged in as: ${user.email!}', style: const TextStyle(fontSize: 16.0,)),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: 200,

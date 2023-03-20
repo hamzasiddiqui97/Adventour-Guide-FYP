@@ -56,165 +56,168 @@ class _SignInState extends State<SignIn> {
 
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(30),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 160,
-                  width: 160,
-                  child: Lottie.asset(
-                      'assets/splash_screen_animation/login-hello.json'),
-                ),
-                const Text(
-                  'Login',
-                  style: TextStyle(fontSize: 30),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: emailController,
-                  cursorColor: Colors.black,
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    errorText: _emailError,
-                    prefixIcon: const Icon(Icons.email),
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(30),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 160,
+                    width: 160,
+                    child: Lottie.asset(
+                        'assets/splash_screen_animation/login-hello.json'),
                   ),
-                  onChanged: (value) {
-                    validateInputs();
-                  },
-                  autofillHints: const [AutofillHints.email],
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                TextFormField(
-                  controller: passwordController,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    errorText: _passwordError,
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                          _isObscure ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
-                      },
+                  const Text(
+                    'Login',
+                    style: TextStyle(fontSize: 30),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: emailController,
+                    cursorColor: Colors.black,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      errorText: _emailError,
+                      prefixIcon: const Icon(Icons.email),
+                    ),
+                    onChanged: (value) {
+                      validateInputs();
+                    },
+                    autofillHints: const [AutofillHints.email],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  TextFormField(
+                    controller: passwordController,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      errorText: _passwordError,
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                            _isObscure ? Icons.visibility_off : Icons.visibility),
+                        onPressed: () {
+                          setState(() {
+                            _isObscure = !_isObscure;
+                          });
+                        },
+                      ),
+                    ),
+                    obscureText: _isObscure,
+                    onChanged: (value) {
+                      validateInputs();
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            fontSize: 16,
+                            decoration: TextDecoration.underline,
+                            color: ColorPalette.secondaryColor,
+                          ),
+                        ),
+                        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ForgotPasswordPage()))),
+                  ),
+
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     validateInputs();
+                  //     if (_formKey.currentState!.validate()) {
+                  //       signIn();
+                  //     }
+                  //   },
+                  //   style: ButtonStyle(
+                  //     backgroundColor: MaterialStateProperty.all<Color>(
+                  //         ColorPalette.secondaryColor),
+                  //     foregroundColor: MaterialStateProperty.all<Color>(
+                  //         ColorPalette.primaryColor),
+                  //   ),
+                  //   child: const Text('Sign In'),
+                  // ),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      validateInputs();
+                      if (_formKey.currentState!.validate()) {
+                        signIn();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorPalette.secondaryColor,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 40),
+                    ),
+                    child: const Text('Sign In'),
+                  ),
+
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
+                      text: 'No Account?  ',
+                      children: [
+                        TextSpan(
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = widget.onClickSignUp,
+                          text: 'Sign Up',
+                          style: const TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: ColorPalette.secondaryColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  obscureText: _isObscure,
-                  onChanged: (value) {
-                    validateInputs();
-                  },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                      child: const Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          fontSize: 16,
-                          decoration: TextDecoration.underline,
-                          color: ColorPalette.secondaryColor,
-                        ),
-                      ),
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ForgotPasswordPage()))),
-                ),
-
-                const SizedBox(
-                  height: 20,
-                ),
-
-                // ElevatedButton(
-                //   onPressed: () {
-                //     validateInputs();
-                //     if (_formKey.currentState!.validate()) {
-                //       signIn();
-                //     }
-                //   },
-                //   style: ButtonStyle(
-                //     backgroundColor: MaterialStateProperty.all<Color>(
-                //         ColorPalette.secondaryColor),
-                //     foregroundColor: MaterialStateProperty.all<Color>(
-                //         ColorPalette.primaryColor),
-                //   ),
-                //   child: const Text('Sign In'),
-                // ),
-
-                ElevatedButton(
-                  onPressed: () {
-                    validateInputs();
-                    if (_formKey.currentState!.validate()) {
-                      signIn();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.secondaryColor,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 40),
+                  const SizedBox(
+                    height: 20,
                   ),
-                  child: const Text('Sign In'),
-                ),
-
-                const SizedBox(
-                  height: 10,
-                ),
-                RichText(
-                  text: TextSpan(
-                    style: const TextStyle(color: Colors.black, fontSize: 16),
-                    text: 'No Account?  ',
-                    children: [
-                      TextSpan(
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = widget.onClickSignUp,
-                        text: 'Sign Up',
-                        style: const TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: ColorPalette.secondaryColor,
-                        ),
-                      ),
-                    ],
+                  const Divider(
+                    thickness: 1.0,
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Divider(
-                  thickness: 1.0,
-                ),
-                const Text('OR'),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    signInWithGoogle();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.secondaryColor,
-                    foregroundColor: ColorPalette.primaryColor,
-                    minimumSize: const Size(double.infinity, 40),
+                  const Text('OR'),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      signInWithGoogle();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorPalette.secondaryColor,
+                      foregroundColor: ColorPalette.primaryColor,
+                      minimumSize: const Size(double.infinity, 40),
+                    ),
+                    icon: Image.asset(
+                      'assets/images/google_logo.png',
+                      width: 24,
+                      height: 24,
+                    ),
+                    label: const Text('Sign In with Google'),
                   ),
-                  icon: Image.asset(
-                    'assets/images/google_logo.png',
-                    width: 24,
-                    height: 24,
-                  ),
-                  label: const Text('Sign In with Google'),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -250,6 +253,7 @@ class _SignInState extends State<SignIn> {
             builder: (context) => const NavigationPage(),
           ),
         );
+
       } else {
         showDialog(
           context: context,
