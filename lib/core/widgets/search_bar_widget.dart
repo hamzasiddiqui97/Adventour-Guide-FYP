@@ -19,6 +19,7 @@ class SearchBar extends StatelessWidget {
     this.width,
     this.suffixIcon,
     this.controller,
+
   });
 
   @override
@@ -37,6 +38,7 @@ class SearchBar extends StatelessWidget {
         onTap: onPress,
         // onChanged: (){},
         decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorPalette.secondaryColor)),
           suffixIcon: suffixIcon,
           prefixIcon: Icon(
             Icons.search,
