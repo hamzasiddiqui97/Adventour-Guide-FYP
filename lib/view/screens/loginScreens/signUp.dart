@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:lottie/lottie.dart';
 
@@ -58,137 +57,140 @@ class _SignUpState extends State<SignUp> {
 
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(30),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 160,
-                  width: 160,
-                  child: Lottie.asset(
-                      'assets/splash_screen_animation/login-hello.json'),
-                ),
-                const Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 30),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: emailController,
-                  cursorColor: Colors.black,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    errorText: _emailError,
-                    prefixIcon: const Icon(Icons.email),
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(30),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 160,
+                    width: 160,
+                    child: Lottie.asset(
+                        'assets/splash_screen_animation/login-hello.json'),
                   ),
-                  onChanged: (value) {
-                    validateInputs();
-                  },
-                  autofillHints: const [AutofillHints.email],
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                TextFormField(
-                  controller: passwordController,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    errorText: _passwordError,
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                          _isObscure ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
-                      },
+                  const Text(
+                    'Sign Up',
+                    style: TextStyle(fontSize: 30),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: emailController,
+                    cursorColor: Colors.black,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      errorText: _emailError,
+                      prefixIcon: const Icon(Icons.email),
                     ),
+                    onChanged: (value) {
+                      validateInputs();
+                    },
+                    autofillHints: const [AutofillHints.email],
                   ),
-                  obscureText: _isObscure,
-                  onChanged: (value) {
-                    validateInputs();
-                  },
-                ),
-
-                const SizedBox(
-                  height: 20,
-                ),
-
-                TextFormField(
-                  controller: confirmPasswordController,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    errorText: _confirmPasswordError,
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                          _isConfirmObscure ? Icons.visibility_off : Icons
-                              .visibility),
-                      onPressed: () {
-                        setState(() {
-                          _isConfirmObscure = !_isConfirmObscure;
-                        });
-                      },
-                    ),
+                  const SizedBox(
+                    height: 12,
                   ),
-                  obscureText: _isConfirmObscure,
-                  onChanged: (value) {
-                    validateInputs();
-                  },
-                ),
-
-                const SizedBox(
-                  height: 20,
-                ),
-
-                ElevatedButton(
-                  onPressed: signUp,
-
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.secondaryColor,
-                    foregroundColor: Colors.white,
-                    minimumSize: Size(double.infinity, 40),
-                  ),
-                  // style: ButtonStyle(
-                  //   backgroundColor: MaterialStateProperty.all<Color>(
-                  //       ColorPalette.secondaryColor),
-                  //   foregroundColor: MaterialStateProperty.all<Color>(
-                  //       ColorPalette.primaryColor),
-                  // ),
-                  child: const Text('Sign Up'),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                RichText(
-                  text: TextSpan(
-                    style: TextStyle(color: Colors.black, fontSize: 16),
-                    text: 'Already have an account?  ',
-                    children: [
-                      TextSpan(
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = widget.onClickSignIn,
-                        text: 'Log In',
-                        style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: ColorPalette.secondaryColor,
-                        ),
+                  TextFormField(
+                    controller: passwordController,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      errorText: _passwordError,
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                            _isObscure ? Icons.visibility_off : Icons.visibility),
+                        onPressed: () {
+                          setState(() {
+                            _isObscure = !_isObscure;
+                          });
+                        },
                       ),
-                    ],
+                    ),
+                    obscureText: _isObscure,
+                    onChanged: (value) {
+                      validateInputs();
+                    },
                   ),
-                ),
-              ],
+
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  TextFormField(
+                    controller: confirmPasswordController,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Password',
+                      errorText: _confirmPasswordError,
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                            _isConfirmObscure ? Icons.visibility_off : Icons
+                                .visibility),
+                        onPressed: () {
+                          setState(() {
+                            _isConfirmObscure = !_isConfirmObscure;
+                          });
+                        },
+                      ),
+                    ),
+                    obscureText: _isConfirmObscure,
+                    onChanged: (value) {
+                      validateInputs();
+                    },
+                  ),
+
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  ElevatedButton(
+                    onPressed: signUp,
+
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorPalette.secondaryColor,
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(double.infinity, 40),
+                    ),
+                    // style: ButtonStyle(
+                    //   backgroundColor: MaterialStateProperty.all<Color>(
+                    //       ColorPalette.secondaryColor),
+                    //   foregroundColor: MaterialStateProperty.all<Color>(
+                    //       ColorPalette.primaryColor),
+                    // ),
+                    child: const Text('Sign Up'),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      style: TextStyle(color: Colors.black, fontSize: 16),
+                      text: 'Already have an account?  ',
+                      children: [
+                        TextSpan(
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = widget.onClickSignIn,
+                          text: 'Log In',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: ColorPalette.secondaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

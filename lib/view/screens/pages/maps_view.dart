@@ -53,11 +53,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   final Mode _mode = Mode.overlay;
   late GoogleMapController googleMapController;
 
-
-
   bool showMultipleSearchBars = false;
   final List multipleDestinations = [];
-
 
   @override
   void dispose() {
@@ -113,7 +110,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       double destinationLng = destinationLocation.longitude;
 
       // Get the route between the previous destination (or the source) and the current destination
-      LatLng originLocation = (i == 0) ? source : destinations[i-1].location;
+      LatLng originLocation = (i == 0) ? source : destinations[i - 1].location;
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         googleApiKey,
         PointLatLng(originLocation.latitude, originLocation.longitude),
@@ -141,13 +138,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       _polylines.add(polyline);
     });
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
-    getTouristAttractionsAlongPolyline(
-        polylineCoordinates, places, _placeType);
+    getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
   }
 
   ///////////////////////////////NEW POLYLINE CODE FOR MULTIPLE DESTINATION ///////////////// ENDED
-
-
 
   //////////////////////////// WORKING CODE ///////////////////////////////
   // void setPolylines() async {
@@ -177,9 +171,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   // }
   // }
 
-
   //////////////////////////// WORKING CODE ENDED ///////////////////////////////
-
 
   void updateMapWithSelectedPlaceType(String placeType) {
     // Clear previous markers
@@ -219,7 +211,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       _markers.add(Marker(
         markerId: MarkerId(place.placeId),
         position:
-        LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+            LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
       ));
@@ -339,6 +331,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     homeScaffoldKey.currentState!
         .showSnackBar(SnackBar(content: Text(response.errorMessage!)));
   }
+
   //////////////// new CODE //////////////////////////////
   List<Destination> destinations = [];
 
@@ -371,13 +364,12 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     ));
     setPolylines();
     setState(() {});
-    googleMapController
-        .animateCamera(CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
+    googleMapController.animateCamera(
+        CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       key: homeScaffoldKey,
       body: Stack(
@@ -444,186 +436,188 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               ),
             ),
 
-
           if (showSearchField)
-          Positioned(
-          top: 0,
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(40),
-                bottomRight: Radius.circular(40),
-              ),
-            ),
-            height: MediaQuery.of(context).size.height * 0.25,
-            width: MediaQuery.of(context).size.width,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-
-                  SizedBox(height: 20,),
-                  // search field and add more field button
-                  if (showSearchField)
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SearchBar(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showSearchField = false;
-                                  });
-                                },
-                                icon: const Icon(Icons.arrow_upward),
-                              ),
-
-                              controller: sourceController,
-                              hintText: 'Search Source',
-                              onPress: () {
-                                Timer(const Duration(milliseconds: 500), () {
-                                  _handlePressButtonSource();
-                                });
-                              }),
-                          const SizedBox(width: 10,),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                showMultipleSearchBars = true;
-                                multipleDestinations.add(destinationController.text);
-                                destinationController.text = '';
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
-                              ),
-                              child: const Icon(
-                                Icons.add,
-                                size: 40,
-                              ),
-                            ),
-                          ),
-                        ]
-                    ),
-
-                  ///// MULTIPLE SEARCH BAR FIELD /////
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      children: [
-                        if (showMultipleSearchBars)
-                          Column(
-                            children: List.generate(
-                              multipleDestinations.length,
-                                  (index) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: SearchBar(
-                                        width: double.infinity,
-                                        controller: TextEditingController(
-                                          text: multipleDestinations[index],
-                                        ),
-                                        hintText: 'Search Destination',
-                                        onPress: () {
-                                          _handlePressButtonDestination();
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          multipleDestinations.removeAt(index);
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20),
-                                          color: Colors.white,
-                                        ),
-                                        child: const Icon(
-                                          Icons.remove,
-                                          size: 40,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  // list of places types
-                  if (showSearchField)
-                    Container(
-                      decoration: const BoxDecoration(color: Colors.transparent),
-                      height: MediaQuery.of(context).size.height / 13,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _placeTypes.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          var textPainter = TextPainter(
-                            text: TextSpan(
-                                text: _placeTypes[index],
-                                style: Theme.of(context).textTheme.button),
-                            textDirection: TextDirection.ltr,
-                          );
-                          textPainter.layout();
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: textPainter.width + 40,
-                              child: InkWell(
-                                splashColor: Colors.white,
+            Positioned(
+              top: 0,
+              child: Container(
+                color: ColorPalette.primaryColor,
+                height: MediaQuery.of(context).size.height * 0.27,
+                width: MediaQuery.of(context).size.width,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      // search field and add more field button
+                      if (showSearchField)
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SearchBar(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.81,
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        showSearchField = false;
+                                      });
+                                    },
+                                    icon: const Icon(Icons.arrow_upward),
+                                  ),
+                                  controller: sourceController,
+                                  hintText: 'Search Source',
+                                  onPress: () {
+                                    Timer(const Duration(milliseconds: 500),
+                                        () {
+                                      _handlePressButtonSource();
+                                    });
+                                  }),
+                              GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    _placeType = _placeTypes[index];
+                                    showMultipleSearchBars = true;
+                                    multipleDestinations
+                                        .add(destinationController.text);
+                                    destinationController.text = '';
                                   });
-                                  updateMapWithSelectedPlaceType(_placeType);
                                 },
-                                child: FloatingActionButton(
-                                  backgroundColor: _selectedIndex == index
-                                      ? ColorPalette.secondaryColor
-                                      : Colors.white,
-                                  foregroundColor: _selectedIndex == index
-                                      ? ColorPalette.primaryColor
-                                      : Colors.black,
-                                  shape: RoundedRectangleBorder(
+                                child: Container(
+                                  decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
+                                    color: Colors.white,
                                   ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedIndex = index;
-                                      _placeType = _placeTypes[index];
-                                    });
-                                    updateMapWithSelectedPlaceType(_placeType);
-                                  },
-                                  child: Text(_placeTypes[index]),
+                                  child: const Icon(
+                                    Icons.add,
+                                    size: 40,
+                                      color: ColorPalette.secondaryColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
+                            ]),
+
+                      ///// MULTIPLE SEARCH BAR FIELD /////
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        child: Column(
+                          children: [
+                            if (showMultipleSearchBars)
+                              Column(
+                                children: List.generate(
+                                  multipleDestinations.length,
+                                  (index) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: SearchBar(
+                                            width: MediaQuery.of(context).size.width * 0.8,
+                                            controller: TextEditingController(
+                                              text: multipleDestinations[index],
+                                            ),
+                                            hintText: 'Search Destination',
+                                            onPress: () {
+                                              _handlePressButtonDestination();
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              multipleDestinations
+                                                  .removeAt(index);
+
+                                            });
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Colors.white,
+                                            ),
+                                            child: const Icon(
+                                              Icons.remove,
+                                              size: 38,
+                                              color: ColorPalette.secondaryColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
-
-
-                ],
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
+
+          // list of places types
+          if (showSearchField)
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.28,
+              right: 1,
+              left: 1,
+              child: Container(
+                decoration: const BoxDecoration(color: Colors.transparent),
+                height: MediaQuery.of(context).size.height / 13,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _placeTypes.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var textPainter = TextPainter(
+                      text: TextSpan(
+                          text: _placeTypes[index],
+                          style: Theme.of(context).textTheme.button),
+                      textDirection: TextDirection.ltr,
+                    );
+                    textPainter.layout();
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        width: textPainter.width + 40,
+                        child: InkWell(
+                          splashColor: Colors.white,
+                          onTap: () {
+                            setState(() {
+                              _placeType = _placeTypes[index];
+                            });
+                            updateMapWithSelectedPlaceType(_placeType);
+                          },
+                          child: FloatingActionButton(
+                            backgroundColor: _selectedIndex == index
+                                ? ColorPalette.secondaryColor
+                                : Colors.white,
+                            foregroundColor: _selectedIndex == index
+                                ? ColorPalette.primaryColor
+                                : Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _selectedIndex = index;
+                                _placeType = _placeTypes[index];
+                              });
+                              updateMapWithSelectedPlaceType(_placeType);
+                            },
+                            child: Text(_placeTypes[index]),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
 
-
-
-
+          // current location
           if (!showSearchField)
             Positioned(
               right: 30,
