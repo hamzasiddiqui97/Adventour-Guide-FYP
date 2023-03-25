@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:lottie/lottie.dart';
 
