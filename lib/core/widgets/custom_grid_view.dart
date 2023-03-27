@@ -14,10 +14,10 @@ class CustomGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Container(
-      color: Colors.white,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.grey.shade50),
       height: 250,
       child: Column(
         children: [

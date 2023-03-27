@@ -19,6 +19,7 @@ class _NewsScreenState extends State<NewsScreen> {
     News newsdata = News();
     await newsdata.getNews();
     articles = newsdata.datatobesavedin;
+    articles.shuffle(); // shuffle the list of articles
     setState(() {
       _loading = false;
     });
