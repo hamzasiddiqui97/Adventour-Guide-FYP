@@ -25,7 +25,6 @@ class _NewsScreenState extends State<NewsScreen> {
   }
 
 
-
   @override
   void initState() {
     super.initState();
@@ -49,25 +48,12 @@ class _NewsScreenState extends State<NewsScreen> {
           child: Container(
             color: Colors.white,
             child: Column(
-              children: <Widget>[
-                //   TextField(
-                // controller: _searchController,
-                // decoration: InputDecoration(
-                //   hintText: "Search news by destination",
-                //   border: InputBorder.none,
-                //   suffixIcon: IconButton(
-                //     icon: Icon(Icons.search),
-                //     onPressed: () {
-                //       getNews(_searchController.text);
-                //     },
-                //   ),
-                // ),
-                //   ),
+              children: [
                 Container(
                   child: ListView.builder(
                     itemCount:  articles.length,
                     physics: const ClampingScrollPhysics(),
-                    shrinkWrap: true, // add this otherwise an error
+                    shrinkWrap: true,
                     itemBuilder: (context, index) {
 
                       return NewsTemplate(
