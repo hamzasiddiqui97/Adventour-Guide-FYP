@@ -142,22 +142,6 @@ class _SignInState extends State<SignIn> {
                     height: 20,
                   ),
 
-                  // ElevatedButton(
-                  //   onPressed: () {
-                  //     validateInputs();
-                  //     if (_formKey.currentState!.validate()) {
-                  //       signIn();
-                  //     }
-                  //   },
-                  //   style: ButtonStyle(
-                  //     backgroundColor: MaterialStateProperty.all<Color>(
-                  //         ColorPalette.secondaryColor),
-                  //     foregroundColor: MaterialStateProperty.all<Color>(
-                  //         ColorPalette.primaryColor),
-                  //   ),
-                  //   child: const Text('Sign In'),
-                  // ),
-
                   ElevatedButton(
                     onPressed: () {
                       validateInputs();

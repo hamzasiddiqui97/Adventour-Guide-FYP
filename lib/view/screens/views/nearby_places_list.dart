@@ -1,14 +1,10 @@
 import 'dart:convert';
-// import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/NearbyResponse.dart';
-// import 'package:google_maps_basics/view/screens/pages/maps_view.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-
 import 'nearby_on_maps.dart';
 
 class NearByPlacesScreen extends StatefulWidget {
@@ -209,41 +205,109 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
   Widget nearbyPlacesWidget(Results results) {
     return SafeArea(
       child: Center(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-              border: Border.all(color: ColorPalette.secondaryColor),
-              borderRadius: BorderRadius.circular(10)),
+        child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: ColorPalette.secondaryColor),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Name: ${results.name!}"),
-              // Text("Location: ${results.geometry!.location!.lat} , ${results.geometry!.location!.lng}"),
-              Text("Rating: ${results.rating ?? "Not Available"}"),
-              Text(
-                  """Place Status: ${results.openingHours != null ? "Open" : "Closed"}"""),
-              Center(
+              if (results.photos != null && results.photos!.isNotEmpty)
+                SizedBox(
+                  height: 130,
+                  width: double.infinity,
+                  child: Image.network(
+                    "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${results.photos![0].photoReference}&key=$googleApiKey",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(
+                  results.name!,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.star,
+                      color: Colors.yellow,
+                      size: 16,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      results.rating?.toString() ?? "Not Available",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: results.rating != null
+                            ? Colors.black
+                            : Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
+                ),
+                child: Text(
+                  results.vicinity ?? "",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
+                ),
+                child: Text(
+                  results.openingHours != null ? "Open" : "Closed",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: results.openingHours != null
+                        ? Colors.green
+                        : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8),
                 child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            ColorPalette.secondaryColor)),
-                    onPressed: () {
-                      setState(() {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MapsViewScreen(
-                                      latitude: results.geometry!.location!.lat!,
-                                      longitude: results.geometry!.location!.lng!,
-                                      title: results.name!,
-                                    )
-                            )
-                        );
-                      });
-                    },
-                    child: const Text('Navigate',style: TextStyle(color: ColorPalette.primaryColor),)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.secondaryColor,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MapsViewScreen(
+                          latitude: results.geometry!.location!.lat!,
+                          longitude: results.geometry!.location!.lng!,
+                          title: results.name!,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Navigate',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
             ],
           ),

@@ -94,7 +94,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   late LatLng source;
 
   ///////////////////// NEW POLYLINE CODE FOR MULTIPLE DESTINATION //////////////////////
-
   void setPolylines() async {
     PolylinePoints polylinePoints = PolylinePoints();
     List<LatLng> polylineCoordinates = [];
@@ -128,7 +127,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     // Define the polyline options
     Polyline polyline = Polyline(
       polylineId: const PolylineId('poly'),
-      color: Colors.blue,
+      color: ColorPalette.secondaryColor,
       width: 3,
       points: polylineCoordinates,
     );
@@ -141,37 +140,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
   }
 
-  ///////////////////////////////NEW POLYLINE CODE FOR MULTIPLE DESTINATION ///////////////// ENDED
-
-  //////////////////////////// WORKING CODE ///////////////////////////////
-  // void setPolylines() async {
-  //   _polylines.clear();
-  //   polylineCoordinates.clear();
-  //
-  //   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-  //       googleApiKey,
-  //       PointLatLng(source.latitude, source.longitude),
-  //       PointLatLng(destination.latitude, destination.longitude));
-
-  //   if (result.status == 'OK') {
-  //     result.points.forEach((PointLatLng point) {
-  //       polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-  //     });
-  //
-  //     setState(() {
-  //       _polylines.add(Polyline(
-  //           width: 9,
-  //           polylineId: const PolylineId('polyLine'),
-  //           color: ColorPalette.secondaryColor,
-  //           points: polylineCoordinates));
-  //     });
-  //     final places = GoogleMapsPlaces(apiKey: googleApiKey);
-  //     getTouristAttractionsAlongPolyline(
-  //         polylineCoordinates, places, _placeType);
-  // }
-  // }
-
-  //////////////////////////// WORKING CODE ENDED ///////////////////////////////
 
   void updateMapWithSelectedPlaceType(String placeType) {
     // Clear previous markers
@@ -332,7 +300,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         .showSnackBar(SnackBar(content: Text(response.errorMessage!)));
   }
 
-  //////////////// new CODE //////////////////////////////
   List<Destination> destinations = [];
 
   Future<void> displayPredictionDestination(

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:google_maps_basics/widgets/sevenDayForecast.dart';
+import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 
 
 class CustomGrid extends StatelessWidget {
@@ -13,10 +14,10 @@ class CustomGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Container(
-      color: Colors.white,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.grey.shade50),
       height: 250,
       child: Column(
         children: [
@@ -81,7 +82,14 @@ class CustomGrid extends StatelessWidget {
                     Container(
                       color: Colors.white,
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // _currentLocation();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const NearByPlacesScreen()),
+                          );
+                        },
                         icon: const Icon(
                           Icons.restaurant, color: ColorPalette.secondaryColor,
                           size: 30,),),

@@ -1,10 +1,31 @@
-class ArticleModel{
+class NewsModel {
+  String? title;
+  String? description;
+  String? urlToImage;
+  String? url;
 
+  NewsModel({
+    this.title,
+    this.description,
+    this.urlToImage,
+    this.url,
+  });
 
-  String title;
-  String description;
-  String url;
-  String urlToImage;
+  factory NewsModel.fromRapidApiJson(Map<String, dynamic> json) {
+    return NewsModel(
+      title: json['title'],
+      urlToImage: json['urlToImage'],
+      description: json['description'],
+      url: json['url'],
+    );
+  }
 
-  ArticleModel({required this.title, required this.description, required this.url, required this.urlToImage});
+  factory NewsModel.fromNewsApiJson(Map<String, dynamic> json) {
+    return NewsModel(
+      title: json['title'],
+      urlToImage: json['urlToImage'],
+      description: json['description'],
+      url: json['url'],
+    );
+  }
 }

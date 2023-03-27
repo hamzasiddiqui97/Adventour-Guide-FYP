@@ -19,34 +19,31 @@ class _MapsViewScreenState extends State<MapsViewScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Container(
-        color: Colors.white,
-        child: SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: ColorPalette.secondaryColor,
-              foregroundColor: ColorPalette.primaryColor,
-              centerTitle: true,
-              title: const Text('Near You'),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: ColorPalette.secondaryColor,
+            foregroundColor: ColorPalette.primaryColor,
+            centerTitle: true,
+            title: const Text('Near You'),
+          ),
+          body: GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(widget.latitude, widget.longitude),
+              zoom: 15,
             ),
-            body: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(widget.latitude, widget.longitude),
-                zoom: 15,
-              ),
-              markers: {
-                Marker(
-                  markerId: const MarkerId("selected_place"),
-                  position: LatLng(widget.latitude, widget.longitude),
-                  infoWindow: InfoWindow(
-                    title: widget.title,
-                  ),
+            markers: {
+              Marker(
+                markerId: const MarkerId("selected_place"),
+                position: LatLng(widget.latitude, widget.longitude),
+                infoWindow: InfoWindow(
+                  title: widget.title,
                 ),
-              },
-              onMapCreated: (GoogleMapController controller) {
-                _mapController = controller;
-              },
-            ),
+              ),
+            },
+            onMapCreated: (GoogleMapController controller) {
+              _mapController = controller;
+            },
           ),
         ),
       ),
