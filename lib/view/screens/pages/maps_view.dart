@@ -122,6 +122,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
           polylineCoordinates.add(LatLng(point.latitude, point.longitude));
         });
       }
+      print(polylineCoordinates);
     }
 
     // Define the polyline options
@@ -138,6 +139,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     });
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
     getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
+
   }
 
 
@@ -174,6 +176,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       );
       touristAttractions.addAll(nearbySearch.results);
     }
+    print(touristAttractions);
     // print the names of the tourist attractions
     for (final place in touristAttractions) {
       _markers.add(Marker(
