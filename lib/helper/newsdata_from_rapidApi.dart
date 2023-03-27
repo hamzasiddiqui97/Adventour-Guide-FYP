@@ -15,7 +15,7 @@ class RapidNews {
       'country': 'pk',
       'language': 'en',
       'q': 'tourism',
-      'category': 'entertainment',
+      'category': 'tourism',
     });
 
     final response = await http.get(uri, headers: headers);
