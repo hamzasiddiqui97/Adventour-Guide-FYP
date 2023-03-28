@@ -59,6 +59,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   @override
   void dispose() {
     googleMapController.dispose();
+    sourceController.dispose();
+    destinationController.dispose();
     super.dispose();
   }
 
@@ -146,21 +148,37 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   void updateMapWithSelectedPlaceType(String placeType) {
     // Clear previous markers
     // _markers.clear();
-    // Get new markers based on selected place type
-    final places = GoogleMapsPlaces(apiKey: googleApiKey);
 
     if (_placesCache.containsKey(placeType)) {
       // Use cached results if available
-      getTouristAttractionsAlongPolyline(
-          polylineCoordinates, places, _placesCache[placeType].toString());
+      for (final place in _placesCache[placeType]!) {
+        _markers.add(Marker(
+          markerId: MarkerId(place.placeId),
+          position:
+          LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+          infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+        ));
+      }
     } else {
-      // Get new results and store them in the cache
+      // Get new markers based on selected place type
+      final places = GoogleMapsPlaces(apiKey: googleApiKey);
       getTouristAttractionsAlongPolyline(polylineCoordinates, places, placeType)
           .then((result) {
         _placesCache[placeType] = result;
+        for (final place in result) {
+          _markers.add(Marker(
+            markerId: MarkerId(place.placeId),
+            position: LatLng(
+                place.geometry!.location.lat, place.geometry!.location.lng),
+            infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
+            icon:
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          ));
+        }
+        setState(() {});
       });
     }
-    setState(() {});
   }
 
   Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(
@@ -171,7 +189,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     for (final point in polylineCoordinates) {
       final nearbySearch = await places.searchNearbyWithRadius(
         Location(lat: point.latitude, lng: point.longitude),
-        200,
+        100,
         type: placeType,
       );
       touristAttractions.addAll(nearbySearch.results);

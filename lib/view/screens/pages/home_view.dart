@@ -50,7 +50,9 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
     } else if (mounted) {
       throw Exception('Failed to load weather data');
     }
-    // print( 'weather: ${response.body}');
+    print( 'weather: ${response.body}');
+    print( '${_weather?.cityName}');
+    print( '${_weather?.temp}');
   }
 
   @override

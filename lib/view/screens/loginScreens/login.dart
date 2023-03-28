@@ -290,7 +290,7 @@ class _SignInState extends State<SignIn> {
         idToken: googleAuth?.idToken,
       );
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-      print(userCredential.user?.displayName);
+      print('Sign in success\n Username: ${userCredential.user?.displayName}');
     } catch (e) {
       if (e is PlatformException) {
         // Handle the exception here
