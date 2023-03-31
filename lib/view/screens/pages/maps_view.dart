@@ -12,9 +12,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
-import '../views/places_list_along_the_route.dart';
-
-
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key}) : super(key: key);
 
@@ -418,8 +415,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          // builder: (context) => const NearByPlacesScreen()),
-                          builder: (context) => const PlacesListAlongTheRoute()),
+                          builder: (context) => const NearByPlacesScreen()),
+                          // builder: (context) => const PlacesListAlongTheRoute()),
                     );
                   },
                   child: const Text(
