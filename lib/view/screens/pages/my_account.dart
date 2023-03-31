@@ -13,7 +13,7 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  final user = FirebaseAuth.instance.currentUser!;
+  // final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +51,8 @@ class _MyAccountState extends State<MyAccount> {
               ),
               if (user != null) ...[
                 const SizedBox(height: 15),
-                Text('Logged in as: ${user.displayName!}',style: const TextStyle(fontSize: 16.0,)),
-                Text('Email: ${user.email!}', style: const TextStyle(fontSize: 16.0,)),
+                Text('Logged in as: ${user.displayName}',style: const TextStyle(fontSize: 16.0,)),
+                Text('Email: ${user.email}', style: const TextStyle(fontSize: 16.0,)),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: 200,

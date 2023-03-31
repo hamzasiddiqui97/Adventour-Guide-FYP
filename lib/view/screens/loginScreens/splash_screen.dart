@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {

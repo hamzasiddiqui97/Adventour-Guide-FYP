@@ -10,8 +10,8 @@ import '../widgets/locationError.dart';
 import '../widgets/mainWeather.dart';
 import '../widgets/requestError.dart';
 import '../widgets/searchBar.dart';
-import '../widgets/weatherDetail.dart';
 import '../widgets/sevenDayForecast.dart';
+import '../widgets/weatherDetail.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

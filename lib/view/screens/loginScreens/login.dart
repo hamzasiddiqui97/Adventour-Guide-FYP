@@ -274,11 +274,11 @@ class _SignInState extends State<SignIn> {
       }
       // Dismiss the loading widget
       Navigator.of(context).pop();
-      Utils.showSnackBar(errorMessage);
+      Utils.showSnackBar(errorMessage,false);
     } catch (e) {
       // Dismiss the loading widget
       Navigator.of(context).pop();
-      Utils.showSnackBar('Sign in failed. Please try again later.');
+      Utils.showSnackBar('Sign in failed. Please try again later.',false);
     }
   }
   signInWithGoogle() async {
