@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/search_bar_widget.dart';
@@ -12,6 +10,7 @@ import 'package:google_maps_basics/model/MultipleDestinations.dart';
 import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:google_api_headers/google_api_headers.dart';
 
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key}) : super(key: key);
@@ -24,8 +23,10 @@ const kGoogleApiKey = googleApiKey;
 final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
-  String _placeType = "gas_station";
-  int _selectedIndex = 0;
+  // String _placeType = "gas_station";
+  // int _selectedIndex = 0;
+
+  final List<String> _selectedPlaceTypes = [];
 
   final List<String> _placeTypes = [
     "All",
@@ -60,8 +61,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   @override
   void dispose() {
     googleMapController.dispose();
-    sourceController.dispose();
-    destinationController.dispose();
     super.dispose();
   }
 
@@ -125,7 +124,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
           polylineCoordinates.add(LatLng(point.latitude, point.longitude));
         });
       }
-      print(polylineCoordinates);
     }
 
     // Define the polyline options
@@ -141,75 +139,102 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       _polylines.add(polyline);
     });
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
-    getTouristAttractionsAlongPolyline(polylineCoordinates, places, _placeType);
-
+    getTouristAttractionsAlongPolyline(polylineCoordinates, places, _selectedPlaceTypes);
   }
 
 
-  void updateMapWithSelectedPlaceType(String placeType) {
+  void updateMapWithSelectedPlaceType(List<String> _selectedPlaceTypes) {
     // Clear previous markers
-    // _markers.clear();
+    _markers.clear();
 
-    if (_placesCache.containsKey(placeType)) {
-      // Use cached results if available
-      for (final place in _placesCache[placeType]!) {
-        _markers.add(Marker(
-          markerId: MarkerId(place.placeId),
-          position:
-          LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
-          infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-        ));
+    // Get new markers based on selected place types
+    final places = GoogleMapsPlaces(apiKey: googleApiKey);
+
+    for (String placeType in _selectedPlaceTypes) {
+      if (_placesCache.containsKey(placeType)) {
+        // Use cached results if available
+        getTouristAttractionsAlongPolyline(
+            polylineCoordinates, places, [placeType]);
+      } else {
+        // Get new results and store them in the cache
+        getTouristAttractionsAlongPolyline(polylineCoordinates, places, [placeType])
+            .then((result) {
+          _placesCache[placeType] = result;
+        });
       }
-    } else {
-      // Get new markers based on selected place type
-      final places = GoogleMapsPlaces(apiKey: googleApiKey);
-      getTouristAttractionsAlongPolyline(polylineCoordinates, places, placeType)
-          .then((result) {
-        _placesCache[placeType] = result;
-        for (final place in result) {
-          _markers.add(Marker(
-            markerId: MarkerId(place.placeId),
-            position: LatLng(
-                place.geometry!.location.lat, place.geometry!.location.lng),
-            infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-            icon:
-            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-          ));
-        }
-        setState(() {});
-      });
     }
+
+    print('placesCache length: ${_placesCache.length}');
+    print('placesCache length: ${_placesCache.entries}');
+    setState(() {});
   }
 
   Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(
       List<LatLng> polylineCoordinates,
       GoogleMapsPlaces places,
-      String placeType) async {
+      List<String> _selectedPlaceTypes) async {
     final touristAttractions = <PlacesSearchResult>[];
+
     for (final point in polylineCoordinates) {
-      final nearbySearch = await places.searchNearbyWithRadius(
-        Location(lat: point.latitude, lng: point.longitude),
-        100,
-        type: placeType,
-      );
-      touristAttractions.addAll(nearbySearch.results);
+      for (final placeType in _selectedPlaceTypes) {
+        final nearbySearch = await places.searchNearbyWithRadius(
+          Location(lat: point.latitude, lng: point.longitude),
+          100,
+          type: placeType,
+        );
+        touristAttractions.addAll(nearbySearch.results);
+      }
     }
-    print(touristAttractions);
+
     // print the names of the tourist attractions
     for (final place in touristAttractions) {
+      double hue = getMarkerHueForPlaceType(place.types[0]); // Get hue based on the first place type
       _markers.add(Marker(
         markerId: MarkerId(place.placeId),
         position:
-            LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+        LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+        icon: BitmapDescriptor.defaultMarkerWithHue(hue),
       ));
       setState(() {});
     }
 
+
     return touristAttractions;
   }
+
+  double getMarkerHueForPlaceType(String placeType) {
+    switch (placeType) {
+      case "tourist_attraction":
+        return BitmapDescriptor.hueMagenta;
+      case "gas_station":
+        return BitmapDescriptor.hueBlue;
+      case "restaurant":
+        return BitmapDescriptor.hueGreen;
+      case "cafe":
+        return BitmapDescriptor.hueYellow;
+      case "airport":
+        return BitmapDescriptor.hueMagenta;
+      case "museum":
+        return BitmapDescriptor.hueMagenta;
+      case "stadium":
+        return BitmapDescriptor.hueMagenta;
+      case "hospital":
+        return BitmapDescriptor.hueAzure;
+      case "police":
+        return BitmapDescriptor.hueAzure;
+      case "atm":
+        return BitmapDescriptor.hueAzure;
+      case "bank":
+        return BitmapDescriptor.hueAzure;
+      case "car_rental":
+        return BitmapDescriptor.hueMagenta;
+    // Add more cases for other place types with their respective colors
+      default:
+        return BitmapDescriptor.hueOrange;
+    }
+  }
+
 
   // current location started
   loadData() async {
@@ -391,6 +416,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => const NearByPlacesScreen()),
+                          // builder: (context) => const PlacesListAlongTheRoute()),
                     );
                   },
                   child: const Text(
@@ -560,49 +586,54 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   scrollDirection: Axis.horizontal,
                   itemCount: _placeTypes.length,
                   itemBuilder: (BuildContext context, int index) {
-                    var textPainter = TextPainter(
-                      text: TextSpan(
-                          text: _placeTypes[index],
-                          style: Theme.of(context).textTheme.button),
-                      textDirection: TextDirection.ltr,
-                    );
-                    textPainter.layout();
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: textPainter.width + 40,
-                        child: InkWell(
-                          splashColor: Colors.white,
-                          onTap: () {
-                            setState(() {
-                              _placeType = _placeTypes[index];
-                            });
-                            updateMapWithSelectedPlaceType(_placeType);
-                          },
-                          child: FloatingActionButton(
-                            backgroundColor: _selectedIndex == index
-                                ? ColorPalette.secondaryColor
-                                : Colors.white,
-                            foregroundColor: _selectedIndex == index
-                                ? ColorPalette.primaryColor
-                                : Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _selectedIndex = index;
-                                _placeType = _placeTypes[index];
-                              });
-                              updateMapWithSelectedPlaceType(_placeType);
-                            },
-                            child: Text(_placeTypes[index]),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: _selectedPlaceTypes.contains(_placeTypes[index])
+                              ? ColorPalette.primaryColor
+                              : Colors.black, backgroundColor: _selectedPlaceTypes.contains(_placeTypes[index])
+                              ? ColorPalette.secondaryColor
+                              : Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (_selectedPlaceTypes.contains(_placeTypes[index])) {
+                              _selectedPlaceTypes.remove(_placeTypes[index]);
+                            } else {
+                              _selectedPlaceTypes.add(_placeTypes[index]);
+                            }
+                            updateMapWithSelectedPlaceType(_selectedPlaceTypes);
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: _selectedPlaceTypes.contains(_placeTypes[index]),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  if (_selectedPlaceTypes.contains(_placeTypes[index])) {
+                                    _selectedPlaceTypes.remove(_placeTypes[index]);
+                                  } else {
+                                    _selectedPlaceTypes.add(_placeTypes[index]);
+                                  }
+                                  updateMapWithSelectedPlaceType(_selectedPlaceTypes);
+                                });
+                              },
+                            ),
+                            Text(_placeTypes[index]),
+                          ],
                         ),
                       ),
                     );
                   },
                 ),
+
+
+
               ),
             ),
 

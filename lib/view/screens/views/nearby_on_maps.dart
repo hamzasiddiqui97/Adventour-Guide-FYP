@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/services.dart';
+
+
 class MapsViewScreen extends StatefulWidget {
   final double latitude;
   final double longitude;
@@ -15,10 +18,20 @@ class MapsViewScreen extends StatefulWidget {
 class _MapsViewScreenState extends State<MapsViewScreen> {
   late GoogleMapController _mapController;
 
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+
+  }
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
@@ -30,7 +43,7 @@ class _MapsViewScreenState extends State<MapsViewScreen> {
           body: GoogleMap(
             initialCameraPosition: CameraPosition(
               target: LatLng(widget.latitude, widget.longitude),
-              zoom: 15,
+              zoom: 18,
             ),
             markers: {
               Marker(
@@ -48,10 +61,5 @@ class _MapsViewScreenState extends State<MapsViewScreen> {
         ),
       ),
     );
-  }
-
-  Future<bool> _onWillPop() async {
-    _mapController.dispose();
-    return true;
   }
 }
