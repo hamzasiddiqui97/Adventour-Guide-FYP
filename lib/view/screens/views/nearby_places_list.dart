@@ -23,6 +23,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
   String apiKey = googleApiKey;
   String radius = "5";
   List<String> placeType = ['All'];
+  bool loading = false;
 
   double latitude = 24.86567779487795;
   double longitude = 67.02628335561303;
@@ -130,12 +131,10 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                             }
                           },
 
-
                           chipDisplay: MultiSelectChipDisplay(
-
                             onTap: (value) {
                               setState(() {
-                                // placeType.remove(value);
+                                placeType.remove(value);
                               });
                             },
                           ),
@@ -149,9 +148,15 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                           ColorPalette.secondaryColor)),
-                  onPressed: () {
-                    updateLocation();
-                    getNearbyPlaces();
+                  onPressed: () async {
+                    setState(() {
+                      loading = true;
+                    });
+                    await updateLocation();
+                    await getNearbyPlaces();
+                    setState(() {
+                      loading = false;
+                    });
                   },
                   child: const Text(
                     "Nearby Places",
@@ -160,8 +165,9 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                     ),
                   ),
                 ),
-                if (nearbyPlacesResponse.results == null ||
-                    nearbyPlacesResponse.results!.isEmpty)
+                if (loading)
+                  const Center(child: CircularProgressIndicator(color: ColorPalette.secondaryColor),),
+                if (!loading && (nearbyPlacesResponse.results == null || nearbyPlacesResponse.results!.isEmpty))
                   const Center(child: Text("No results found")),
                 if (nearbyPlacesResponse.results != null)
                   for (int i = 0; i < nearbyPlacesResponse.results!.length; i++)
