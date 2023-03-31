@@ -294,7 +294,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: BorderSide(color: ColorPalette.secondaryColor),
+            side: const BorderSide(color: ColorPalette.secondaryColor),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,7 +389,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                     );
                   },
                   child: const Text(
-                    'Navigate',
+                    'Show on Map',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
