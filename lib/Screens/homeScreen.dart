@@ -10,8 +10,8 @@ import '../widgets/locationError.dart';
 import '../widgets/mainWeather.dart';
 import '../widgets/requestError.dart';
 import '../widgets/searchBar.dart';
-import '../widgets/weatherDetail.dart';
 import '../widgets/sevenDayForecast.dart';
+import '../widgets/weatherDetail.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     : Expanded(
                         child: PageView(
-                          physics: BouncingScrollPhysics(),
+                          physics: const BouncingScrollPhysics(),
                           controller: _pageController,
                           children: [
                             // First Page of the Page View
@@ -99,17 +99,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   FadeIn(
                                     curve: Curves.easeIn,
-                                    duration: Duration(milliseconds: 250),
+                                    duration: const Duration(milliseconds: 250),
                                     child: MainWeather(),
                                   ),
                                   FadeIn(
                                     curve: Curves.easeIn,
-                                    duration: Duration(milliseconds: 500),
+                                    duration: const Duration(milliseconds: 500),
                                     child: WeatherInfo(),
                                   ),
                                   FadeIn(
                                     curve: Curves.easeIn,
-                                    duration: Duration(milliseconds: 750),
+                                    duration: const Duration(milliseconds: 750),
                                     child: HourlyForecast(),
                                   ),
                                 ],
@@ -121,13 +121,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 FadeIn(
                                   curve: Curves.easeIn,
-                                  duration: Duration(milliseconds: 250),
+                                  duration: const Duration(milliseconds: 250),
                                   child: SevenDayForecast(),
                                 ),
                                 const SizedBox(height: 16.0),
                                 FadeIn(
                                   curve: Curves.easeIn,
-                                  duration: Duration(milliseconds: 500),
+                                  duration: const Duration(milliseconds: 500),
                                   child: WeatherDetail(),
                                 ),
                               ],

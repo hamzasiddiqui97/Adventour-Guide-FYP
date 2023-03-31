@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../helper/utils.dart';
 import '../provider/weatherProvider.dart';
-import 'package:google_maps_basics/core/constant/color_constants.dart';
 
 class WeeklyScreen extends StatelessWidget {
   static const routeName = '/weeklyScreen';

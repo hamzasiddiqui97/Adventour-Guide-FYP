@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 // import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
@@ -273,40 +274,31 @@ class _SignInState extends State<SignIn> {
       }
       // Dismiss the loading widget
       Navigator.of(context).pop();
-      Utils.showSnackBar(errorMessage);
+      Utils.showSnackBar(errorMessage,false);
     } catch (e) {
       // Dismiss the loading widget
       Navigator.of(context).pop();
-      Utils.showSnackBar('Sign in failed. Please try again later.');
+      Utils.showSnackBar('Sign in failed. Please try again later.',false);
     }
   }
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-
-  Future<User?> signInWithGoogle() async {
-    // Trigger the Google Authentication flow
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-    if (googleUser == null) {
-      // User cancelled the Google Authentication flow
-      return null;
+  signInWithGoogle() async {
+    try {
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      print('Sign in success\n Username: ${userCredential.user?.displayName}');
+    } catch (e) {
+      if (e is PlatformException) {
+        // Handle the exception here
+        print('Error: ${e.code} - ${e.message}');
+      } else {
+        // Handle other exceptions here
+        print('Error: $e');
+      }
     }
-
-    // Obtain the Google Auth credentials from the user's Google account
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    // Convert the Google Auth credentials to Firebase Auth credentials
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in to Firebase Auth with the obtained Firebase Auth credentials
-    final UserCredential userCredential = await _auth.signInWithCredential(credential);
-
-    print('username sign_in: ${userCredential.user?.displayName}');
-    return userCredential.user;
   }
-
 }

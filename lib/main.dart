@@ -1,16 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
+// import 'package:google_maps_basics/view/screens/loginScreens/onboarding_screen.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/auth_page.dart';
+// import 'package:google_maps_basics/view/screens/loginScreens/splash_screen.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
+
+import 'view/screens/loginScreens/roleSelection.dart';
 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   runApp(const MyApp());
 }
 
@@ -23,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp(
+    return GetMaterialApp(
       scaffoldMessengerKey: Utils.messengerKey,
       navigatorKey: navigatorKey,
       initialRoute: '/splashScreen',
@@ -39,7 +42,7 @@ class MyApp extends StatelessWidget {
               return const NavigationPage();
             } else {
               // User is not authenticated, show sign in screen
-              return const AuthPage();
+              return  RoleSelection();
             }
           },
         ),
