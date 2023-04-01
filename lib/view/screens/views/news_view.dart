@@ -17,6 +17,9 @@ class _NewsScreenState extends State<NewsScreen> {
   List<NewsModel> articles = <NewsModel>[];
   List<NewsModel> rapidNews = <NewsModel>[];
   bool _loading = true;
+  ScrollController _scrollController = ScrollController();
+  int _currentMaxIndex = 10;
+  List<dynamic> mergedList = [];
 
   getNews() async {
     News newsdata = News();
@@ -36,16 +39,35 @@ class _NewsScreenState extends State<NewsScreen> {
     });
   }
 
+
+
   @override
   void initState() {
     super.initState();
     getNews();
     getRapidNews();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _fetchMoreNews();
+      }
+    });
+  }
+
+  void _fetchMoreNews() {
+    if (_currentMaxIndex < mergedList.length) {
+      setState(() {
+        _currentMaxIndex += 10;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> mergedList = [];
+
+
+
+    // List<dynamic> mergedList = [];
     mergedList.addAll(articles);
     mergedList.addAll(rapidNews);
     mergedList.shuffle();
@@ -65,13 +87,16 @@ class _NewsScreenState extends State<NewsScreen> {
           child: CircularProgressIndicator(),
         )
             : SingleChildScrollView(
+          controller: _scrollController,
           child: Container(
             color: Colors.white,
             child: Column(
               children: [
                 Container(
                   child: ListView.builder(
-                    itemCount: mergedList.length,
+                    itemCount: _currentMaxIndex < mergedList.length
+                        ? _currentMaxIndex
+                        : mergedList.length,
                     physics: const ClampingScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
