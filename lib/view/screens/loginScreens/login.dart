@@ -291,6 +291,12 @@ class _SignInState extends State<SignIn> {
       );
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
       print('Sign in success\n Username: ${userCredential.user?.displayName}');
+
+      // Navigate to the home screen after successful sign-in
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const NavigationPage()),
+      );
     } catch (e) {
       if (e is PlatformException) {
         // Handle the exception here
