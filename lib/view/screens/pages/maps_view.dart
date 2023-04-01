@@ -384,6 +384,19 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
   }
 
+  void _clearMap() {
+    setState(() {
+      _markers.clear();
+      _polylines.clear();
+      sourceController.clear();
+      destinationController.clear();
+      multipleDestinations.clear();
+      showMultipleSearchBars = false;
+      _selectedPlaceTypes.clear();
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -675,6 +688,26 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                 ),
               ),
             ),
+
+          if (!showSearchField)
+          Positioned(
+            bottom: 80,
+            left: 10,
+            child: ElevatedButton(
+
+              onPressed: () {
+                _clearMap();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorPalette.secondaryColor, // Change the button color here
+              ),
+              child: const Text(
+                'Clear Markers',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+
         ],
       ),
     );
