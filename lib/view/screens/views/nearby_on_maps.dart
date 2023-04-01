@@ -43,7 +43,7 @@ class _MapsViewScreenState extends State<MapsViewScreen> {
           body: GoogleMap(
             initialCameraPosition: CameraPosition(
               target: LatLng(widget.latitude, widget.longitude),
-              zoom: 18,
+              zoom: 13,
             ),
             markers: {
               Marker(

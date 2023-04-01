@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/core/constant/color_constants.dart';
@@ -30,11 +29,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
   void initState() {
 
     super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((user) {
-      if (user != null) {
-        _fetchWeather();
-      }
-    });
+    _fetchWeather();
+
   }
 
 

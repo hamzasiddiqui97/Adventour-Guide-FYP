@@ -13,8 +13,7 @@ class NavigationPage extends StatefulWidget {
 }
 
 class _NavigationPageState extends State<NavigationPage> {
-
-  List pages = const [
+  List<Widget> pages = const [
     HomePageNavBar(),
     HomePageGoogleMaps(),
     MyPlan(),
@@ -22,7 +21,7 @@ class _NavigationPageState extends State<NavigationPage> {
   ];
 
   int _currentIndex = 0;
-  void onTap(int index){
+  void onTap(int index) {
     setState(() {
       _currentIndex = index;
     });
@@ -33,7 +32,10 @@ class _NavigationPageState extends State<NavigationPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: pages[_currentIndex],
+        body: IndexedStack(
+          index: _currentIndex,
+          children: pages,
+        ),
         bottomNavigationBar: BottomNavigationBar(
           onTap: onTap,
           currentIndex: _currentIndex,
@@ -45,19 +47,19 @@ class _NavigationPageState extends State<NavigationPage> {
           backgroundColor: Colors.white,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home,),
+              icon: Icon(Icons.home),
               label: "Home",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.map,),
+              icon: Icon(Icons.map),
               label: "Maps",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.emoji_transportation,),
+              icon: Icon(Icons.emoji_transportation),
               label: "My Plans",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person,),
+              icon: Icon(Icons.person),
               label: "Profile",
             ),
           ],
