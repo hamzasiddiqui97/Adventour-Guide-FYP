@@ -20,9 +20,11 @@ class HomePageGoogleMaps extends StatefulWidget {
 }
 
 const kGoogleApiKey = googleApiKey;
-final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
+// final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
+  final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
+
   // String _placeType = "gas_station";
   // int _selectedIndex = 0;
 
