@@ -620,7 +620,8 @@ packages:
     dependency: "direct main"
     description:
       name: multi_select_flutter
-      url: "https://pub.dartlang.org"
+      sha256: "503857b415d390d29159df8a9d92d83c6aac17aaf1c307fb7bcfc77d097d20ed"
+      url: "https://pub.dev"
     source: hosted
     version: "4.1.3"
   nested:
