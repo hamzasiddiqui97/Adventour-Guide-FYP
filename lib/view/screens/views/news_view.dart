@@ -41,9 +41,6 @@ class _NewsScreenState extends State<NewsScreen> {
     super.initState();
     getNews();
     getRapidNews();
-    setState(() {
-      _loading = false;
-    });
   }
 
   @override
