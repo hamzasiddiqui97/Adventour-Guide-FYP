@@ -27,7 +27,6 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
   bool _isRequestError = false;
   bool _isLocationError = false;
 
-
   @override
   void initState() {
     super.initState();
