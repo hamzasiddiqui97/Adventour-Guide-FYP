@@ -11,6 +11,8 @@ import 'package:google_maps_basics/view/screens/views/nearby_places_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
+import 'dart:math';
+
 
 class HomePageGoogleMaps extends StatefulWidget {
   const HomePageGoogleMaps({Key? key}) : super(key: key);
@@ -98,52 +100,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   late LatLng destination;
   late LatLng source;
 
-  ///////////////////// NEW POLYLINE CODE FOR MULTIPLE DESTINATION //////////////////////
-  // void setPolylines() async {
-  //   PolylinePoints polylinePoints = PolylinePoints();
-  //   List<LatLng> polylineCoordinates = [];
-  //
-  //   // Add the source location to the polyline coordinates
-  //   polylineCoordinates.add(source);
-  //
-  //   // Iterate through all the destinations and add their locations to the polyline coordinates
-  //   for (int i = 0; i < destinations.length; i++) {
-  //     Destination destination = destinations[i];
-  //     LatLng destinationLocation = destination.location;
-  //     double destinationLat = destinationLocation.latitude;
-  //     double destinationLng = destinationLocation.longitude;
-  //
-  //     // Get the route between the previous destination (or the source) and the current destination
-  //     LatLng originLocation = (i == 0) ? source : destinations[i - 1].location;
-  //     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-  //       googleApiKey,
-  //       PointLatLng(originLocation.latitude, originLocation.longitude),
-  //       PointLatLng(destinationLat, destinationLng),
-  //     );
-  //
-  //     // Add the points of the polyline result to the polyline coordinates
-  //     if (result.points.isNotEmpty) {
-  //       result.points.forEach((PointLatLng point) {
-  //         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-  //       });
-  //     }
-  //   }
-  //
-  //   // Define the polyline options
-  //   Polyline polyline = Polyline(
-  //     polylineId: const PolylineId('poly'),
-  //     color: ColorPalette.secondaryColor,
-  //     width: 3,
-  //     points: polylineCoordinates,
-  //   );
-  //
-  //   // Add the polyline to the map
-  //   setState(() {
-  //     _polylines.add(polyline);
-  //   });
-  //   final places = GoogleMapsPlaces(apiKey: googleApiKey);
-  //   getTouristAttractionsAlongPolyline(polylineCoordinates, places, _selectedPlaceTypes);
-  // }
+
   void setPolylines() async {
     PolylinePoints polylinePoints = PolylinePoints();
     List<LatLng> polylineCoordinates = [];
@@ -195,11 +152,12 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       _polylines.add(polyline);
     });
 
+    print(polylineCoordinates.length);
+
+
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
     getTouristAttractionsAlongPolyline(polylineCoordinates, places, _selectedPlaceTypes);
   }
-
-
 
   void updateMapWithSelectedPlaceType(List<String> _selectedPlaceTypes) {
     // Clear previous markers
@@ -233,20 +191,39 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       List<String> _selectedPlaceTypes) async {
     final touristAttractions = <PlacesSearchResult>[];
 
-    for (final point in polylineCoordinates) {
-      for (final placeType in _selectedPlaceTypes) {
-        final nearbySearch = await places.searchNearbyWithRadius(
-          Location(lat: point.latitude, lng: point.longitude),
-          100,
-          type: placeType,
-        );
-        touristAttractions.addAll(nearbySearch.results);
-      }
+    // 1. Increase the search radius to cover more area with fewer API calls
+    const searchRadius = 1000;
+
+    // 4. Limit the number of polyline coordinates processed
+    const maxPoints = 30;
+    final step = max(1, polylineCoordinates.length ~/ maxPoints);
+
+    for (int i = 0; i < polylineCoordinates.length; i += step) {
+      final point = polylineCoordinates[i];
+
+      // 2. Use a single API call to search for multiple place types
+      final nearbySearch = await places.searchNearbyWithRadius(
+        Location(lat: point.latitude, lng: point.longitude),
+        searchRadius,
+        type: null,
+      );
+
+      // 3. Use a more optimized data structure for storing search results
+      final filteredResults = nearbySearch.results.where((result) {
+        return result.types.any((type) => _selectedPlaceTypes.contains(type));
+      });
+
+      touristAttractions.addAll(filteredResults);
     }
-    debugPrint('lenght of tourist attraction on polyline: ${touristAttractions.length}');
+
+    debugPrint('length of tourist attraction on polyline: ${touristAttractions.length}');
     debugPrint('list of tourist attraction on polyline: ${touristAttractions.toString()}');
-    // print the names of the tourist attractions
-    for (final place in touristAttractions) {
+
+    // Remove duplicate places
+    final uniqueTouristAttractions = touristAttractions.toSet().toList();
+
+    // Add markers for the unique tourist attractions
+    for (final place in uniqueTouristAttractions) {
       double hue = getMarkerHueForPlaceType(place.types[0]); // Get hue based on the first place type
       _markers.add(Marker(
         markerId: MarkerId(place.placeId),
@@ -258,10 +235,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       setState(() {});
     }
 
-
-    return touristAttractions;
+    print('tourist Attraction: ${uniqueTouristAttractions.length}');
+    return uniqueTouristAttractions;
   }
-
   double getMarkerHueForPlaceType(String placeType) {
     switch (placeType) {
       case "tourist_attraction":
@@ -411,6 +387,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   List<Destination> destinations = [];
 
+
   Future<void> displayPredictionDestination(
       Prediction p, ScaffoldMessengerState? currentState) async {
     GoogleMapsPlaces places = GoogleMapsPlaces(
@@ -442,6 +419,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     setState(() {});
     googleMapController.animateCamera(
         CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
+
+    print('desti: ${destinations.toString()}');
   }
 
   void _clearMap() {
@@ -477,6 +456,11 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             myLocationButtonEnabled: false,
             markers: _markers.toSet(),
           ),
+
+
+          // if (!showSearchField)
+          //   Positioned(
+          //       child: ),
 
           if (!showSearchField)
             Positioned(
