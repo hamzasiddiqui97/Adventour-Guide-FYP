@@ -78,6 +78,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   @override
   void initState() {
     super.initState();
+    _clearMap();
     polylinePoints = PolylinePoints();
     sourceController.text = 'Source';
     destinationController.text = 'Destination';
@@ -98,6 +99,51 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   late LatLng source;
 
   ///////////////////// NEW POLYLINE CODE FOR MULTIPLE DESTINATION //////////////////////
+  // void setPolylines() async {
+  //   PolylinePoints polylinePoints = PolylinePoints();
+  //   List<LatLng> polylineCoordinates = [];
+  //
+  //   // Add the source location to the polyline coordinates
+  //   polylineCoordinates.add(source);
+  //
+  //   // Iterate through all the destinations and add their locations to the polyline coordinates
+  //   for (int i = 0; i < destinations.length; i++) {
+  //     Destination destination = destinations[i];
+  //     LatLng destinationLocation = destination.location;
+  //     double destinationLat = destinationLocation.latitude;
+  //     double destinationLng = destinationLocation.longitude;
+  //
+  //     // Get the route between the previous destination (or the source) and the current destination
+  //     LatLng originLocation = (i == 0) ? source : destinations[i - 1].location;
+  //     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+  //       googleApiKey,
+  //       PointLatLng(originLocation.latitude, originLocation.longitude),
+  //       PointLatLng(destinationLat, destinationLng),
+  //     );
+  //
+  //     // Add the points of the polyline result to the polyline coordinates
+  //     if (result.points.isNotEmpty) {
+  //       result.points.forEach((PointLatLng point) {
+  //         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+  //       });
+  //     }
+  //   }
+  //
+  //   // Define the polyline options
+  //   Polyline polyline = Polyline(
+  //     polylineId: const PolylineId('poly'),
+  //     color: ColorPalette.secondaryColor,
+  //     width: 3,
+  //     points: polylineCoordinates,
+  //   );
+  //
+  //   // Add the polyline to the map
+  //   setState(() {
+  //     _polylines.add(polyline);
+  //   });
+  //   final places = GoogleMapsPlaces(apiKey: googleApiKey);
+  //   getTouristAttractionsAlongPolyline(polylineCoordinates, places, _selectedPlaceTypes);
+  // }
   void setPolylines() async {
     PolylinePoints polylinePoints = PolylinePoints();
     List<LatLng> polylineCoordinates = [];
@@ -105,26 +151,29 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     // Add the source location to the polyline coordinates
     polylineCoordinates.add(source);
 
-    // Iterate through all the destinations and add their locations to the polyline coordinates
-    for (int i = 0; i < destinations.length; i++) {
-      Destination destination = destinations[i];
-      LatLng destinationLocation = destination.location;
-      double destinationLat = destinationLocation.latitude;
-      double destinationLng = destinationLocation.longitude;
+    // Check if there are any destinations
+    if (destinations.isNotEmpty) {
+      // Iterate through all the destinations and add their locations to the polyline coordinates
+      for (int i = 0; i < destinations.length; i++) {
+        Destination destination = destinations[i];
+        LatLng destinationLocation = destination.location;
+        double destinationLat = destinationLocation.latitude;
+        double destinationLng = destinationLocation.longitude;
 
-      // Get the route between the previous destination (or the source) and the current destination
-      LatLng originLocation = (i == 0) ? source : destinations[i - 1].location;
-      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        googleApiKey,
-        PointLatLng(originLocation.latitude, originLocation.longitude),
-        PointLatLng(destinationLat, destinationLng),
-      );
+        // Get the route between the previous destination (or the source) and the current destination
+        LatLng originLocation = (i == 0) ? source : destinations[i - 1].location;
+        PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+          googleApiKey,
+          PointLatLng(originLocation.latitude, originLocation.longitude),
+          PointLatLng(destinationLat, destinationLng),
+        );
 
-      // Add the points of the polyline result to the polyline coordinates
-      if (result.points.isNotEmpty) {
-        result.points.forEach((PointLatLng point) {
-          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-        });
+        // Add the points of the polyline result to the polyline coordinates
+        if (result.points.isNotEmpty) {
+          result.points.forEach((PointLatLng point) {
+            polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+          });
+        }
       }
     }
 
@@ -136,13 +185,20 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       points: polylineCoordinates,
     );
 
+    // Remove any existing polylines
+    setState(() {
+      _polylines.clear();
+    });
+
     // Add the polyline to the map
     setState(() {
       _polylines.add(polyline);
     });
+
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
     getTouristAttractionsAlongPolyline(polylineCoordinates, places, _selectedPlaceTypes);
   }
+
 
 
   void updateMapWithSelectedPlaceType(List<String> _selectedPlaceTypes) {
@@ -187,7 +243,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         touristAttractions.addAll(nearbySearch.results);
       }
     }
-
+    debugPrint('lenght of tourist attraction on polyline: ${touristAttractions.length}');
+    debugPrint('list of tourist attraction on polyline: ${touristAttractions.toString()}');
     // print the names of the tourist attractions
     for (final place in touristAttractions) {
       double hue = getMarkerHueForPlaceType(place.types[0]); // Get hue based on the first place type
@@ -310,14 +367,17 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     final lat = detail.result.geometry!.location.lat;
     final lng = detail.result.geometry!.location.lng;
 
-    source = LatLng(lat, lng);
-    sourceController.text = detail.result.name;
-    _markers.add(Marker(
-        markerId: const MarkerId("source"),
-        position: source,
-        infoWindow: InfoWindow(title: detail.result.name)));
+
+
+    setState(() {
+      source = LatLng(lat, lng);
+      sourceController.text = detail.result.name;
+      _markers.add(Marker(
+          markerId: const MarkerId("source"),
+          position: source,
+          infoWindow: InfoWindow(title: detail.result.name)));
+    });
     setPolylines();
-    setState(() {});
     googleMapController
         .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
   }
@@ -393,6 +453,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       multipleDestinations.clear();
       showMultipleSearchBars = false;
       _selectedPlaceTypes.clear();
+      destinations.clear();
     });
   }
 
