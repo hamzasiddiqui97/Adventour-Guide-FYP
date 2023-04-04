@@ -393,6 +393,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       multipleDestinations.clear();
       showMultipleSearchBars = false;
       _selectedPlaceTypes.clear();
+      destinations.clear();
     });
   }
 
