@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PlacesListAlongTheRoute extends StatefulWidget {
@@ -29,7 +30,11 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Points'),
+          backgroundColor: ColorPalette.secondaryColor,
+          foregroundColor: ColorPalette.primaryColor,
+          title: const Text(
+            'Points',
+          ),
         ),
         body: ListView.builder(
           itemCount: widget.markers.length,
@@ -51,6 +56,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                       ),
                     ),
                     const SizedBox(height: 4),
+
                     Text(
                       marker.infoWindow.snippet ?? 'No vicinity information',
                       style: const TextStyle(
@@ -60,10 +66,14 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              ColorPalette.secondaryColor)),
                       onPressed: () {
-                        // Add your logic to add the place to the trip
+                        // Logic for Adding this location to database.....
                       },
-                      child: const Text('Add place to trip'),
+                      child: const Text('Add place to trip',
+                          style: TextStyle(color: ColorPalette.primaryColor)),
                     ),
                   ],
                 ),
