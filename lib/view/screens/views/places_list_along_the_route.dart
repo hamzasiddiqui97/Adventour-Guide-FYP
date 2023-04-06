@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/view/screens/views/Places_detail_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -124,7 +123,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                         ),
                         onPressed: () {
 
-                          final FirebaseAuth _auth = FirebaseAuth.instance;
+                          // final FirebaseAuth _auth = FirebaseAuth.instance;
                           // final User? currentUser = _auth.currentUser;
                           // final String? userId = currentUser?.uid;
 
@@ -134,6 +133,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                             marker.position.latitude,
                             marker.position.longitude);
                         },
+
                         child: const Text('Add place to trip', style: TextStyle(color: ColorPalette.primaryColor)),
                       ),
 
