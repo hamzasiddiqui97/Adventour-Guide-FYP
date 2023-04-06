@@ -493,7 +493,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PlacesListAlongTheRoute(markers: _markers.toSet()),
+                        builder: (context) => PlacesListAlongTheRoute(markers: _markers.toSet().toList()),
                       ),
                     );
 
