@@ -21,16 +21,9 @@ class PlacesListAlongTheRoute extends StatefulWidget {
 class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
 
-  Future<void> addPlaceToTrip(String name, String address, double lat, double lng, String? userId) async {
-    if (userId == null) {
-      Utils.showSnackBar("You need to be logged in to add places", false);
-      return;
-    }
-
+  Future<void> addPlaceToTrip(String name, String address, double lat, double lng) async {
     CollectionReference touristRef = FirebaseFirestore.instance.collection('Tourist');
-    DocumentReference userDocRef = touristRef.doc(userId);
-
-    CollectionReference placesTripRef = userDocRef.collection('placesAdded');
+    CollectionReference placesTripRef = touristRef.doc('placesAdded').collection('places');
 
     Map<String, dynamic> placeData = {
       'name': name,
@@ -50,6 +43,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
       Utils.showSnackBar("Failed to add place", false);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -131,16 +125,14 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                         onPressed: () {
 
                           final FirebaseAuth _auth = FirebaseAuth.instance;
-                          final User? currentUser = _auth.currentUser;
-                          final String? userId = currentUser?.uid;
+                          // final User? currentUser = _auth.currentUser;
+                          // final String? userId = currentUser?.uid;
 
                           addPlaceToTrip(
                             marker.infoWindow.title ?? 'Unknown',
                             marker.infoWindow.snippet ?? 'No vicinity information',
                             marker.position.latitude,
-                            marker.position.longitude,
-                            userId,
-                          );
+                            marker.position.longitude);
                         },
                         child: const Text('Add place to trip', style: TextStyle(color: ColorPalette.primaryColor)),
                       ),
