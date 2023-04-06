@@ -89,6 +89,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final List<Marker> _markers = [];
 
+
   // polylines
   final Set<Polyline> _polylines = <Polyline>{};
   List<LatLng> polylineCoordinates = [];
@@ -151,7 +152,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       _polylines.add(polyline);
     });
 
-    print(polylineCoordinates.length);
+    print('polylineCoordinates length: ${polylineCoordinates.length}');
 
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
     getTouristAttractionsAlongPolyline(
@@ -184,23 +185,29 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     setState(() {});
   }
 
+
   Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(
-    List<LatLng> polylineCoordinates,
-    GoogleMapsPlaces places,
-    List<String> _selectedPlaceTypes,
-  ) async {
+      List<LatLng> polylineCoordinates,
+      GoogleMapsPlaces places,
+      List<String> _selectedPlaceTypes,
+      ) async {
     final touristAttractions = <PlacesSearchResult>{};
+    final uniquePlaceIds = <String>{}; // Add this line
 
     final searchResults = await Future.wait(_selectedPlaceTypes.map(
-        (placeType) => Future.wait(
+            (placeType) => Future.wait(
             polylineCoordinates.map((point) => places.searchNearbyWithRadius(
-                  Location(lat: point.latitude, lng: point.longitude),
-                  100,
-                  type: placeType,
-                )))));
+              Location(lat: point.latitude, lng: point.longitude),
+              100,
+              type: placeType,
+            )))));
 
     for (final nearbySearch in searchResults.expand((x) => x)) {
-      touristAttractions.addAll(nearbySearch.results);
+      for (final result in nearbySearch.results) {
+        if (uniquePlaceIds.add(result.placeId)) { // Add this line
+          touristAttractions.add(result);
+        }
+      }
     }
 
     // Print the names of the tourist attractions
@@ -210,7 +217,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       _markers.add(Marker(
         markerId: MarkerId(place.placeId),
         position:
-            LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+        LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
         icon: BitmapDescriptor.defaultMarkerWithHue(hue),
       ));
@@ -221,6 +228,45 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     print('touris attr: ${touristAttractions.length}');
     return touristAttractions.toList();
   }
+
+
+  // Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(
+  //   List<LatLng> polylineCoordinates,
+  //   GoogleMapsPlaces places,
+  //   List<String> _selectedPlaceTypes,
+  // ) async {
+  //   final touristAttractions = <PlacesSearchResult>{};
+  //
+  //   final searchResults = await Future.wait(_selectedPlaceTypes.map(
+  //       (placeType) => Future.wait(
+  //           polylineCoordinates.map((point) => places.searchNearbyWithRadius(
+  //                 Location(lat: point.latitude, lng: point.longitude),
+  //                 100,
+  //                 type: placeType,
+  //               )))));
+  //
+  //   for (final nearbySearch in searchResults.expand((x) => x)) {
+  //     touristAttractions.addAll(nearbySearch.results);
+  //   }
+  //
+  //   // Print the names of the tourist attractions
+  //   for (final place in touristAttractions) {
+  //     double hue = getMarkerHueForPlaceType(
+  //         place.types[0]); // Get hue based on the first place type
+  //     _markers.add(Marker(
+  //       markerId: MarkerId(place.placeId),
+  //       position:
+  //           LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+  //       infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
+  //       icon: BitmapDescriptor.defaultMarkerWithHue(hue),
+  //     ));
+  //   }
+  //
+  //   setState(() {});
+  //
+  //   print('touris attr: ${touristAttractions.length}');
+  //   return touristAttractions.toList();
+  // }
 
   double getMarkerHueForPlaceType(String placeType) {
     switch (placeType) {
@@ -435,10 +481,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             markers: _markers.toSet(),
           ),
 
-          // if (!showSearchField)
-          //   Positioned(
-          //       child: ),
-
           if (!showSearchField)
             Positioned(
                 bottom: 30,
@@ -448,23 +490,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                       backgroundColor: MaterialStateProperty.all(
                           ColorPalette.secondaryColor)),
                   onPressed: () async {
-                    final places = GoogleMapsPlaces(apiKey: googleApiKey);
-                    List<PlacesSearchResult> touristAttractions  =
-                    await getTouristAttractionsAlongPolyline(
-                      polylineCoordinates,
-                      places,
-                      _selectedPlaceTypes,
-                    );
-
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PlacesListAlongTheRoute(points: touristAttractions ),
+                        builder: (context) => PlacesListAlongTheRoute(markers: _markers.toSet()),
                       ),
                     );
+
                   },
                   child: const Text(
-                    'Nearby Me',
+                    'Near Me',
                     style: TextStyle(color: ColorPalette.primaryColor),
                   ),
                 )),
