@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/view/screens/views/Places_detail_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,8 +22,11 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
 
   Future<void> addPlaceToTrip(String name, String address, double lat, double lng) async {
-    CollectionReference touristRef = FirebaseFirestore.instance.collection('Tourist');
-    CollectionReference placesTripRef = touristRef.doc('placesAdded').collection('places');
+    final FirebaseDatabase database = FirebaseDatabase.instance;
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final User? currentUser = _auth.currentUser;
+    final String? userId = currentUser?.uid;
+    DatabaseReference placesRef = database.ref().child("users").child(userId!).child("places");
 
     Map<String, dynamic> placeData = {
       'name': name,
@@ -31,18 +35,15 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
       'longitude': lng,
     };
 
-    return placesTripRef
-        .add(placeData)
-        .then((_) {
+    try {
+      await placesRef.push().set(placeData);
       print("Place added $name");
       Utils.showSnackBar("Place added successfully", true);
-    })
-        .catchError((error) {
+    } catch (error) {
       print("Failed to add place: $error");
       Utils.showSnackBar("Failed to add place", false);
-    });
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -122,11 +123,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                               ColorPalette.primaryColor),
                         ),
                         onPressed: () {
-
-                          // final FirebaseAuth _auth = FirebaseAuth.instance;
-                          // final User? currentUser = _auth.currentUser;
-                          // final String? userId = currentUser?.uid;
-
                           addPlaceToTrip(
                             marker.infoWindow.title ?? 'Unknown',
                             marker.infoWindow.snippet ?? 'No vicinity information',
@@ -136,6 +132,8 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
                         child: const Text('Add place to trip', style: TextStyle(color: ColorPalette.primaryColor)),
                       ),
+
+
 
                     ],
                   ),
