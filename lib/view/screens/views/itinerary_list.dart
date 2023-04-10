@@ -20,10 +20,10 @@ class _ItineraryListState extends State<ItineraryList> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          automaticallyImplyLeading: false,
+          // automaticallyImplyLeading: false,
           backgroundColor: ColorPalette.secondaryColor,
           foregroundColor: ColorPalette.primaryColor,
-          title: const Text('Selected Itinerary'),
+          title: const Text('Selected Places'),
           centerTitle: true,
         ),
         body: StreamBuilder<DatabaseEvent>(
