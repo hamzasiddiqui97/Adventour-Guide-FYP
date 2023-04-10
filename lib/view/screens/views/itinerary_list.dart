@@ -16,15 +16,14 @@ class ItineraryList extends StatefulWidget {
 class _ItineraryListState extends State<ItineraryList> {
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
+    return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
           automaticallyImplyLeading: false,
           backgroundColor: ColorPalette.secondaryColor,
           foregroundColor: ColorPalette.primaryColor,
-          title: const Text('Itinerary'),
+          title: const Text('Selected Itinerary'),
           centerTitle: true,
         ),
         body: StreamBuilder<DatabaseEvent>(

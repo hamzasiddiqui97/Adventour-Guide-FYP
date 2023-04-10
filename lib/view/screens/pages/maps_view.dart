@@ -21,13 +21,10 @@ class HomePageGoogleMaps extends StatefulWidget {
 }
 
 const kGoogleApiKey = googleApiKey;
-// final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
-  // String _placeType = "gas_station";
-  // int _selectedIndex = 0;
 
   final List<String> _selectedPlaceTypes = [];
 
@@ -228,45 +225,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     print('touris attr: ${touristAttractions.length}');
     return touristAttractions.toList();
   }
-
-
-  // Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(
-  //   List<LatLng> polylineCoordinates,
-  //   GoogleMapsPlaces places,
-  //   List<String> _selectedPlaceTypes,
-  // ) async {
-  //   final touristAttractions = <PlacesSearchResult>{};
-  //
-  //   final searchResults = await Future.wait(_selectedPlaceTypes.map(
-  //       (placeType) => Future.wait(
-  //           polylineCoordinates.map((point) => places.searchNearbyWithRadius(
-  //                 Location(lat: point.latitude, lng: point.longitude),
-  //                 100,
-  //                 type: placeType,
-  //               )))));
-  //
-  //   for (final nearbySearch in searchResults.expand((x) => x)) {
-  //     touristAttractions.addAll(nearbySearch.results);
-  //   }
-  //
-  //   // Print the names of the tourist attractions
-  //   for (final place in touristAttractions) {
-  //     double hue = getMarkerHueForPlaceType(
-  //         place.types[0]); // Get hue based on the first place type
-  //     _markers.add(Marker(
-  //       markerId: MarkerId(place.placeId),
-  //       position:
-  //           LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
-  //       infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-  //       icon: BitmapDescriptor.defaultMarkerWithHue(hue),
-  //     ));
-  //   }
-  //
-  //   setState(() {});
-  //
-  //   print('touris attr: ${touristAttractions.length}');
-  //   return touristAttractions.toList();
-  // }
 
   double getMarkerHueForPlaceType(String placeType) {
     switch (placeType) {
