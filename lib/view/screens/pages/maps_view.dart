@@ -489,17 +489,19 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                           ColorPalette.secondaryColor)),
+
                   onPressed: () async {
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PlacesListAlongTheRoute(markers: _markers.toSet().toList()),
+                        builder: (context) => PlacesListAlongTheRoute(markers: _markers.toSet().toList(),),
                       ),
                     );
 
                   },
                   child: const Text(
-                    'Near Me',
+                    'Places List',
                     style: TextStyle(color: ColorPalette.primaryColor),
                   ),
                 )),

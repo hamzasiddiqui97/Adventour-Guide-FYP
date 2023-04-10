@@ -3,9 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
-// import 'package:google_maps_basics/view/screens/loginScreens/onboarding_screen.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/auth_page.dart';
-// import 'package:google_maps_basics/view/screens/loginScreens/splash_screen.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 
 import 'view/screens/loginScreens/roleSelection.dart';
@@ -34,20 +32,15 @@ class MyApp extends StatelessWidget {
         '/splashScreen': (context) => StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
-            // if (snapshot.connectionState == ConnectionState.waiting) {
-            //   return SplashScreen();
-            // }
             if (snapshot.hasData) {
               // User is authenticated, show NavigationPage
-              return const NavigationPage();
+              return NavigationPage(uid: snapshot.data!.uid);
             } else {
               // User is not authenticated, show sign in screen
-              return  RoleSelection();
+              return RoleSelection();
             }
           },
         ),
-        // '/onBoardingScreen': (context) => const OnboardingScreen(),
-        // '/loginMainPage':  (context) => LoginScreen(),
         '/signIn': (context) => StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
@@ -56,14 +49,22 @@ class MyApp extends StatelessWidget {
             } else if (snapshot.hasError) {
               return const Center(child: Text('Something went wrong'),);
             } else if (snapshot.hasData) {
-              return const NavigationPage();
+              return NavigationPage(uid: snapshot.data!.uid);
             } else {
               return const AuthPage();
             }
           },
         ),
-        // '/signUp': (context) => SignupPage(),
-        '/home': (context) => const NavigationPage(),
+        '/home': (context) => StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return NavigationPage(uid: snapshot.data!.uid);
+            } else {
+              return RoleSelection();
+            }
+          },
+        ),
       },
       title: 'Adventour',
       theme: ThemeData(
@@ -71,7 +72,16 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       debugShowCheckedModeBanner: false,
-      home: const NavigationPage(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot){
+          if (snapshot.hasData){
+            return NavigationPage(uid: snapshot.data!.uid);
+          } else{
+            return RoleSelection();
+          }
+        },
+      ),
     );
   }
 }

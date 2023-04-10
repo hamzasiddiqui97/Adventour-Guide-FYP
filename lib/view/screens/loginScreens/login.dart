@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-// import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/forgot_password.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:lottie/lottie.dart';
-// import 'onboarding_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignIn extends StatefulWidget {
@@ -232,10 +230,15 @@ class _SignInState extends State<SignIn> {
 
       // Check if the sign-in was successful
       if (FirebaseAuth.instance.currentUser != null) {
+
+        // Get the user's UID
+        String uid = FirebaseAuth.instance.currentUser!.uid;
+        print('Get the users UID: ${uid.toString()}');
+
         // Navigate to the home screen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const NavigationPage(),
+            builder: (context) => NavigationPage(uid: uid,),
           ),
         );
 
@@ -292,10 +295,14 @@ class _SignInState extends State<SignIn> {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
       print('Sign in success\n Username: ${userCredential.user?.displayName}');
 
+
+      // Get the user's UID
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+
       // Navigate to the home screen after successful sign-in
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const NavigationPage()),
+        MaterialPageRoute(builder: (context) => NavigationPage(uid: uid)),
       );
     } catch (e) {
       if (e is PlatformException) {
