@@ -20,7 +20,6 @@ class _ItineraryListState extends State<ItineraryList> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          // automaticallyImplyLeading: false,
           backgroundColor: ColorPalette.secondaryColor,
           foregroundColor: ColorPalette.primaryColor,
           title: const Text('Selected Places'),
@@ -36,17 +35,28 @@ class _ItineraryListState extends State<ItineraryList> {
               return ListView.builder(
                 itemCount: places.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text(places[index]['name']),
-                      subtitle: Text(places[index]['address']),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          AddPlacesToFirebaseDb.deletePlace(widget.uid, places[index]['key']);
-                        },
-                      ),
-                    ),
+                  return FutureBuilder<Map<String, dynamic>>(
+                    future: AddPlacesToFirebaseDb.getPlaceDetails(widget.uid, places[index]['key']),
+                    builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> placeDetailsSnapshot) {
+                      if (placeDetailsSnapshot.hasData) {
+                        Map<String, dynamic> placeDetails = placeDetailsSnapshot.data!;
+                        return Card(
+                          child: ListTile(
+                            title: Text(placeDetails['name']),
+                            subtitle: Text('${placeDetails['address']} \nDistance: ${placeDetails['distance']} \nTime: ${placeDetails['time']}'),
+                            isThreeLine: true,
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                AddPlacesToFirebaseDb.deletePlace(widget.uid, places[index]['key']);
+                              },
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
                   );
                 },
               );

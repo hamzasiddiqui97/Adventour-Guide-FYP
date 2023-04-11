@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -10,7 +11,7 @@ import 'package:google_maps_basics/model/MultipleDestinations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
-
+import 'package:http/http.dart' as http;
 import '../views/places_list_along_the_route.dart';
 
 class HomePageGoogleMaps extends StatefulWidget {
@@ -23,6 +24,8 @@ class HomePageGoogleMaps extends StatefulWidget {
 const kGoogleApiKey = googleApiKey;
 
 class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
+  List<Map<String, String>> markerDataList = [];
+
   final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
 
@@ -50,8 +53,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   final destinationController = TextEditingController();
 
   bool showSearchField = false;
-  String totalDistance = '';
-  String totalTime = '';
   final Mode _mode = Mode.overlay;
   late GoogleMapController googleMapController;
 
@@ -97,41 +98,62 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   late LatLng destination;
   late LatLng source;
 
+  Future<List<Map<String, String>>> calculateDistanceAndTime(List<Marker> markers) async {
+    List<Map<String, String>> distancesAndTimes = [];
+
+    for (int i = 0; i < markers.length - 1; i++) {
+      LatLng source = markers[i].position;
+      LatLng destination = markers[i + 1].position;
+
+      String url = 'https://maps.googleapis.com/maps/api/directions/json?origin=${source.latitude},${source.longitude}&destination=${destination.latitude},${destination.longitude}&key=$googleApiKey';
+      http.Response response = await http.get(Uri.parse(url));
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+      if (jsonResponse['status'] == 'OK') {
+        String distance = jsonResponse['routes'][0]['legs'][0]['distance']['text'];
+        String time = jsonResponse['routes'][0]['legs'][0]['duration']['text'];
+
+        Map<String, String> distanceAndTime = {
+          'distance': distance,
+          'time': time,
+        };
+        distancesAndTimes.add(distanceAndTime);
+      } else {
+        print('Error getting distance and time: ${jsonResponse['status']}');
+      }
+    }
+
+    return distancesAndTimes;
+  }
+
   void setPolylines() async {
     PolylinePoints polylinePoints = PolylinePoints();
     List<LatLng> polylineCoordinates = [];
 
-    // Add the source location to the polyline coordinates
-    polylineCoordinates.add(source);
+    List<Marker> markers = _markers.toList();
 
-    // Check if there are any destinations
-    if (destinations.isNotEmpty) {
-      // Iterate through all the destinations and add their locations to the polyline coordinates
-      for (int i = 0; i < destinations.length; i++) {
-        Destination destination = destinations[i];
-        LatLng destinationLocation = destination.location;
-        double destinationLat = destinationLocation.latitude;
-        double destinationLng = destinationLocation.longitude;
+    for (int i = 0; i < markers.length - 1; i++) {
+      LatLng originLocation = markers[i].position;
+      LatLng destinationLocation = markers[i + 1].position;
 
-        // Get the route between the previous destination (or the source) and the current destination
-        LatLng originLocation =
-            (i == 0) ? source : destinations[i - 1].location;
-        PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-          googleApiKey,
-          PointLatLng(originLocation.latitude, originLocation.longitude),
-          PointLatLng(destinationLat, destinationLng),
-        );
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        googleApiKey,
+        PointLatLng(originLocation.latitude, originLocation.longitude),
+        PointLatLng(destinationLocation.latitude, destinationLocation.longitude),
+      );
 
-        // Add the points of the polyline result to the polyline coordinates
-        if (result.points.isNotEmpty) {
-          result.points.forEach((PointLatLng point) {
-            polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-          });
-        }
+      if (result.points.isNotEmpty) {
+        result.points.forEach((PointLatLng point) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        });
       }
+
+      List<Map<String, String>> distancesAndTimes = await calculateDistanceAndTime(markers);
+      String? distance = distancesAndTimes[i]['distance'];
+      String? time = distancesAndTimes[i]['time'];
+      print('Distance from ${originLocation.latitude}, ${originLocation.longitude} to ${destinationLocation.latitude}, ${destinationLocation.longitude}: $distance, Time: $time');
     }
 
-    // Define the polyline options
     Polyline polyline = Polyline(
       polylineId: const PolylineId('poly'),
       color: ColorPalette.secondaryColor,
@@ -139,12 +161,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       points: polylineCoordinates,
     );
 
-    // Remove any existing polylines
     setState(() {
       _polylines.clear();
     });
 
-    // Add the polyline to the map
     setState(() {
       _polylines.add(polyline);
     });
@@ -419,9 +439,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+      return Scaffold(
       key: homeScaffoldKey,
       body: Stack(
         alignment: Alignment.center,
@@ -449,15 +470,18 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                           ColorPalette.secondaryColor)),
 
                   onPressed: () async {
-
+                    final distancesAndTimes = await calculateDistanceAndTime(_markers);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PlacesListAlongTheRoute(markers: _markers.toSet().toList(),),
+                        builder: (context) => PlacesListAlongTheRoute(
+                          markers: _markers.toSet().toList(),
+                          distancesAndTimes: distancesAndTimes,
+                        ),
                       ),
                     );
-
                   },
+
                   child: const Text(
                     'Places List',
                     style: TextStyle(color: ColorPalette.primaryColor),

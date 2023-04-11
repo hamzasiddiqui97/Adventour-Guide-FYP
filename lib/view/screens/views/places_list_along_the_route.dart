@@ -10,8 +10,10 @@ import '../../../snackbar_utils.dart';
 
 class PlacesListAlongTheRoute extends StatefulWidget {
   final List<Marker> markers;
+  final List<Map<String, String>> distancesAndTimes;
 
-  const PlacesListAlongTheRoute({Key? key, required this.markers})
+
+  const PlacesListAlongTheRoute({Key? key, required this.markers, required this.distancesAndTimes})
       : super(key: key);
 
   @override
@@ -35,13 +37,15 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     userId = currentUser?.uid;
   }
 
-  void _savePlaceToTrip(String name, String address, double lat, double lng) {
+  void _savePlaceToTrip(String name, String address, double lat, double lng, String distance, String time) {
     setState(() {
       final newPlace = {
         'name': name,
         'address': address,
         'latitude': lat,
         'longitude': lng,
+        'distance': distance,
+        'time': time,
       };
       _savedPlaces.add(newPlace);
     });
@@ -50,7 +54,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   Future<void> _saveTrip() async {
     final FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference placesRef =
-        database.ref().child("users").child(userId!).child("places");
+    database.ref().child("users").child(userId!).child("places");
 
     for (int i = 0; i < _savedPlaces.length; i++) {
       final placeData = _savedPlaces[i];
@@ -68,6 +72,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
     Utils.showSnackBar("Places added successfully", true);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +103,12 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: widget.markers.length,
+                itemCount: widget.markers.length, // Set itemCount to the minimum length of both lists
                 itemBuilder: (context, index) {
                   final marker = widget.markers.elementAt(index);
+                  final distanceAndTime = widget.distancesAndTimes[index];
+                  final distance = distanceAndTime['distance'] ?? 'Unknown';
+                  final time = distanceAndTime['time'] ?? 'Unknown';
                   return GestureDetector(
                       onTap: () {
                         final marker = widget.markers.elementAt(index);
@@ -143,38 +151,45 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                                   color: Colors.grey,
                                 ),
                               ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Distance: $distance',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Time: $time',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
                               const SizedBox(height: 8),
                               ElevatedButton(
                                 style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          ColorPalette.secondaryColor),
-                                  foregroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          ColorPalette.primaryColor),
+                                  backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
+                                  foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
                                 ),
                                 onPressed: () {
-                                  final name =
-                                      marker.infoWindow.title ?? 'Unknown';
-                                  final address = marker.infoWindow.snippet ??
-                                      'No vicinity information';
+                                  final name = marker.infoWindow.title ?? 'Unknown';
+                                  final address = marker.infoWindow.snippet ?? 'No vicinity information';
                                   final imageUrl = '';
+                                  final distance = distanceAndTime['distance'] ?? 'Unknown';
+                                  final time = distanceAndTime['time'] ?? 'Unknown';
                                   setState(() {
-                                    _savedPlaces.add({
-                                      'name': name,
-                                      'address': address,
-                                      'latitude': marker.position.latitude,
-                                      'longitude': marker.position.longitude,
-                                    });
+                                    _savePlaceToTrip(name, address, marker.position.latitude, marker.position.longitude, distance, time);
                                     print('on Pressed Add place to trip (_savedPlaceslength): ${_savedPlaces.length}');
                                   });
-                                  Utils.showSnackBar(
-                                      "Place added to trip", true);
+                                  Utils.showSnackBar("Place added to trip", true);
                                 },
                                 child: const Text('Add place to trip',
                                     style: TextStyle(
                                         color: ColorPalette.primaryColor)),
                               ),
+
                             ],
                           ),
                         ),
