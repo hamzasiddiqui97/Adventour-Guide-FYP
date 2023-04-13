@@ -54,14 +54,14 @@ class _ItineraryListState extends State<ItineraryList> {
                           ),
                         );
                       } else {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                     },
                   );
                 },
               );
             } else {
-              return Center(
+              return const Center(
                 child: Text('No places saved'),
               );
             }

@@ -557,7 +557,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
       }
       Utils.showSnackBar(errorMessage, false);
     } catch (e) {
-      Utils.showSnackBar("An error occurred while signing up.", false);
+      Utils.showSnackBar("An error occurred while signing up", false);
     } finally {
       Navigator.of(context).pop(); // Dismiss the progress dialog
     }
