@@ -103,12 +103,20 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: widget.markers.length, // Set itemCount to the minimum length of both lists
+                itemCount: widget.distancesAndTimes.length, // Set itemCount to the minimum length of both lists
                 itemBuilder: (context, index) {
                   final marker = widget.markers.elementAt(index);
                   final distanceAndTime = widget.distancesAndTimes[index];
+                  print(distanceAndTime.entries.toString());
                   final distance = distanceAndTime['distance'] ?? 'Unknown';
                   final time = distanceAndTime['time'] ?? 'Unknown';
+
+                  String distanceText;
+                  if (index == 0) {
+                    distanceText = '0 km (Starting point)';
+                  } else {
+                    distanceText = 'Distance from ${widget.markers[index - 1].infoWindow.title ?? 'Unknown'}: $distance';
+                  }
                   return GestureDetector(
                       onTap: () {
                         final marker = widget.markers.elementAt(index);
@@ -143,30 +151,39 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                marker.infoWindow.snippet ??
-                                    'No vicinity information',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
+                              // Text(
+                              //   marker.infoWindow.snippet ??
+                              //       'No vicinity information',
+                              //   style: const TextStyle(
+                              //     fontSize: 14,
+                              //     color: Colors.grey,
+                              //   ),
+                              // ),
                               const SizedBox(height: 4),
                               Text(
-                                'Distance: $distance',
+                                distanceText,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Time: $time',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
+
+
+                              // Text(
+                              //   'Distance: $distance',
+                              //   style: const TextStyle(
+                              //     fontSize: 14,
+                              //     color: Colors.grey,
+                              //   ),
+                              // ),
+                              // const SizedBox(height: 4),
+                              // Text(
+                              //   'Time: $time',
+                              //   style: const TextStyle(
+                              //     fontSize: 14,
+                              //     color: Colors.grey,
+                              //   ),
+                              // ),
                               const SizedBox(height: 8),
                               ElevatedButton(
                                 style: ButtonStyle(

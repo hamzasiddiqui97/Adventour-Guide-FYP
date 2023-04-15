@@ -101,6 +101,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   Future<List<Map<String, String>>> calculateDistanceAndTime(List<Marker> markers) async {
     List<Map<String, String>> distancesAndTimes = [];
 
+    double totalDistanceInMeters = 0;
     for (int i = 0; i < markers.length - 1; i++) {
       LatLng source = markers[i].position;
       LatLng destination = markers[i + 1].position;
@@ -110,11 +111,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       Map<String, dynamic> jsonResponse = json.decode(response.body);
 
       if (jsonResponse['status'] == 'OK') {
-        String distance = jsonResponse['routes'][0]['legs'][0]['distance']['text'];
+        int distanceInMeters = jsonResponse['routes'][0]['legs'][0]['distance']['value'];
         String time = jsonResponse['routes'][0]['legs'][0]['duration']['text'];
 
+        totalDistanceInMeters += distanceInMeters;
+        double totalDistanceInKm = totalDistanceInMeters / 1000;
+
         Map<String, String> distanceAndTime = {
-          'distance': distance,
+          'source_name': markers[0].infoWindow.title ?? 'Unknown', // Use source marker's name
+          'destination_name': markers[i + 1].infoWindow.title ?? 'Unknown',
+          'distance': '${totalDistanceInKm.toStringAsFixed(2)} km',
           'time': time,
         };
         distancesAndTimes.add(distanceAndTime);
@@ -311,6 +317,62 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   // search places function started
 
   // source search autocomplete button
+  // Future<void> _handlePressButtonSource() async {
+  //   Prediction? p = await PlacesAutocomplete.show(
+  //       context: context,
+  //       apiKey: kGoogleApiKey,
+  //       onError: onError,
+  //       mode: _mode,
+  //       language: "en",
+  //       strictbounds: false,
+  //       logo: const Text(''),
+  //       types: [""],
+  //       decoration: InputDecoration(
+  //           hintText: "Search source",
+  //           focusedBorder: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(20),
+  //             borderSide: const BorderSide(color: ColorPalette.primaryColor),
+  //           )),
+  //       components: [Component(Component.country, "pk")]);
+  //
+  //   if (p != null) {
+  //     displayPredictionSource(p, homeScaffoldKey.currentState);
+  //   } else {
+  //     homeScaffoldKey.currentState!
+  //         .showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
+  //   }
+  // }
+  //
+  // void onError(PlacesAutocompleteResponse? response) {
+  //   final errorMessage = response?.errorMessage ?? 'Unknown error';
+  //   homeScaffoldKey.currentState!
+  //       .showSnackBar(SnackBar(content: Text(errorMessage)));
+  // }
+  //
+  // Future<void> displayPredictionSource(
+  //     Prediction p, ScaffoldMessengerState? currentState) async {
+  //   GoogleMapsPlaces places = GoogleMapsPlaces(
+  //     apiKey: kGoogleApiKey,
+  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
+  //   );
+  //
+  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
+  //
+  //   final lat = detail.result.geometry!.location.lat;
+  //   final lng = detail.result.geometry!.location.lng;
+  //
+  //   setState(() {
+  //     source = LatLng(lat, lng);
+  //     sourceController.text = detail.result.name;
+  //     _markers.add(Marker(
+  //         markerId: const MarkerId("source"),
+  //         position: source,
+  //         infoWindow: InfoWindow(title: detail.result.name)));
+  //   });
+  //   setPolylines();
+  //   googleMapController
+  //       .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
+  // }
   Future<void> _handlePressButtonSource() async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
@@ -329,12 +391,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             )),
         components: [Component(Component.country, "pk")]);
 
-    displayPredictionSource(p!, homeScaffoldKey.currentState);
+    if (p != null) {
+      displayPredictionSource(p, homeScaffoldKey.currentState);
+    } else {
+      homeScaffoldKey.currentState?.showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
+    }
   }
 
-  void onError(PlacesAutocompleteResponse response) {
-    homeScaffoldKey.currentState!
-        .showSnackBar(SnackBar(content: Text(response.errorMessage!)));
+  void onError(PlacesAutocompleteResponse? response) {
+    final errorMessage = response?.errorMessage ?? 'Unknown error';
+    homeScaffoldKey.currentState?.showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 
   Future<void> displayPredictionSource(
@@ -346,28 +412,100 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
     PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
 
-    final lat = detail.result.geometry!.location.lat;
-    final lng = detail.result.geometry!.location.lng;
+    final lat = detail.result.geometry?.location.lat;
+    final lng = detail.result.geometry?.location.lng;
 
-    setState(() {
-      source = LatLng(lat, lng);
-      sourceController.text = detail.result.name;
-      _markers.add(Marker(
-          markerId: const MarkerId("source"),
-          position: source,
-          infoWindow: InfoWindow(title: detail.result.name)));
-    });
-    setPolylines();
-    googleMapController
-        .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
+    if (lat != null && lng != null) {
+      setState(() {
+        source = LatLng(lat, lng);
+        sourceController.text = detail.result.name;
+        _markers.add(Marker(
+            markerId: const MarkerId("source"),
+            position: source,
+            infoWindow: InfoWindow(title: detail.result.name)));
+      });
+      setPolylines();
+      googleMapController.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
+    } else {
+      currentState?.showSnackBar(const SnackBar(content: Text('Error: Could not get location')));
+    }
   }
 
+
   // destination search autocomplete button
+  // Future<void> _handlePressButtonDestination() async {
+  //   Prediction? p = await PlacesAutocomplete.show(
+  //       context: context,
+  //       apiKey: kGoogleApiKey,
+  //       onError: onError,
+  //       mode: _mode,
+  //       language: "en",
+  //       logo: const Text(''),
+  //       strictbounds: false,
+  //       types: [""],
+  //       decoration: InputDecoration(
+  //           hintText: "Search Destination",
+  //           focusedBorder: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(20),
+  //             borderSide: const BorderSide(color: ColorPalette.primaryColor),
+  //           )),
+  //       components: [Component(Component.country, "pk")]);
+  //
+  //   if (p != null) {
+  //     displayPredictionDestination(p, homeScaffoldKey.currentState);
+  //   } else {
+  //     homeScaffoldKey.currentState!
+  //         .showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
+  //   }
+  // }
+  //
+  // void onErrorDestination(PlacesAutocompleteResponse? response) {
+  //   final errorMessage = response?.errorMessage ?? 'Unknown error';
+  //   homeScaffoldKey.currentState!
+  //       .showSnackBar(SnackBar(content: Text(errorMessage)));
+  // }
+  //
+  // List<Destination> destinations = [];
+  //
+  // Future<void> displayPredictionDestination(
+  //     Prediction p, ScaffoldMessengerState? currentState) async {
+  //   GoogleMapsPlaces places = GoogleMapsPlaces(
+  //     apiKey: kGoogleApiKey,
+  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
+  //   );
+  //
+  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
+  //
+  //   final lat = detail.result.geometry!.location.lat;
+  //   final lng = detail.result.geometry!.location.lng;
+  //
+  //   Destination newDestination = Destination(
+  //     name: detail.result.name,
+  //     location: LatLng(lat, lng),
+  //   );
+  //
+  //   setState(() {
+  //     destinations.add(newDestination);
+  //   });
+  //
+  //   destinationController.text = detail.result.name;
+  //   _markers.add(Marker(
+  //     markerId: MarkerId("destination ${destinations.length}"),
+  //     position: newDestination.location,
+  //     infoWindow: InfoWindow(title: newDestination.name),
+  //   ));
+  //   setPolylines();
+  //   setState(() {});
+  //   googleMapController.animateCamera(
+  //       CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
+  //
+  //   print('desti: ${destinations.toString()}');
+  // }
   Future<void> _handlePressButtonDestination() async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
         apiKey: kGoogleApiKey,
-        onError: onError,
+        onError: onErrorDestination,
         mode: _mode,
         language: "en",
         logo: const Text(''),
@@ -381,12 +519,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             )),
         components: [Component(Component.country, "pk")]);
 
-    displayPredictionDestination(p!, homeScaffoldKey.currentState);
+    if (p != null) {
+      displayPredictionDestination(p, homeScaffoldKey.currentState);
+    } else {
+      homeScaffoldKey.currentState?.showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
+    }
   }
 
-  void onErrorDestination(PlacesAutocompleteResponse response) {
-    homeScaffoldKey.currentState!
-        .showSnackBar(SnackBar(content: Text(response.errorMessage!)));
+  void onErrorDestination(PlacesAutocompleteResponse? response) {
+    final errorMessage = response?.errorMessage ?? 'Unknown error';
+    homeScaffoldKey.currentState?.showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 
   List<Destination> destinations = [];
@@ -400,30 +542,32 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
     PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
 
-    final lat = detail.result.geometry!.location.lat;
-    final lng = detail.result.geometry!.location.lng;
+    final lat = detail.result.geometry?.location.lat;
+    final lng = detail.result.geometry?.location.lng;
 
-    Destination newDestination = Destination(
-      name: detail.result.name,
-      location: LatLng(lat, lng),
-    );
+    if (lat != null && lng != null) {
+      Destination newDestination = Destination(
+        name: detail.result.name,
+        location: LatLng(lat, lng),
+      );
 
-    setState(() {
-      destinations.add(newDestination);
-    });
+      setState(() {
+        destinations.add(newDestination);
+      });
 
-    destinationController.text = detail.result.name;
-    _markers.add(Marker(
-      markerId: MarkerId("destination ${destinations.length}"),
-      position: newDestination.location,
-      infoWindow: InfoWindow(title: newDestination.name),
-    ));
-    setPolylines();
-    setState(() {});
-    googleMapController.animateCamera(
-        CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
-
-    print('desti: ${destinations.toString()}');
+      destinationController.text = detail.result.name;
+      _markers.add(Marker(
+        markerId: MarkerId("destination ${destinations.length}"),
+        position: newDestination.location,
+        infoWindow: InfoWindow(title: newDestination.name),
+      ));
+      setPolylines();
+      setState(() {});
+      googleMapController.animateCamera(CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
+      print('desti: ${destinations.toString()}');
+    } else {
+      currentState?.showSnackBar(const SnackBar(content: Text('Error: Could not get location')));
+    }
   }
 
   void _clearMap() {

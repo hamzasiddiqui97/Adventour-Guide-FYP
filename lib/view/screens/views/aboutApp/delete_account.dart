@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/auth_page.dart';
+import '../../../../core/constant/color_constants.dart';
 import '../../../../snackbar_utils.dart';
 
 class DeleteAccountPage extends StatefulWidget {
@@ -46,7 +47,13 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: const Text('Delete Account')),
+        appBar:AppBar(
+          elevation: 0,
+          backgroundColor: ColorPalette.secondaryColor,
+          foregroundColor: ColorPalette.primaryColor,
+          title: const Text('Delete Account'),
+          centerTitle: true,
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
