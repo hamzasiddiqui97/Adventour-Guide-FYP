@@ -36,14 +36,20 @@ class _ItineraryListState extends State<ItineraryList> {
                 itemCount: places.length,
                 itemBuilder: (BuildContext context, int index) {
                   return FutureBuilder<Map<String, dynamic>>(
+
                     future: AddPlacesToFirebaseDb.getPlaceDetails(widget.uid, places[index]['key']),
                     builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> placeDetailsSnapshot) {
                       if (placeDetailsSnapshot.hasData) {
                         Map<String, dynamic> placeDetails = placeDetailsSnapshot.data!;
+                        String? name = placeDetails['name'];
+                        String? address = placeDetails['address'];
+                        String? distance = placeDetails['distance'];
+                        String? time = placeDetails['time'];
+
                         return Card(
                           child: ListTile(
-                            title: Text(placeDetails['name']),
-                            subtitle: Text('${placeDetails['address']} \nDistance: ${placeDetails['distance']} \nTime: ${placeDetails['time']}'),
+                            title: Text(name ?? 'Unknown'),
+                            subtitle: Text('${address ?? 'No address'} \nDistance: ${distance ?? 'Unknown'} \nTime: ${time ?? 'Unknown'}'),
                             isThreeLine: true,
                             trailing: IconButton(
                               icon: const Icon(Icons.delete),

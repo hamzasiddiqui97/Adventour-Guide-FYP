@@ -61,10 +61,15 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
               const Text('Are you sure you want to delete your account?'),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: ButtonStyle(
+                  elevation: MaterialStateProperty.all(0),
+                    backgroundColor: MaterialStateProperty.all(
+                        ColorPalette.secondaryColor)
+                ),
                 onPressed: () {
                   deleteAccount();
                 },
-                child: const Text('Delete My Account'),
+                child: const Text('Delete My Account',style: TextStyle(color: Colors.white),),
               ),
             ],
           ),

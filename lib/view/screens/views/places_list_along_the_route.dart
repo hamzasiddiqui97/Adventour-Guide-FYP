@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_basics/view/screens/views/itinerary_list.dart';
 import 'package:google_maps_basics/view/screens/views/Places_detail_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -36,6 +37,8 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     currentUser = _auth.currentUser;
     userId = currentUser?.uid;
   }
+  TextEditingController _tripNameController = TextEditingController();
+
 
   void _savePlaceToTrip(String name, String address, double lat, double lng, String distance, String time) {
     setState(() {
@@ -52,9 +55,15 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   }
 
   Future<void> _saveTrip() async {
+    // Check if the trip name is not empty
+    if (_tripNameController.text.trim().isEmpty) {
+      Utils.showSnackBar("Trip name cannot be empty", false);
+      return;
+    }
+
     final FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference placesRef =
-    database.ref().child("users").child(userId!).child("places");
+    database.ref().child("users").child(userId!).child("places").child(_tripNameController.text);
 
     for (int i = 0; i < _savedPlaces.length; i++) {
       final placeData = _savedPlaces[i];
@@ -72,7 +81,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
     Utils.showSnackBar("Places added successfully", true);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +109,46 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
         ),
         body: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _tripNameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Enter Trip Name',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLength: 20,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                      onChanged: (value) {
+                        if (value.trim().isEmpty) {
+                          Utils.showSnackBar("Trip name cannot be empty", false);
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all(ColorPalette.primaryColor),
+                      backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor),
+                    ),
+                    onPressed: () {
+                      if (_tripNameController.text.trim().isNotEmpty) {
+                        // Close the text field.
+                        FocusScope.of(context).unfocus();
+                      } else {
+                        Utils.showSnackBar("Trip name cannot be empty", false);
+                      }
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: widget.distancesAndTimes.length, // Set itemCount to the minimum length of both lists
