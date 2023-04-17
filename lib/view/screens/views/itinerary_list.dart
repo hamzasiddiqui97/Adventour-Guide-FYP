@@ -3,7 +3,6 @@ import '../../../core/constant/color_constants.dart';
 import '../../../model/firebase_reference.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-
 class ItineraryList extends StatefulWidget {
   final String uid;
 
@@ -32,29 +31,33 @@ class _ItineraryListState extends State<ItineraryList> {
               Map<dynamic, dynamic> values =
               snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
               List<dynamic> places = values.values.toList();
+              print('Placesssss : ${places.toString()}');
               return ListView.builder(
                 itemCount: places.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return FutureBuilder<Map<String, dynamic>>(
-
-                    future: AddPlacesToFirebaseDb.getPlaceDetails(widget.uid, places[index]['key']),
-                    builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> placeDetailsSnapshot) {
+                  String? placeKey = places[index]['key'] as String?;
+                  if (placeKey == null) {
+                    return const Center(child: Text('Invalid place data'));
+                  }
+                  return FutureBuilder<Map<String, dynamic>?>(
+                    future: AddPlacesToFirebaseDb.getPlaceDetails(widget.uid, placeKey),
+                    builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>?> placeDetailsSnapshot) {
                       if (placeDetailsSnapshot.hasData) {
-                        Map<String, dynamic> placeDetails = placeDetailsSnapshot.data!;
-                        String? name = placeDetails['name'];
-                        String? address = placeDetails['address'];
-                        String? distance = placeDetails['distance'];
-                        String? time = placeDetails['time'];
+                        Map<String, dynamic>? placeDetails = placeDetailsSnapshot.data;
+                        String name = placeDetails?['name'] ?? 'Unknown';
+                        String address = placeDetails?['address'] ?? 'No address';
+                        String distance = placeDetails?['distance'] ?? 'Unknown';
+                        String time = placeDetails?['time'] ?? 'Unknown';
 
                         return Card(
                           child: ListTile(
-                            title: Text(name ?? 'Unknown'),
-                            subtitle: Text('${address ?? 'No address'} \nDistance: ${distance ?? 'Unknown'} \nTime: ${time ?? 'Unknown'}'),
+                            title: Text(name),
+                            subtitle: Text('$address \nDistance: $distance \nTime: $time'),
                             isThreeLine: true,
                             trailing: IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () {
-                                AddPlacesToFirebaseDb.deletePlace(widget.uid, places[index]['key']);
+                                AddPlacesToFirebaseDb.deletePlace(widget.uid, placeKey);
                               },
                             ),
                           ),
@@ -66,6 +69,7 @@ class _ItineraryListState extends State<ItineraryList> {
                   );
                 },
               );
+
             } else {
               return const Center(
                 child: Text('No places saved'),

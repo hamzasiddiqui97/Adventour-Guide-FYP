@@ -30,6 +30,10 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   List<Map<String, dynamic>> _savedPlaces =
       []; // add list to store places locally
 
+
+  bool _isTripNameSaved = false;
+
+
   @override
   void initState() {
     super.initState();
@@ -37,21 +41,31 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     currentUser = _auth.currentUser;
     userId = currentUser?.uid;
   }
-  TextEditingController _tripNameController = TextEditingController();
+  final TextEditingController _tripNameController = TextEditingController();
 
 
   void _savePlaceToTrip(String name, String address, double lat, double lng, String distance, String time) {
+    final placeData = {
+      'name': name,
+      'address': address,
+      'latitude': lat,
+      'longitude': lng,
+      'distance': distance,
+      'time': time,
+    };
     setState(() {
-      final newPlace = {
-        'name': name,
-        'address': address,
-        'latitude': lat,
-        'longitude': lng,
-        'distance': distance,
-        'time': time,
-      };
-      _savedPlaces.add(newPlace);
+      _savedPlaces.add(placeData);
     });
+
+    final FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference placesRef =
+    database.ref().child("users").child(userId!).child("places").child(_tripNameController.text);
+    try {
+      placesRef.push().set(placeData);
+      print("Place added ${placeData['name']}");
+    } catch (error) {
+      print("Failed to add place: $error");
+    }
   }
 
   Future<void> _saveTrip() async {
@@ -60,6 +74,10 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
       Utils.showSnackBar("Trip name cannot be empty", false);
       return;
     }
+
+    setState(() {
+      _isTripNameSaved = true;
+    });
 
     final FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference placesRef =
@@ -85,6 +103,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   @override
   Widget build(BuildContext context) {
     print('Markers in PlacesListAlongTheRoute: ${widget.markers.length}');
+
 
     if (widget.markers.isEmpty) {
       return SafeArea(
@@ -140,6 +159,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                       if (_tripNameController.text.trim().isNotEmpty) {
                         // Close the text field.
                         FocusScope.of(context).unfocus();
+                        _saveTrip();
                       } else {
                         Utils.showSnackBar("Trip name cannot be empty", false);
                       }
@@ -149,7 +169,8 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                 ],
               ),
             ),
-            Expanded(
+            if (_isTripNameSaved)
+              Expanded(
               child: ListView.builder(
                 itemCount: widget.distancesAndTimes.length, // Set itemCount to the minimum length of both lists
                 itemBuilder: (context, index) {
@@ -165,6 +186,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                   } else {
                     distanceText = 'Distance from ${widget.markers[index - 1].infoWindow.title ?? 'Unknown'}: $distance';
                   }
+
                   return GestureDetector(
                       onTap: () {
                         final marker = widget.markers.elementAt(index);
@@ -225,13 +247,13 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                               //   ),
                               // ),
                               // const SizedBox(height: 4),
-                              // Text(
-                              //   'Time: $time',
-                              //   style: const TextStyle(
-                              //     fontSize: 14,
-                              //     color: Colors.grey,
-                              //   ),
-                              // ),
+                              Text(
+                                'Time: $time',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
                               const SizedBox(height: 8),
                               ElevatedButton(
                                 style: ButtonStyle(

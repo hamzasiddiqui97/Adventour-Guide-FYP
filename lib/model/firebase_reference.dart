@@ -12,7 +12,7 @@ class AddPlacesToFirebaseDb {
         .onValue;
   }
 
-  static Future<Map<String, dynamic>> getPlaceDetails(String uid, String placeKey) async {
+  static Future<Map<String, dynamic>?> getPlaceDetails(String uid, String placeKey) async {
     DatabaseReference placeRef = database
         .ref()
         .child('users')
@@ -25,14 +25,10 @@ class AddPlacesToFirebaseDb {
     if (dataSnapshot.value != null) {
       return dataSnapshot.value as Map<String, dynamic>;
     } else {
-      return {
-        'name': 'Unknown',
-        'address': 'Unknown',
-        'distance': 'Unknown',
-        'time': 'Unknown',
-      };
+      return null;
     }
   }
+
 
   static void deletePlace(String uid, String placeKey) {
     database
