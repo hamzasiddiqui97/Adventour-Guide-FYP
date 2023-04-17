@@ -44,29 +44,29 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   final TextEditingController _tripNameController = TextEditingController();
 
 
-  void _savePlaceToTrip(String name, String address, double lat, double lng, String distance, String time) {
-    final placeData = {
-      'name': name,
-      'address': address,
-      'latitude': lat,
-      'longitude': lng,
-      'distance': distance,
-      'time': time,
-    };
-    setState(() {
-      _savedPlaces.add(placeData);
-    });
-
-    final FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference placesRef =
-    database.ref().child("users").child(userId!).child("places").child(_tripNameController.text);
-    try {
-      placesRef.push().set(placeData);
-      print("Place added ${placeData['name']}");
-    } catch (error) {
-      print("Failed to add place: $error");
-    }
-  }
+  // void _savePlaceToTrip(String name, String address, double lat, double lng, String distance, String time) {
+  //   final placeData = {
+  //     'name': name,
+  //     'address': address,
+  //     'latitude': lat,
+  //     'longitude': lng,
+  //     'distance': distance,
+  //     'time': time,
+  //   };
+  //   setState(() {
+  //     _savedPlaces.add(placeData);
+  //   });
+  //
+  //   final FirebaseDatabase database = FirebaseDatabase.instance;
+  //   DatabaseReference placesRef =
+  //   database.ref().child("users").child(userId!).child("places").child(_tripNameController.text);
+  //   try {
+  //     placesRef.push().set(placeData);
+  //     print("Place added ${placeData['name']}");
+  //   } catch (error) {
+  //     print("Failed to add place: $error");
+  //   }
+  // }
 
   Future<void> _saveTrip() async {
     // Check if the trip name is not empty
@@ -266,10 +266,19 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                                   final imageUrl = '';
                                   final distance = distanceAndTime['distance'] ?? 'Unknown';
                                   final time = distanceAndTime['time'] ?? 'Unknown';
+
                                   setState(() {
-                                    _savePlaceToTrip(name, address, marker.position.latitude, marker.position.longitude, distance, time);
+                                    _savedPlaces.add({
+                                      'name': name,
+                                      'address': address,
+                                      'latitude': marker.position.latitude,
+                                      'longitude': marker.position.longitude,
+                                      'distance': distance,
+                                      'time': time,
+                                    });
                                     print('on Pressed Add place to trip (_savedPlaceslength): ${_savedPlaces.length}');
                                   });
+
                                   Utils.showSnackBar("Place added to trip", true);
                                 },
                                 child: const Text('Add place to trip',
@@ -296,14 +305,14 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                         foregroundColor: Colors.white,
                       ),
                       onPressed: () async {
-                        if (_savedPlaces.isNotEmpty) {
-                          final FirebaseDatabase database =
-                              FirebaseDatabase.instance;
+                        if (_savedPlaces.isNotEmpty && _tripNameController.text.trim().isNotEmpty) {
+                          final FirebaseDatabase database = FirebaseDatabase.instance;
                           DatabaseReference placesRef = database
                               .ref()
                               .child("users")
                               .child(userId!)
-                              .child("places");
+                              .child("places")
+                              .child(_tripNameController.text);
 
                           for (int i = 0; i < _savedPlaces.length; i++) {
                             try {
@@ -319,9 +328,9 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                           });
                           Utils.showSnackBar("Places added successfully", true);
                         } else {
-                          Utils.showSnackBar("No places saved", false);
+                          Utils.showSnackBar("No places saved or trip name is empty", false);
                         }
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryList(uid: userId?? 'default')));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryList(uid: userId?? 'default', tripName: _tripNameController.text)));
                       },
                       child: const Text(
                         'Save Trip',
