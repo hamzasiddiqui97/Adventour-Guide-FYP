@@ -1,5 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constant/color_constants.dart';
+import '../../../model/firebase_reference.dart';
+import '../views/myplan_trip_details.dart'; // Import the updated AddPlacesToFirebaseDb class
 
 class MyPlan extends StatefulWidget {
   final String uid;
@@ -24,38 +27,37 @@ class _MyPlanState extends State<MyPlan> {
           title: const Text('My Trips'),
           centerTitle: true,
         ),
-        body: const Center(child: Text('Nothing to Show')),
-        // body: StreamBuilder<DatabaseEvent>(
-        //   stream: AddPlacesToFirebaseDb.getPlacesStream(widget.uid),
-        //   builder: (BuildContext context, AsyncSnapshot<DatabaseEvent> snapshot) {
-        //     if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
-        //       Map<dynamic, dynamic> values =
-        //       snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
-        //       List<dynamic> places = values.values.toList();
-        //       return ListView.builder(
-        //         itemCount: places.length,
-        //         itemBuilder: (BuildContext context, int index) {
-        //           return Card(
-        //             child: ListTile(
-        //               title: Text(places[index]['name']),
-        //               subtitle: Text(places[index]['address']),
-        //               trailing: IconButton(
-        //                 icon: Icon(Icons.delete),
-        //                 onPressed: () {
-        //                   AddPlacesToFirebaseDb.deletePlace(widget.uid, places[index]['key']);
-        //                 },
-        //               ),
-        //             ),
-        //           );
-        //         },
-        //       );
-        //     } else {
-        //       return Center(
-        //         child: Text('No places saved'),
-        //       );
-        //     }
-        //   },
-        // ),
+        body: StreamBuilder<DatabaseEvent>(
+          stream: AddPlacesToFirebaseDb.getTripsStream(widget.uid),
+          builder: (BuildContext context, AsyncSnapshot<DatabaseEvent> snapshot) {
+            if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
+              Map<dynamic, dynamic> values = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+              List<String> tripNames = values.keys.cast<String>().toList();
+
+              return ListView.builder(
+                itemCount: tripNames.length,
+                itemBuilder: (BuildContext context, int index) {
+                  String tripName = tripNames[index];
+
+                  return ExpansionTile(
+                    title: Text(tripName),
+                    children: [
+                      ListTile(
+                        title: Text('Show details for trip $tripName'),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> TripPlacesDetails(uid: widget.uid, tripName: tripName)));
+                          // Navigate to the trip details page or handle the tap event
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else {
+              return const Center(child: Text('Nothing to Show'));
+            }
+          },
+        ),
       ),
     );
   }

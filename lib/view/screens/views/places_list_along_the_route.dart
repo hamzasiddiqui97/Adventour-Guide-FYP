@@ -278,7 +278,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                                     });
                                     print('on Pressed Add place to trip (_savedPlaceslength): ${_savedPlaces.length}');
                                   });
-
                                   Utils.showSnackBar("Place added to trip", true);
                                 },
                                 child: const Text('Add place to trip',

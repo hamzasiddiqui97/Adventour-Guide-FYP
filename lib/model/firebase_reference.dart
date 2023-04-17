@@ -13,6 +13,15 @@ class AddPlacesToFirebaseDb {
         .onValue;
   }
 
+  // New function to get trip names for MyPlan
+  static Stream<DatabaseEvent> getTripsStream(String uid) {
+    return database
+        .ref()
+        .child('users')
+        .child(uid)
+        .child('places')
+        .onValue;
+  }
 
   static Future<Map<String, dynamic>?> getPlaceDetails(String uid, String tripName, String placeKey) async {
     DatabaseReference placeRef = database

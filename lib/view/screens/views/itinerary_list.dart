@@ -26,49 +26,58 @@ class _ItineraryListState extends State<ItineraryList> {
           centerTitle: true,
         ),
         body: StreamBuilder<DatabaseEvent>(
-          stream: AddPlacesToFirebaseDb.getPlacesStream(widget.uid,widget.tripName),
+          stream: AddPlacesToFirebaseDb.getPlacesStream(widget.uid, widget.tripName),
           builder: (BuildContext context, AsyncSnapshot<DatabaseEvent> snapshot) {
             if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
+              print('Snapshot data: ${snapshot.data!.snapshot.value}');
+
               Map<dynamic, dynamic> values =
               snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
               List<dynamic> places = values.values.toList();
               print('Placesssss : ${places.toString()}');
-              return ListView.builder(
-                itemCount: places.length,
-                itemBuilder: (BuildContext context, int index) {
-                  String? placeKey = places[index]['key'] as String?;
-                  if (placeKey == null) {
-                    return const Center(child: Text('Invalid place data'));
-                  }
-                  return FutureBuilder<Map<String, dynamic>?>(
-                    future: AddPlacesToFirebaseDb.getPlaceDetails(widget.uid, widget.tripName,placeKey),
-                    builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>?> placeDetailsSnapshot) {
-                      if (placeDetailsSnapshot.hasData) {
-                        Map<String, dynamic>? placeDetails = placeDetailsSnapshot.data;
-                        String name = placeDetails?['name'] ?? 'Unknown';
-                        String address = placeDetails?['address'] ?? 'No address';
-                        String distance = placeDetails?['distance'] ?? 'Unknown';
-                        String time = placeDetails?['time'] ?? 'Unknown';
-
-                        return Card(
-                          child: ListTile(
-                            title: Text(name),
-                            subtitle: Text('$address \nDistance: $distance \nTime: $time'),
-                            isThreeLine: true,
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                AddPlacesToFirebaseDb.deletePlace(widget.uid,widget.tripName, placeKey);
-                              },
-                            ),
-                          ),
-                        );
-                      } else {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  );
+              return RefreshIndicator(
+                onRefresh: () async {
+                  setState(() {});
                 },
+                child: ListView.builder(
+                  itemCount: places.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    String? placeKey = values.keys.elementAt(index) as String?;
+                    if (placeKey == null) {
+                      return const Center(child: Text('Invalid place data'));
+                    }
+                    return FutureBuilder<Map<String, dynamic>?>(
+                      future: AddPlacesToFirebaseDb.getPlaceDetails(widget.uid, widget.tripName, placeKey),
+                      builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>?> placeDetailsSnapshot) {
+                        if (placeDetailsSnapshot.hasData) {
+                          Map<String, dynamic>? placeDetails = placeDetailsSnapshot.data;
+                          String name = placeDetails?['name'] ?? 'Unknown';
+                          String address = placeDetails?['address'] ?? 'No address';
+                          String distance = placeDetails?['distance'] ?? 'Unknown';
+                          String time = placeDetails?['time'] ?? 'Unknown';
+
+                          return Card(
+                            child: ListTile(
+                              title: Text(name),
+                              subtitle: Text('$address \nDistance: $distance \nTime: $time'),
+                              isThreeLine: true,
+                              trailing: IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  AddPlacesToFirebaseDb.deletePlace(widget.uid, widget.tripName, placeKey);
+                                },
+                              ),
+                            ),
+                          );
+                        } else {
+                          print('No data in the snapshot or no places');
+
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      },
+                    );
+                  },
+                ),
               );
 
             } else {
