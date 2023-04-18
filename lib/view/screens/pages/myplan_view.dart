@@ -46,7 +46,6 @@ class _MyPlanState extends State<MyPlan> {
                         title: Text('Show details for trip $tripName'),
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context)=> TripPlacesDetails(uid: widget.uid, tripName: tripName)));
-                          // Navigate to the trip details page or handle the tap event
                         },
                       ),
                     ],

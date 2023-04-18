@@ -32,15 +32,16 @@ class AddPlacesToFirebaseDb {
         .child(tripName)
         .child(placeKey);
 
-    DataSnapshot dataSnapshot = (await placeRef.once()) as DataSnapshot;
+    DatabaseEvent event = (await placeRef.once());
+    DataSnapshot dataSnapshot = event.snapshot;
 
     if (dataSnapshot.value != null) {
-      return dataSnapshot.value as Map<String, dynamic>;
+      Map<String, dynamic> result = Map<String, dynamic>.from(dataSnapshot.value as Map);
+      return result;
     } else {
       return null;
     }
   }
-
 
   static void deletePlace(String uid, String tripName, String placeKey) {
     database
