@@ -74,8 +74,8 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(address, style: subtitleStyle,),
-                                  Text('$distance ', style: subtitleStyle,),
+                                  Text('Address: $address', style: subtitleStyle,),
+                                  Text('Distance: $distance ', style: subtitleStyle,),
                                   Text('Time to reach: $time', style: subtitleStyle,),
 
                                 ],
