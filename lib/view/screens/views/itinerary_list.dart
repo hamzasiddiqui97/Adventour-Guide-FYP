@@ -56,6 +56,7 @@ class _ItineraryListState extends State<ItineraryList> {
                           String distance = placeDetails?['distance'] ?? 'Unknown';
                           String time = placeDetails?['time'] ?? 'Unknown';
 
+
                           return Card(
                             child: ListTile(
                               title: Text(name),

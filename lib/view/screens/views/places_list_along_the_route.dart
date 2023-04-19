@@ -14,6 +14,7 @@ class PlacesListAlongTheRoute extends StatefulWidget {
   final List<Map<String, String>> distancesAndTimes;
 
 
+
   const PlacesListAlongTheRoute({Key? key, required this.markers, required this.distancesAndTimes})
       : super(key: key);
 
@@ -27,11 +28,13 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   late User? currentUser;
   late String? userId;
 
-  List<Map<String, dynamic>> _savedPlaces =
-      []; // add list to store places locally
-
+  List<Map<String, dynamic>> _savedPlaces = []; // add list to store places locally
 
   bool _isTripNameSaved = false;
+
+  // date picker
+  DateTime? _fromDate;
+  DateTime? _toDate;
 
 
   @override
@@ -43,35 +46,13 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   }
   final TextEditingController _tripNameController = TextEditingController();
 
-
-  // void _savePlaceToTrip(String name, String address, double lat, double lng, String distance, String time) {
-  //   final placeData = {
-  //     'name': name,
-  //     'address': address,
-  //     'latitude': lat,
-  //     'longitude': lng,
-  //     'distance': distance,
-  //     'time': time,
-  //   };
-  //   setState(() {
-  //     _savedPlaces.add(placeData);
-  //   });
-  //
-  //   final FirebaseDatabase database = FirebaseDatabase.instance;
-  //   DatabaseReference placesRef =
-  //   database.ref().child("users").child(userId!).child("places").child(_tripNameController.text);
-  //   try {
-  //     placesRef.push().set(placeData);
-  //     print("Place added ${placeData['name']}");
-  //   } catch (error) {
-  //     print("Failed to add place: $error");
-  //   }
-  // }
-
   Future<void> _saveTrip() async {
-    // Check if the trip name is not empty
+    // Check if the trip name is not empty and dates are selected
     if (_tripNameController.text.trim().isEmpty) {
       Utils.showSnackBar("Trip name cannot be empty", false);
+      return;
+    } else if (_fromDate == null || _toDate == null) {
+      Utils.showSnackBar("Please select both From and To dates", false);
       return;
     }
 
@@ -83,10 +64,17 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     DatabaseReference placesRef =
     database.ref().child("users").child(userId!).child("places").child(_tripNameController.text);
 
+    // Save the fromDate and toDate directly under the trip
+    await placesRef.set({
+      'fromDate': _fromDate!.toIso8601String(),
+      'toDate': _toDate!.toIso8601String(),
+    });
+
+    // Save the places under the trip
     for (int i = 0; i < _savedPlaces.length; i++) {
       final placeData = _savedPlaces[i];
       try {
-        await placesRef.push().set(placeData);
+        await placesRef.child("places").push().set(placeData);
         print("Place added ${placeData['name']}");
       } catch (error) {
         print("Failed to add place: $error");
@@ -97,6 +85,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
       _savedPlaces = [];
     });
 
+    print('savedPlaces: ${_savedPlaces.toString()}');
     Utils.showSnackBar("Places added successfully", true);
   }
 
@@ -133,6 +122,8 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
+                  const SizedBox(height: 8),
                   Expanded(
                     child: TextField(
                       controller: _tripNameController,
@@ -169,6 +160,57 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                 ],
               ),
             ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2100),
+                    );
+
+                    if (pickedDate != null) {
+                      setState(() {
+                        _fromDate = pickedDate;
+                      });
+                    }
+                  },
+                  child: Text(
+                    _fromDate == null
+                        ? 'Choose From Date'
+                        : 'From: ${_fromDate!.toLocal()}'.split(' ')[0],
+                    style: const TextStyle(color: ColorPalette.secondaryColor),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2100),
+                    );
+
+                    if (pickedDate != null) {
+                      setState(() {
+                        _toDate = pickedDate;
+                      });
+                    }
+                  },
+                  child: Text(
+                    _toDate == null
+                        ? 'Choose To Date'
+                        : 'To: ${_toDate!.toLocal()}'.split(' ')[0],
+                    style: const TextStyle(color: ColorPalette.secondaryColor),
+                  ),
+                ),
+              ],
+            ),
+
             if (_isTripNameSaved)
               Expanded(
               child: ListView.builder(
@@ -221,15 +263,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              // Text(
-                              //   marker.infoWindow.snippet ??
-                              //       'No vicinity information',
-                              //   style: const TextStyle(
-                              //     fontSize: 14,
-                              //     color: Colors.grey,
-                              //   ),
-                              // ),
-                              const SizedBox(height: 4),
+
                               Text(
                                 distanceText,
                                 style: const TextStyle(
@@ -237,16 +271,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                                   color: Colors.grey,
                                 ),
                               ),
-
-
-                              // Text(
-                              //   'Distance: $distance',
-                              //   style: const TextStyle(
-                              //     fontSize: 14,
-                              //     color: Colors.grey,
-                              //   ),
-                              // ),
-                              // const SizedBox(height: 4),
                               Text(
                                 'Time: $time',
                                 style: const TextStyle(
@@ -267,6 +291,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                                   final distance = distanceAndTime['distance'] ?? 'Unknown';
                                   final time = distanceAndTime['time'] ?? 'Unknown';
 
+
                                   setState(() {
                                     _savedPlaces.add({
                                       'name': name,
@@ -275,6 +300,8 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                                       'longitude': marker.position.longitude,
                                       'distance': distance,
                                       'time': time,
+                                      'fromDate': _fromDate?.toIso8601String() ?? '',
+                                      'toDate': _toDate?.toIso8601String() ?? '',
                                     });
                                     print('on Pressed Add place to trip (_savedPlaceslength): ${_savedPlaces.length}');
                                   });
@@ -292,7 +319,9 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                 },
               ),
             ),
-            SizedBox(
+            if (_isTripNameSaved)
+
+              SizedBox(
               height: MediaQuery.of(context).size.height * 0.12,
               child: Padding(
                 padding: const EdgeInsets.all(18),
@@ -329,7 +358,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                         } else {
                           Utils.showSnackBar("No places saved or trip name is empty", false);
                         }
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryList(uid: userId?? 'default', tripName: _tripNameController.text)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryList(uid: userId ?? 'default', tripName: _tripNameController.text)));
                       },
                       child: const Text(
                         'Save Trip',
