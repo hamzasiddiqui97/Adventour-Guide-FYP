@@ -14,7 +14,6 @@ class PlacesListAlongTheRoute extends StatefulWidget {
   final List<Map<String, String>> distancesAndTimes;
 
 
-
   const PlacesListAlongTheRoute({Key? key, required this.markers, required this.distancesAndTimes})
       : super(key: key);
 
@@ -64,7 +63,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     DatabaseReference placesRef =
     database.ref().child("users").child(userId!).child("places").child(_tripNameController.text);
 
-    // Save the fromDate and toDate directly under the trip
     await placesRef.set({
       'fromDate': _fromDate!.toIso8601String(),
       'toDate': _toDate!.toIso8601String(),
@@ -86,11 +84,14 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     });
 
     print('savedPlaces: ${_savedPlaces.toString()}');
+    print('original markers list: ${widget.markers}');
     Utils.showSnackBar("Places added successfully", true);
   }
 
   @override
   Widget build(BuildContext context) {
+
+
     print('Markers in PlacesListAlongTheRoute: ${widget.markers.length}');
 
 
@@ -108,6 +109,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     }
 
     return SafeArea(
+
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: ColorPalette.secondaryColor,
@@ -182,7 +184,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                   child: Text(
                     _fromDate == null
                         ? 'Choose From Date'
-                        : 'From: ${_fromDate!.toLocal()}'.split(' ')[0],
+                        : 'From: ${_fromDate!.month.toString().padLeft(2, '0')}-${_fromDate!.day.toString().padLeft(2, '0')}',
                     style: const TextStyle(color: ColorPalette.secondaryColor),
                   ),
                 ),
@@ -204,7 +206,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                   child: Text(
                     _toDate == null
                         ? 'Choose To Date'
-                        : 'To: ${_toDate!.toLocal()}'.split(' ')[0],
+                        : 'To: ${_toDate!.month.toString().padLeft(2, '0')}-${_toDate!.day.toString().padLeft(2, '0')}',
                     style: const TextStyle(color: ColorPalette.secondaryColor),
                   ),
                 ),
