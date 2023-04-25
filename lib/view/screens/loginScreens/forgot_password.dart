@@ -74,13 +74,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 20,),
                 ElevatedButton(
                   onPressed: resetPassword,
-                  // style: ButtonStyle(
-                  //   backgroundColor: MaterialStateProperty.all<Color>(
-                  //       ColorPalette.secondaryColor),
-                  //   foregroundColor: MaterialStateProperty.all<Color>(
-                  //       ColorPalette.primaryColor),
-                  // ),
-
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.secondaryColor,
                     foregroundColor: Colors.white,

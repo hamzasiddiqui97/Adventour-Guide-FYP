@@ -5,6 +5,7 @@ import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:google_maps_basics/widgets/sevenDayForecast.dart';
 
+import '../../view/screens/views/nearby_places_list.dart';
 import '../../view/screens/views/search_nearby_restaurant.dart';
 
 
@@ -32,12 +33,19 @@ class CustomGrid extends StatelessWidget {
                     Container(
                       color: Colors.white,
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const NearByPlacesScreen()),
+                          );
+                        },
                         icon: const Icon(
                           Icons.hotel, color: ColorPalette.secondaryColor,
                           size: 30,),),
                     ),
-                    const Text('Hotel', textAlign: TextAlign.center),
+                    const Text('Near Me', textAlign: TextAlign.center),
+
                   ],
                 ),
                 Column(

@@ -18,7 +18,6 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void initState() {
     selectSignUp();
-    // TODO: implement initState
     super.initState();
   }
 

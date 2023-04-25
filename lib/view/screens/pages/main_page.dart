@@ -6,19 +6,26 @@ import 'package:google_maps_basics/view/screens/pages/my_account.dart';
 import 'package:google_maps_basics/view/screens/pages/myplan_view.dart';
 
 class NavigationPage extends StatefulWidget {
-  const NavigationPage({Key? key}) : super(key: key);
+  final String uid;
+  const NavigationPage({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<NavigationPage> createState() => _NavigationPageState();
 }
 
 class _NavigationPageState extends State<NavigationPage> {
-  List<Widget> pages = const [
-    HomePageNavBar(),
-    HomePageGoogleMaps(),
-    MyPlan(),
-    MyAccount(),
-  ];
+  late List<Widget> pages;
+
+  @override
+  void initState() {
+    super.initState();
+    pages = [
+      HomePageNavBar(),
+      HomePageGoogleMaps(),
+      MyPlan(uid: widget.uid),
+      MyAccount(),
+    ];
+  }
 
   int _currentIndex = 0;
   void onTap(int index) {

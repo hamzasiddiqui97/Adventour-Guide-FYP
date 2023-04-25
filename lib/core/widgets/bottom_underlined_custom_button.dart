@@ -17,7 +17,7 @@ class UnderlineButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
-      child: InkWell(
+      child: GestureDetector(
         onTap: onPress,
         child: Container(
           width: width,
@@ -40,7 +40,7 @@ class UnderlineButton extends StatelessWidget {
               ),
               )
               ),
-              InkWell(
+              const InkWell(
                 enableFeedback: true,
                 splashColor: ColorPalette.secondaryColor,
                   child: Icon(Icons.arrow_forward_ios,color: ColorPalette.secondaryColor,)),

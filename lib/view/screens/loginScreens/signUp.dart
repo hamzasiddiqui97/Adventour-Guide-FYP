@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
-import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:lottie/lottie.dart';
 
 class SignUp extends StatefulWidget {
@@ -226,7 +225,7 @@ class _SignUpState extends State<SignUp> {
           'Email': emailController.text,
           'Password': passwordController.text
         });
-        Utils.showSnackBar("Account is created Sucessfully!", true);
+        Utils.showSnackBar("Account is created Successfully!", true);
       } else {
         // Password and Confirm Password do not match
         throw FirebaseAuthException(
@@ -558,7 +557,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
       }
       Utils.showSnackBar(errorMessage, false);
     } catch (e) {
-      Utils.showSnackBar("An error occurred while signing up.", false);
+      Utils.showSnackBar("An error occurred while signing up", false);
     } finally {
       Navigator.of(context).pop(); // Dismiss the progress dialog
     }

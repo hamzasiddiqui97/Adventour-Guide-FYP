@@ -4,6 +4,10 @@ import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/bottom_underlined_custom_button.dart';
 import 'package:google_maps_basics/core/widgets/rounded_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../views/aboutApp/contact_us.dart';
+import '../views/aboutApp/delete_account.dart';
+import '../views/aboutApp/privacy.dart';
+import '../views/aboutApp/term_conds.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({Key? key}) : super(key: key);
@@ -13,7 +17,6 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  // final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +65,11 @@ class _MyAccountState extends State<MyAccount> {
                       await FirebaseAuth.instance.signOut();
                       Navigator.pushNamedAndRemoveUntil(context, '/signIn', (route) => false);
                     },
-                    child: const Text('Sign Out', ),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: ColorPalette.primaryColor,
                       backgroundColor: ColorPalette.secondaryColor,
                     ),
+                    child: const Text('Sign Out', ),
                   ),
                 ),
               ] else ...[
@@ -77,7 +80,7 @@ class _MyAccountState extends State<MyAccount> {
                   color: ColorPalette.secondaryColor,
                   width: 200.0,
                   onPress: () {
-// Open login page and set display name on successful login
+                    // Open login page and set display name on successful login
                     Navigator.pushNamed(context, '/login').then((displayName) {
                       if (displayName != null) {
                         // _setDisplayName(displayName.toString());
@@ -88,10 +91,35 @@ class _MyAccountState extends State<MyAccount> {
               ],
               const SizedBox(height: 20),
               UnderlineButton(name: 'All my plans', color: Colors.transparent,textColor: Colors.black, width: screenWidth,),
-              UnderlineButton(name: 'Contact us', color: Colors.transparent,textColor: Colors.black, width: screenWidth,),
-              UnderlineButton(name: 'Privacy policy', color: Colors.transparent,textColor: Colors.black, width:screenWidth,),
-              UnderlineButton(name: 'Terms and Condition', color: Colors.transparent,textColor: Colors.black, width: screenWidth,),
-              UnderlineButton(name: 'Delete my account', color: Colors.transparent,textColor: Colors.black, width:  screenWidth,),
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactUsPage()));
+                },
+                  child: UnderlineButton(
+                    name: 'Contact us',
+                    color: Colors.transparent,
+                    textColor: Colors.black,
+                    width: screenWidth,)),
+              InkWell(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacyPolicyPage()));
+                  },
+                  child: UnderlineButton(name: 'Privacy policy', color: Colors.transparent,textColor: Colors.black, width:screenWidth,)),
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const TermsAndConditionsPage()));
+                },
+                child: UnderlineButton(
+                  name: 'Terms and Condition', color: Colors.transparent,textColor: Colors.black, width: screenWidth,),
+              ),
+              InkWell(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => DeleteAccountPage()));
+                  },
+                enableFeedback: true,
+                child: UnderlineButton(
+                  name: 'Delete my account', color: Colors.transparent,textColor: Colors.black, width:  screenWidth,),
+              ),
             ],
           ),
         ),

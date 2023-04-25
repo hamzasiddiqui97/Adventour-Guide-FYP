@@ -312,7 +312,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                 padding: const EdgeInsets.all(8),
                 child: Text(
                   results.name!,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -322,12 +322,12 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.star,
                       color: Colors.yellow,
                       size: 16,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
                       results.rating?.toString() ?? "Not Available",
                       style: TextStyle(
@@ -348,7 +348,7 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                 ),
                 child: Text(
                   results.vicinity ?? "",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
                   ),
