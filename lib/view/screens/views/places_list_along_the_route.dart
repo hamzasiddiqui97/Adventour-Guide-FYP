@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_basics/view/screens/views/itinerary_list.dart';
-import 'package:google_maps_basics/view/screens/views/Places_detail_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../core/constant/color_constants.dart';
@@ -12,9 +11,10 @@ import '../../../snackbar_utils.dart';
 class PlacesListAlongTheRoute extends StatefulWidget {
   final List<Marker> markers;
   final List<Map<String, String>> distancesAndTimes;
+  final List<LatLng> polylineCoordinates; // Add this line
 
 
-  const PlacesListAlongTheRoute({Key? key, required this.markers, required this.distancesAndTimes})
+  const PlacesListAlongTheRoute({Key? key, required this.markers, required this.distancesAndTimes, required this.polylineCoordinates})
       : super(key: key);
 
   @override
@@ -36,6 +36,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   DateTime? _toDate;
 
 
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +45,14 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     userId = currentUser?.uid;
   }
   final TextEditingController _tripNameController = TextEditingController();
+
+
+  bool _isPlaceAdded(Marker marker) {
+    return _savedPlaces.any((place) =>
+    place['latitude'] == marker.position.latitude &&
+        place['longitude'] == marker.position.longitude);
+  }
+
 
   Future<void> _saveTrip() async {
     // Check if the trip name is not empty and dates are selected
@@ -216,39 +225,39 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
             if (_isTripNameSaved)
               Expanded(
               child: ListView.builder(
-                itemCount: widget.distancesAndTimes.length, // Set itemCount to the minimum length of both lists
+                itemCount: widget.distancesAndTimes.length,
                 itemBuilder: (context, index) {
                   final marker = widget.markers.elementAt(index);
                   final distanceAndTime = widget.distancesAndTimes[index];
                   print(distanceAndTime.entries.toString());
-                  final distance = distanceAndTime['distance'] ?? 'Unknown';
-                  final time = distanceAndTime['time'] ?? 'Unknown';
+                  // final distance = distanceAndTime['distance'] ?? 'Unknown';
+                  // final time = distanceAndTime['time'] ?? 'Unknown';
 
-                  String distanceText;
-                  if (index == 0) {
-                    distanceText = '0 km (Starting point)';
-                  } else {
-                    distanceText = 'Distance from ${widget.markers[index - 1].infoWindow.title ?? 'Unknown'}: $distance';
-                  }
+                  // String distanceText;
+                  // if (index == 0) {
+                  //   distanceText = '0 km (Starting point)';
+                  // } else {
+                  //   distanceText = 'Distance from ${widget.markers[index - 1].infoWindow.title ?? 'Unknown'}: $distance';
+                  // }
 
                   return GestureDetector(
-                      onTap: () {
-                        final marker = widget.markers.elementAt(index);
-                        final name = marker.infoWindow.title ?? 'Unknown';
-                        final address = marker.infoWindow.snippet ??
-                            'No vicinity information';
-                        final imageUrl = '';
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PlacesDetail(
-                              name: name,
-                              address: address,
-                              imageUrl: imageUrl,
-                            ),
-                          ),
-                        );
-                      },
+                      // onTap: () {
+                      //   final marker = widget.markers.elementAt(index);
+                      //   final name = marker.infoWindow.title ?? 'Unknown';
+                      //   final address = marker.infoWindow.snippet ??
+                      //       'No vicinity information';
+                      //   final imageUrl = '';
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => PlacesDetail(
+                      //         name: name,
+                      //         address: address,
+                      //         imageUrl: imageUrl,
+                      //       ),
+                      //     ),
+                      //   );
+                      // },
                       child: Card(
                         margin: const EdgeInsets.all(8),
                         elevation: 4,
@@ -266,27 +275,30 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                               ),
                               const SizedBox(height: 4),
 
-                              Text(
-                                distanceText,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              Text(
-                                'Time: $time',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
+                              // Text(
+                              //   distanceText,
+                              //   style: const TextStyle(
+                              //     fontSize: 14,
+                              //     color: Colors.grey,
+                              //   ),
+                              // ),
+                              // Text(
+                              //   'Time: $time',
+                              //   style: const TextStyle(
+                              //     fontSize: 14,
+                              //     color: Colors.grey,
+                              //   ),
+                              // ),
                               const SizedBox(height: 8),
                               ElevatedButton(
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
                                   foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
                                 ),
-                                onPressed: () {
+                                onPressed:_isPlaceAdded(marker)
+                                    ? null
+                                    :
+                                    () {
                                   final name = marker.infoWindow.title ?? 'Unknown';
                                   final address = marker.infoWindow.snippet ?? 'No vicinity information';
                                   final imageUrl = '';
@@ -309,9 +321,10 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                                   });
                                   Utils.showSnackBar("Place added to trip", true);
                                 },
-                                child: const Text('Add place to trip',
-                                    style: TextStyle(
-                                        color: ColorPalette.primaryColor)),
+                                child: Text(
+                                  _isPlaceAdded(marker) ? 'Place added' : 'Add place to trip',
+                                  style: const TextStyle(color: ColorPalette.primaryColor),
+                                ),
                               ),
 
                             ],
@@ -360,7 +373,14 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                         } else {
                           Utils.showSnackBar("No places saved or trip name is empty", false);
                         }
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryList(uid: userId ?? 'default', tripName: _tripNameController.text)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryList(
+                            uid: userId ?? 'default',
+                            tripName: _tripNameController.text,
+                          savedPlaces: _savedPlaces,
+                            distancesAndTimes: widget.distancesAndTimes,
+                          polylineCoordinates : widget.polylineCoordinates,
+
+                        )));
                       },
                       child: const Text(
                         'Save Trip',

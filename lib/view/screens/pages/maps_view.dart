@@ -215,7 +215,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       List<String> _selectedPlaceTypes,
       ) async {
     final touristAttractions = <PlacesSearchResult>{};
-    final uniquePlaceIds = <String>{}; // Add this line
+    final uniquePlaceIds = <String>{};
 
     final searchResults = await Future.wait(_selectedPlaceTypes.map(
             (placeType) => Future.wait(
@@ -621,6 +621,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                         builder: (context) => PlacesListAlongTheRoute(
                           markers: _markers.toSet().toList(),
                           distancesAndTimes: distancesAndTimes,
+                          polylineCoordinates: polylineCoordinates,
                         ),
                       ),
                     );
