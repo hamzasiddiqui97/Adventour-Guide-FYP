@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -11,7 +10,6 @@ import 'package:google_maps_basics/model/MultipleDestinations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
-import 'package:http/http.dart' as http;
 import '../views/places_list_along_the_route.dart';
 
 class HomePageGoogleMaps extends StatefulWidget {
@@ -33,7 +31,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final List<String> _placeTypes = [
     "All",
-    "tourist_attraction",
+    // "tourist_attraction",
     "gas_station",
     "restaurant",
     "cafe",
@@ -45,7 +43,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     "atm",
     "parking",
     "bank",
-    "car_rental",
+    // "car_rental",
     "embassy"
   ];
 
@@ -83,8 +81,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     destinationController.text = 'Destination';
   }
 
-  // final List<Marker> _markersPolylinePlaces = []; for adding markers along polyline
-
   final List<Marker> _markers = [];
 
 
@@ -98,39 +94,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   late LatLng destination;
   late LatLng source;
 
-  Future<List<Map<String, String>>> calculateDistanceAndTime(List<Marker> markers) async {
-    List<Map<String, String>> distancesAndTimes = [];
-
-    double totalDistanceInMeters = 0;
-    for (int i = 0; i < markers.length - 1; i++) {
-      LatLng source = markers[i].position;
-      LatLng destination = markers[i + 1].position;
-
-      String url = 'https://maps.googleapis.com/maps/api/directions/json?origin=${source.latitude},${source.longitude}&destination=${destination.latitude},${destination.longitude}&key=$googleApiKey';
-      http.Response response = await http.get(Uri.parse(url));
-      Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-      if (jsonResponse['status'] == 'OK') {
-        int distanceInMeters = jsonResponse['routes'][0]['legs'][0]['distance']['value'];
-        String time = jsonResponse['routes'][0]['legs'][0]['duration']['text'];
-
-        totalDistanceInMeters += distanceInMeters;
-        double totalDistanceInKm = totalDistanceInMeters / 1000;
-
-        Map<String, String> distanceAndTime = {
-          'source_name': markers[0].infoWindow.title ?? 'Unknown', // Use source marker's name
-          'destination_name': markers[i + 1].infoWindow.title ?? 'Unknown',
-          'distance': '${totalDistanceInKm.toStringAsFixed(2)} km',
-          'time': time,
-        };
-        distancesAndTimes.add(distanceAndTime);
-      } else {
-        print('Error getting distance and time: ${jsonResponse['status']}');
-      }
-    }
-
-    return distancesAndTimes;
-  }
+  // copy of polylineCoordinates to send to new screen..
+  List<LatLng> tempPolylineCoordinates = [];
 
   void setPolylines() async {
     PolylinePoints polylinePoints = PolylinePoints();
@@ -154,10 +119,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         });
       }
 
-      List<Map<String, String>> distancesAndTimes = await calculateDistanceAndTime(markers);
-      String? distance = distancesAndTimes[i]['distance'];
-      String? time = distancesAndTimes[i]['time'];
-      print('Distance from ${originLocation.latitude}, ${originLocation.longitude} to ${destinationLocation.latitude}, ${destinationLocation.longitude}: $distance, Time: $time');
+      // List<Map<String, String>> distancesAndTimes = await calculateDistanceAndTime(markers);
+      // String? distance = distancesAndTimes[i]['distance'];
+      // String? time = distancesAndTimes[i]['time'];
+      // print('Distance from ${originLocation.latitude}, ${originLocation.longitude} to ${destinationLocation.latitude}, ${destinationLocation.longitude}: $distance, Time: $time');
     }
 
     Polyline polyline = Polyline(
@@ -166,6 +131,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       width: 3,
       points: polylineCoordinates,
     );
+
+    // Assign polylineCoordinates to tempPolylineCoordinates
+    tempPolylineCoordinates = List<LatLng>.from(polylineCoordinates);
 
     setState(() {
       _polylines.clear();
@@ -316,63 +284,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   // search places function started
 
-  // source search autocomplete button
-  // Future<void> _handlePressButtonSource() async {
-  //   Prediction? p = await PlacesAutocomplete.show(
-  //       context: context,
-  //       apiKey: kGoogleApiKey,
-  //       onError: onError,
-  //       mode: _mode,
-  //       language: "en",
-  //       strictbounds: false,
-  //       logo: const Text(''),
-  //       types: [""],
-  //       decoration: InputDecoration(
-  //           hintText: "Search source",
-  //           focusedBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(20),
-  //             borderSide: const BorderSide(color: ColorPalette.primaryColor),
-  //           )),
-  //       components: [Component(Component.country, "pk")]);
-  //
-  //   if (p != null) {
-  //     displayPredictionSource(p, homeScaffoldKey.currentState);
-  //   } else {
-  //     homeScaffoldKey.currentState!
-  //         .showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
-  //   }
-  // }
-  //
-  // void onError(PlacesAutocompleteResponse? response) {
-  //   final errorMessage = response?.errorMessage ?? 'Unknown error';
-  //   homeScaffoldKey.currentState!
-  //       .showSnackBar(SnackBar(content: Text(errorMessage)));
-  // }
-  //
-  // Future<void> displayPredictionSource(
-  //     Prediction p, ScaffoldMessengerState? currentState) async {
-  //   GoogleMapsPlaces places = GoogleMapsPlaces(
-  //     apiKey: kGoogleApiKey,
-  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
-  //   );
-  //
-  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
-  //
-  //   final lat = detail.result.geometry!.location.lat;
-  //   final lng = detail.result.geometry!.location.lng;
-  //
-  //   setState(() {
-  //     source = LatLng(lat, lng);
-  //     sourceController.text = detail.result.name;
-  //     _markers.add(Marker(
-  //         markerId: const MarkerId("source"),
-  //         position: source,
-  //         infoWindow: InfoWindow(title: detail.result.name)));
-  //   });
-  //   setPolylines();
-  //   googleMapController
-  //       .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
-  // }
   Future<void> _handlePressButtonSource() async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
@@ -433,74 +344,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
 
   // destination search autocomplete button
-  // Future<void> _handlePressButtonDestination() async {
-  //   Prediction? p = await PlacesAutocomplete.show(
-  //       context: context,
-  //       apiKey: kGoogleApiKey,
-  //       onError: onError,
-  //       mode: _mode,
-  //       language: "en",
-  //       logo: const Text(''),
-  //       strictbounds: false,
-  //       types: [""],
-  //       decoration: InputDecoration(
-  //           hintText: "Search Destination",
-  //           focusedBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(20),
-  //             borderSide: const BorderSide(color: ColorPalette.primaryColor),
-  //           )),
-  //       components: [Component(Component.country, "pk")]);
-  //
-  //   if (p != null) {
-  //     displayPredictionDestination(p, homeScaffoldKey.currentState);
-  //   } else {
-  //     homeScaffoldKey.currentState!
-  //         .showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
-  //   }
-  // }
-  //
-  // void onErrorDestination(PlacesAutocompleteResponse? response) {
-  //   final errorMessage = response?.errorMessage ?? 'Unknown error';
-  //   homeScaffoldKey.currentState!
-  //       .showSnackBar(SnackBar(content: Text(errorMessage)));
-  // }
-  //
-  // List<Destination> destinations = [];
-  //
-  // Future<void> displayPredictionDestination(
-  //     Prediction p, ScaffoldMessengerState? currentState) async {
-  //   GoogleMapsPlaces places = GoogleMapsPlaces(
-  //     apiKey: kGoogleApiKey,
-  //     apiHeaders: await const GoogleApiHeaders().getHeaders(),
-  //   );
-  //
-  //   PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
-  //
-  //   final lat = detail.result.geometry!.location.lat;
-  //   final lng = detail.result.geometry!.location.lng;
-  //
-  //   Destination newDestination = Destination(
-  //     name: detail.result.name,
-  //     location: LatLng(lat, lng),
-  //   );
-  //
-  //   setState(() {
-  //     destinations.add(newDestination);
-  //   });
-  //
-  //   destinationController.text = detail.result.name;
-  //   _markers.add(Marker(
-  //     markerId: MarkerId("destination ${destinations.length}"),
-  //     position: newDestination.location,
-  //     infoWindow: InfoWindow(title: newDestination.name),
-  //   ));
-  //   setPolylines();
-  //   setState(() {});
-  //   googleMapController.animateCamera(
-  //       CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
-  //
-  //   print('desti: ${destinations.toString()}');
-  // }
+
   Future<void> _handlePressButtonDestination() async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
@@ -614,14 +458,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                           ColorPalette.secondaryColor)),
 
                   onPressed: () async {
-                    final distancesAndTimes = await calculateDistanceAndTime(_markers);
+                    // final distancesAndTimes = await calculateDistanceAndTime(_markers);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => PlacesListAlongTheRoute(
                           markers: _markers.toSet().toList(),
-                          distancesAndTimes: distancesAndTimes,
-                          polylineCoordinates: polylineCoordinates,
+                          // distancesAndTimes: distancesAndTimes,
+                          polylineCoordinates: tempPolylineCoordinates,
                         ),
                       ),
                     );
@@ -783,7 +627,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                 ),
               ),
             ),
-
           // list of places types
           if (showSearchField)
             Positioned(

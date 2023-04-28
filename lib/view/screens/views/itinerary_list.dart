@@ -192,19 +192,20 @@ import '../../../model/firebase_reference.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../pages/main_page.dart';
 
+
 class ItineraryList extends StatefulWidget {
   final String uid;
   final String tripName;
   final List<Map<String, dynamic>> savedPlaces;
-  final List<Map<String, String>> distancesAndTimes;
   final List<LatLng> polylineCoordinates;
+
 
   ItineraryList(
       {Key? key,
       required this.uid,
       required this.tripName,
       required this.savedPlaces,
-      required this.distancesAndTimes,
+
       required this.polylineCoordinates})
       : super(key: key);
 
@@ -216,10 +217,12 @@ class _ItineraryListState extends State<ItineraryList> {
 
 
   late List<double> distances;
+
   @override
   void initState() {
     super.initState();
-    distances = calculateDistances(widget.polylineCoordinates,widget.savedPlaces);
+    distances = calculateDistances(widget.polylineCoordinates, widget.savedPlaces);
+    print("widget.savedPlaces: ${widget.savedPlaces}");
   }
 
   double calculateDistanceBetweenTwoPoints(LatLng start, LatLng end) {
@@ -278,24 +281,34 @@ class _ItineraryListState extends State<ItineraryList> {
   }
 
 
+  List<Map<String, dynamic>> sortPlacesByPolylineOrder(
+      List<Map<String, dynamic>> places, List<LatLng> polylineCoordinates) {
+    List<Map<String, dynamic>> sortedPlaces = places.map((place) {
+      LatLng point = LatLng(place['latitude'], place['longitude']);
+      int index = getSegmentIndex(polylineCoordinates, point);
+      return {"place": place, "index": index};
+    }).toList();
+
+    sortedPlaces.sort((a, b) => a['index'].compareTo(b['index']));
+
+    print('sorted places listttttttttt: ${sortedPlaces.toString()}');
+    return sortedPlaces.map<Map<String, dynamic>>((sortedPlace) => sortedPlace['place'] as Map<String, dynamic>).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-
+    List<Map<String, dynamic>> places = widget.savedPlaces;
 
     print('Selected points: ${widget.savedPlaces}');
-    for (int i = 0; i < widget.savedPlaces.length; i++) {
-      String name = widget.savedPlaces[i]['name'];
+    for (int i = 0; i < places.length; i++) {
+      String name = places[i]['name'];
       if (i == 0) {
         print('$i. $name (Source)');
       } else if (i - 1 < distances.length) {
-        String previousName = widget.savedPlaces[i - 1]['name'];
+        String previousName = places[i - 1]['name'];
         print('$i. $name (distance from $previousName: ${distances[i - 1].toStringAsFixed(2)} km)');
       }
     }
-
-
-    print('distancesAndTimes: ${widget.distancesAndTimes}');
 
     return SafeArea(
       child: Scaffold(
@@ -315,29 +328,24 @@ class _ItineraryListState extends State<ItineraryList> {
               MaterialPageRoute(
                 builder: (context) => NavigationPage(uid: widget.uid),
               ),
-              (route) => false,
+                  (route) => false,
             );
           },
           child: const Icon(Icons.done),
         ),
         body: StreamBuilder<DatabaseEvent>(
-          stream: AddPlacesToFirebaseDb.getPlacesStream(
-              widget.uid, widget.tripName),
-          builder:
-              (BuildContext context, AsyncSnapshot<DatabaseEvent> snapshot) {
+          stream: AddPlacesToFirebaseDb.getPlacesStream(widget.uid, widget.tripName),
+          builder: (BuildContext context, AsyncSnapshot<DatabaseEvent> snapshot) {
             if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
               print('Snapshot data: ${snapshot.data!.snapshot.value}');
 
-              Map<dynamic, dynamic> values =
-                  snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+              Map<dynamic, dynamic> values = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+              Map<String, dynamic> stringKeyedValues = values.map((key, value) => MapEntry(key.toString(), value));
 
+              // filter from and to date key and values...
               Map<dynamic, dynamic> filteredValues = Map.fromEntries(
-                  values.entries.where((entry) =>
-                      entry.key != 'fromDate' && entry.key != 'toDate'));
+                  values.entries.where((entry) => entry.key != 'fromDate' && entry.key != 'toDate'));
 
-              List<dynamic> places = filteredValues.values.toList();
-
-              print('Placesssss : ${places.toString()}');
               return RefreshIndicator(
                 onRefresh: () async {
                   setState(() {});
@@ -345,24 +353,28 @@ class _ItineraryListState extends State<ItineraryList> {
                 child: ListView.builder(
                   itemCount: places.length,
                   itemBuilder: (BuildContext context, int index) {
-                    String? placeKey =
-                        filteredValues.keys.elementAt(index) as String?;
+                    String? placeKey = filteredValues.keys.elementAt(index) as String?;
                     if (placeKey == null) {
                       return const Center(child: Text('Invalid place data'));
                     }
 
+                    Map<String, dynamic> place = places[index];
+                    // Print the place name and distance
+                    String name = place['name'] ?? 'Unknown';
+                    if (index == 0) {
+                      print('$index. $name (Source)');
+                    } else if (index - 1 < distances.length) {
+                      String previousName = widget.savedPlaces[index - 1]['name'] ?? 'Unknown';
+                      print('$index. $name (distance from $previousName: ${distances[index - 1].toStringAsFixed(2)} km)');
+                    }
+
                     return FutureBuilder<Map<String, dynamic>?>(
-                      future: AddPlacesToFirebaseDb.getPlaceDetails(
-                          widget.uid, widget.tripName, placeKey),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<Map<String, dynamic>?>
-                              placeDetailsSnapshot) {
+                      future: AddPlacesToFirebaseDb.getPlaceDetails(widget.uid, widget.tripName, placeKey),
+                      builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>?> placeDetailsSnapshot) {
                         if (placeDetailsSnapshot.hasData) {
-                          Map<String, dynamic>? placeDetails =
-                              placeDetailsSnapshot.data;
+                          Map<String, dynamic>? placeDetails = placeDetailsSnapshot.data;
                           String name = placeDetails?['name'] ?? 'Unknown';
-                          String address =
-                              placeDetails?['address'] ?? 'No address';
+                          String address = placeDetails?['address'] ?? 'No address';
 
                           String distance = '';
                           if (index == 0) {
@@ -370,19 +382,14 @@ class _ItineraryListState extends State<ItineraryList> {
                           } else if (index - 1 < distances.length) {
                             String startPointName = widget.savedPlaces[index - 1]['name'] ?? 'Unknown';
                             String endPointName = widget.savedPlaces[index]['name'] ?? 'Unknown';
-                            distance = distances[index - 1].toStringAsFixed(2) + ' km (from ' + startPointName + ' to ' + endPointName + ')';
+                            distance = '${distances[index - 1].toStringAsFixed(2)} km (from $startPointName to $endPointName)';
                           }
 
+                          DateTime fromDate = DateTime.parse(stringKeyedValues["fromDate"]);
+                          DateTime toDate = DateTime.parse(stringKeyedValues["toDate"]);
 
-
-                          DateTime fromDate =
-                              DateTime.parse(values["fromDate"]);
-                          DateTime toDate = DateTime.parse(values["toDate"]);
-
-                          String formattedFromDate =
-                              "${fromDate.month.toString().padLeft(2, '0')}-${fromDate.day.toString().padLeft(2, '0')}";
-                          String formattedToDate =
-                              "${toDate.month.toString().padLeft(2, '0')}-${toDate.day.toString().padLeft(2, '0')}";
+                          String formattedFromDate = "${fromDate.month.toString().padLeft(2, '0')}-${fromDate.day.toString().padLeft(2, '0')}";
+                          String formattedToDate = "${toDate.month.toString().padLeft(2, '0')}-${toDate.day.toString().padLeft(2, '0')}";
 
                           return TimelineTile(
                             alignment: TimelineAlign.manual,
@@ -409,14 +416,12 @@ class _ItineraryListState extends State<ItineraryList> {
                             endChild: Card(
                               child: ListTile(
                                 title: Text(name),
-                                subtitle:
-                                    Text('$address \nDistance: $distance'),
+                                subtitle: Text('$address \nDistance: $distance'),
                                 isThreeLine: true,
                                 trailing: IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () {
-                                    AddPlacesToFirebaseDb.deletePlace(
-                                        widget.uid, widget.tripName, placeKey);
+                                    AddPlacesToFirebaseDb.deletePlace(widget.uid, widget.tripName, placeKey);
                                   },
                                 ),
                               ),
@@ -425,15 +430,14 @@ class _ItineraryListState extends State<ItineraryList> {
                         } else {
                           print('No data in the snapshot or no places');
 
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return const Center(child: CircularProgressIndicator());
                         }
                       },
                     );
                   },
                 ),
               );
-            } else {
+            }  else {
               return const Center(
                 child: Text('No places saved'),
               );
