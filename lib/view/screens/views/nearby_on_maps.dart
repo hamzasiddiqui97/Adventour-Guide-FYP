@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 class MapsViewScreen extends StatefulWidget {
@@ -18,7 +19,10 @@ class MapsViewScreen extends StatefulWidget {
 class _MapsViewScreenState extends State<MapsViewScreen> {
   late GoogleMapController _mapController;
 
-
+  void shareGoogleMaps(double latitude, double longitude) {
+    final String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    Share.share(googleMapsUrl);
+  }
   @override
   void dispose() {
     _mapController.dispose();

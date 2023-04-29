@@ -546,7 +546,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                     showMultipleSearchBars = true;
                                     multipleDestinations
                                         .add(destinationController.text);
-                                    destinationController.text = '';
+                                    destinationController.text = destinationController.text;
                                   });
                                 },
                                 child: Container(
