@@ -256,8 +256,8 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
           markers: _markers,
           onMapCreated: (GoogleMapController controller) async {
             _mapController = controller;
-            if (widget.list != null) {
-              print('Creating polyline with points: ${widget.list}');
+            if (_sortedList != null) {
+              // print('Creating polyline with points: ${widget.list}');
               print('Creating polyline with _sortedList: ${_sortedList}');
 
 
