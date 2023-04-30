@@ -117,11 +117,19 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
         );
         nextPlaceName = nextPlace['name'];
       } else {
-        nextPlaceName = 'Current Point';
+        nextPlaceName = 'Destination';
       }
 
-      String distance = i == 0 ? (distancesList[i]?.distance?.text ?? 'Unknown') : (distancesList[i - 1]?.distance?.text ?? 'Unknown');
-      String duration = i == 0 ? (distancesList[i]?.duration?.text ?? 'Unknown') : (distancesList[i - 1]?.duration?.text ?? 'Unknown');
+      String distance = i == 0
+          ? (distancesList[i]?.distance?.text ?? 'Unknown')
+          : (i == points.length - 1
+          ? 'N/A'
+          : (distancesList[i - 1]?.distance?.text ?? 'Unknown'));
+      String duration = i == 0
+          ? (distancesList[i]?.duration?.text ?? 'Unknown')
+          : (i == points.length - 1
+          ? 'N/A'
+          : (distancesList[i - 1]?.duration?.text ?? 'Unknown'));
 
       markers.add(Marker(
         markerId: MarkerId('marker$sequence'),
@@ -129,7 +137,6 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
         onTap: () {
           showModalBottomSheet(
-
             context: context,
             builder: (context) {
               return SizedBox(
@@ -148,6 +155,7 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     }
     return markers;
   }
+
 
   Future<List<LatLng>> _getDirections(List<LatLng> points) async {
     List<LatLng> polylineCoordinates = [];

@@ -20,29 +20,26 @@ class CustomInfoWindow extends StatefulWidget {
 }
 
 class _CustomInfoWindowState extends State<CustomInfoWindow> {
-
-
   TextStyle highlightText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 20,
     color: ColorPalette.secondaryColor,
-
   );
   TextStyle headingStyle = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 20,
     color: Colors.black,
   );
-
   TextStyle normalText = const TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 17,
     color: Colors.black,
   );
 
-
   @override
   Widget build(BuildContext context) {
+    bool isDestination = widget.nextPlaceName == 'Destination';
+
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -70,16 +67,21 @@ class _CustomInfoWindowState extends State<CustomInfoWindow> {
             ),
             const SizedBox(height: 8),
             Wrap(
-              children:  [
-                Text(
-                '${widget.duration} and ${widget.distance}',
-                style: highlightText,
-              ),
+              children: [
+                if (!isDestination)
+                  Text(
+                    '${widget.duration} and ${widget.distance}',
+                    style: highlightText,
+                  ),
                 const SizedBox(height: 8),
-                Text('to next stop ${widget.nextPlaceName}',style: normalText,)
-              ]
+                Text(
+                  isDestination
+                      ? 'This is your destination'
+                      : 'to next stop ${widget.nextPlaceName}',
+                  style: normalText,
+                ),
+              ],
             ),
-
           ],
         ),
       ),
