@@ -98,57 +98,57 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   List<LatLng> tempPolylineCoordinates = [];
 
   void setPolylines() async {
-    PolylinePoints polylinePoints = PolylinePoints();
-    List<LatLng> polylineCoordinates = [];
+      PolylinePoints polylinePoints = PolylinePoints();
+      List<LatLng> polylineCoordinates = [];
 
-    List<Marker> markers = _markers.toList();
+      List<Marker> markers = _markers.toList();
 
-    for (int i = 0; i < markers.length - 1; i++) {
-      LatLng originLocation = markers[i].position;
-      LatLng destinationLocation = markers[i + 1].position;
+      for (int i = 0; i < markers.length - 1; i++) {
+        LatLng originLocation = markers[i].position;
+        LatLng destinationLocation = markers[i + 1].position;
 
-      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        googleApiKey,
-        PointLatLng(originLocation.latitude, originLocation.longitude),
-        PointLatLng(destinationLocation.latitude, destinationLocation.longitude),
-      );
+        PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+          googleApiKey,
+          PointLatLng(originLocation.latitude, originLocation.longitude),
+          PointLatLng(destinationLocation.latitude, destinationLocation.longitude),
+        );
 
-      if (result.points.isNotEmpty) {
-        result.points.forEach((PointLatLng point) {
-          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-        });
+        if (result.points.isNotEmpty) {
+          result.points.forEach((PointLatLng point) {
+            polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+          });
+        }
+
+        // List<Map<String, String>> distancesAndTimes = await calculateDistanceAndTime(markers);
+        // String? distance = distancesAndTimes[i]['distance'];
+        // String? time = distancesAndTimes[i]['time'];
+        // print('Distance from ${originLocation.latitude}, ${originLocation.longitude} to ${destinationLocation.latitude}, ${destinationLocation.longitude}: $distance, Time: $time');
       }
 
-      // List<Map<String, String>> distancesAndTimes = await calculateDistanceAndTime(markers);
-      // String? distance = distancesAndTimes[i]['distance'];
-      // String? time = distancesAndTimes[i]['time'];
-      // print('Distance from ${originLocation.latitude}, ${originLocation.longitude} to ${destinationLocation.latitude}, ${destinationLocation.longitude}: $distance, Time: $time');
+      Polyline polyline = Polyline(
+        polylineId: const PolylineId('poly'),
+        color: ColorPalette.secondaryColor,
+        width: 3,
+        points: polylineCoordinates,
+      );
+
+      // Assign polylineCoordinates to tempPolylineCoordinates
+      tempPolylineCoordinates = List<LatLng>.from(polylineCoordinates);
+
+      setState(() {
+        _polylines.clear();
+      });
+
+      setState(() {
+        _polylines.add(polyline);
+      });
+
+      print('polylineCoordinates length: ${polylineCoordinates.length}');
+
+      final places = GoogleMapsPlaces(apiKey: googleApiKey);
+      getTouristAttractionsAlongPolyline(
+          polylineCoordinates, places, _selectedPlaceTypes);
     }
-
-    Polyline polyline = Polyline(
-      polylineId: const PolylineId('poly'),
-      color: ColorPalette.secondaryColor,
-      width: 3,
-      points: polylineCoordinates,
-    );
-
-    // Assign polylineCoordinates to tempPolylineCoordinates
-    tempPolylineCoordinates = List<LatLng>.from(polylineCoordinates);
-
-    setState(() {
-      _polylines.clear();
-    });
-
-    setState(() {
-      _polylines.add(polyline);
-    });
-
-    print('polylineCoordinates length: ${polylineCoordinates.length}');
-
-    final places = GoogleMapsPlaces(apiKey: googleApiKey);
-    getTouristAttractionsAlongPolyline(
-        polylineCoordinates, places, _selectedPlaceTypes);
-  }
 
   void updateMapWithSelectedPlaceType(List<String> _selectedPlaceTypes) {
     // Clear previous markers
@@ -305,7 +305,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     if (p != null) {
       displayPredictionSource(p, homeScaffoldKey.currentState);
     } else {
-      homeScaffoldKey.currentState?.showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
+      // homeScaffoldKey.currentState?.showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
+      return;
     }
   }
 

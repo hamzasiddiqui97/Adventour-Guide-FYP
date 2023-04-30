@@ -22,6 +22,9 @@ class TripPlacesDetails extends StatefulWidget {
 }
 
 class _TripPlacesDetailsState extends State<TripPlacesDetails> {
+
+  Map<int, dynamic> tempPlaces = {};
+
   DistanceWrapper? distanceWrapper;
   TextStyle titleStyle =
       const TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
@@ -79,16 +82,28 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                         // Filter out the fromDate and toDate keys
                         values.remove('fromDate');
                         values.remove('toDate');
-                        List<dynamic> places = values.values.toList();
+                        // List<dynamic> places = values.values.toList();
                         print('Places data: $values'); // Add this line
 
                         // Sort places based on their sequence
-                        places.sort((a, b) => (a['sequence'] as int).compareTo(b['sequence'] as int));
+                        // append data in temp list with sequence as key and all details as value
+                        for (var entry in values.entries) {
+                          int sequence = entry.value['sequence'] as int;
+                          tempPlaces[sequence] = entry.value;
+                        }
+                        List<MapEntry<int, dynamic>> sortedEntries = tempPlaces.entries.toList();
+                        sortedEntries.sort((a, b) => a.key.compareTo(b.key));
+                        tempPlaces = Map<int, dynamic>.fromEntries(sortedEntries);
+                        print('temp places keys${tempPlaces}');
+
+
+                        LatLng? previousLocation;
 
 
                         return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: places.length,
+                      // itemCount: places.length,
+                          itemCount: tempPlaces.length,
                       itemBuilder: (BuildContext context, int index) {
                         String? placeKey = values.keys.elementAt(index) as String?;
                         if (placeKey == null) {
@@ -128,11 +143,24 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                               address = placeDetails?['address'] ?? 'No address found';
                               distance2 = placeDetails?['distance'] ?? 'No distance found';
                               time = placeDetails?['time'] ?? 'No data found';
-                              lat = placeDetails?['latitude'];
-                              long = placeDetails?['longitude'];
+                              lat = placeDetails?['latitude'] ?? 0;
+                              long = placeDetails?['longitude'] ?? 0;
 
-                              ListofLatLong.add(LatLng(lat!, long!));
-                              distance(sourcelat:69.6798,sourcelong: 18.9712,destinationlat: 27.7244,destinationlong:68.8228);
+                              if (lat != null && long != null) {
+                                ListofLatLong.add(LatLng(lat ??0 , long??0));
+                                if (index == 0) {
+                                  previousLocation = LatLng(lat ?? 0, long?? 0);
+                                } else {
+                                  distance(
+                                    sourcelat: previousLocation?.latitude,
+                                    sourcelong: previousLocation?.longitude,
+                                    destinationlat: lat,
+                                    destinationlong: long,
+                                  );
+                                  previousLocation = LatLng(lat??0, long??0);
+                                }
+                              }
+
                               return Card(
                                 margin: const EdgeInsets.all(16),
                                 child: ListTile(
@@ -188,7 +216,7 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
             ElevatedButton(
                 onPressed: () {
                   print(ListofLatLong.toString());
-                  Get.to(ViewMapForTrip(list: ListofLatLong,));
+                  Get.to(ViewMapForTrip(list: ListofLatLong, tempPlaces: tempPlaces,));
                 },
                 child: const Text(
                   "View Map",

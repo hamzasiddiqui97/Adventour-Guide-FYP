@@ -7,6 +7,8 @@ import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:lottie/lottie.dart';
 
+import '../pages/main_page.dart';
+
 class SignUp extends StatefulWidget {
   final VoidCallback onClickSignIn;
 
@@ -209,14 +211,17 @@ class _SignUpState extends State<SignUp> {
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(
-              child: CircularProgressIndicator(),
-            ));
+          child: CircularProgressIndicator(),
+        ));
     try {
       if (passwordController.text == confirmPasswordController.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
+        // Get the UID of the newly created user
+        String uid = userCredential.user!.uid;
+
         // User has been successfully registered
         // Add any additional actions to be performed after successful registration
         //adding to the firestore
@@ -226,6 +231,12 @@ class _SignUpState extends State<SignUp> {
           'Password': passwordController.text
         });
         Utils.showSnackBar("Account is created Successfully!", true);
+        print('sign up: uid of user: $uid');
+        Navigator.of(context).pop(); // Dismiss the progress dialog
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NavigationPage(uid: uid)),
+        );
       } else {
         // Password and Confirm Password do not match
         throw FirebaseAuthException(
