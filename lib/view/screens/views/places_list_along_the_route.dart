@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_basics/view/screens/views/itinerary_list.dart';
-import 'package:google_maps_basics/view/screens/views/Places_detail_view.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:google_maps_basics/view/screens/pages/main_page.dart';
+// import 'package:google_maps_basics/view/screens/views/itinerary_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../core/constant/color_constants.dart';
@@ -11,11 +13,12 @@ import '../../../snackbar_utils.dart';
 
 class PlacesListAlongTheRoute extends StatefulWidget {
   final List<Marker> markers;
-  final List<Map<String, String>> distancesAndTimes;
+  final List<LatLng> polylineCoordinates;
 
 
-
-  const PlacesListAlongTheRoute({Key? key, required this.markers, required this.distancesAndTimes})
+  const PlacesListAlongTheRoute({Key? key,
+    required this.markers,
+    required this.polylineCoordinates})
       : super(key: key);
 
   @override
@@ -44,7 +47,35 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     currentUser = _auth.currentUser;
     userId = currentUser?.uid;
   }
+
   final TextEditingController _tripNameController = TextEditingController();
+
+
+  bool _isPlaceAdded(Marker marker) {
+    return _savedPlaces.any((place) =>
+    place['name'] == marker.infoWindow.title &&
+        place['latitude'] == marker.position.latitude &&
+        place['longitude'] == marker.position.longitude);
+  }
+
+
+  Map<String, dynamic> _addPlaceToTrip(Marker marker) {
+    final name = marker.infoWindow.title ?? 'Unknown';
+    final address = marker.infoWindow.snippet ?? 'No vicinity information';
+    final imageUrl = '';
+    final sequence = _savedPlaces.length + 1;
+
+    return {
+      'name': name,
+      'address': address,
+      'latitude': marker.position.latitude,
+      'longitude': marker.position.longitude,
+      'sequence': sequence, // Add sequence number
+      'fromDate': _fromDate?.toIso8601String() ?? '',
+      'toDate': _toDate?.toIso8601String() ?? '',
+    };
+  }
+
 
   Future<void> _saveTrip() async {
     // Check if the trip name is not empty and dates are selected
@@ -64,7 +95,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     DatabaseReference placesRef =
     database.ref().child("users").child(userId!).child("places").child(_tripNameController.text);
 
-    // Save the fromDate and toDate directly under the trip
     await placesRef.set({
       'fromDate': _fromDate!.toIso8601String(),
       'toDate': _toDate!.toIso8601String(),
@@ -80,17 +110,20 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
         print("Failed to add place: $error");
       }
     }
+    print('savedPlaces: ${_savedPlaces.toString()}');
 
     setState(() {
       _savedPlaces = [];
     });
 
-    print('savedPlaces: ${_savedPlaces.toString()}');
+    print('original markers list: ${widget.markers}');
     Utils.showSnackBar("Places added successfully", true);
   }
 
   @override
   Widget build(BuildContext context) {
+
+
     print('Markers in PlacesListAlongTheRoute: ${widget.markers.length}');
 
 
@@ -108,6 +141,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     }
 
     return SafeArea(
+
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: ColorPalette.secondaryColor,
@@ -182,7 +216,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                   child: Text(
                     _fromDate == null
                         ? 'Choose From Date'
-                        : 'From: ${_fromDate!.toLocal()}'.split(' ')[0],
+                        : 'From: ${_fromDate!.month.toString().padLeft(2, '0')}-${_fromDate!.day.toString().padLeft(2, '0')}',
                     style: const TextStyle(color: ColorPalette.secondaryColor),
                   ),
                 ),
@@ -204,7 +238,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                   child: Text(
                     _toDate == null
                         ? 'Choose To Date'
-                        : 'To: ${_toDate!.toLocal()}'.split(' ')[0],
+                        : 'To: ${_toDate!.month.toString().padLeft(2, '0')}-${_toDate!.day.toString().padLeft(2, '0')}',
                     style: const TextStyle(color: ColorPalette.secondaryColor),
                   ),
                 ),
@@ -214,39 +248,28 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
             if (_isTripNameSaved)
               Expanded(
               child: ListView.builder(
-                itemCount: widget.distancesAndTimes.length, // Set itemCount to the minimum length of both lists
+                itemCount: widget.markers.length,
                 itemBuilder: (context, index) {
                   final marker = widget.markers.elementAt(index);
-                  final distanceAndTime = widget.distancesAndTimes[index];
-                  print(distanceAndTime.entries.toString());
-                  final distance = distanceAndTime['distance'] ?? 'Unknown';
-                  final time = distanceAndTime['time'] ?? 'Unknown';
-
-                  String distanceText;
-                  if (index == 0) {
-                    distanceText = '0 km (Starting point)';
-                  } else {
-                    distanceText = 'Distance from ${widget.markers[index - 1].infoWindow.title ?? 'Unknown'}: $distance';
-                  }
 
                   return GestureDetector(
-                      onTap: () {
-                        final marker = widget.markers.elementAt(index);
-                        final name = marker.infoWindow.title ?? 'Unknown';
-                        final address = marker.infoWindow.snippet ??
-                            'No vicinity information';
-                        final imageUrl = '';
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PlacesDetail(
-                              name: name,
-                              address: address,
-                              imageUrl: imageUrl,
-                            ),
-                          ),
-                        );
-                      },
+                      // onTap: () {
+                      //   final marker = widget.markers.elementAt(index);
+                      //   final name = marker.infoWindow.title ?? 'Unknown';
+                      //   final address = marker.infoWindow.snippet ??
+                      //       'No vicinity information';
+                      //   final imageUrl = '';
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => PlacesDetail(
+                      //         name: name,
+                      //         address: address,
+                      //         imageUrl: imageUrl,
+                      //       ),
+                      //     ),
+                      //   );
+                      // },
                       child: Card(
                         margin: const EdgeInsets.all(8),
                         elevation: 4,
@@ -264,52 +287,42 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                               ),
                               const SizedBox(height: 4),
 
-                              Text(
-                                distanceText,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              Text(
-                                'Time: $time',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
+                              // Text(
+                              //   distanceText,
+                              //   style: const TextStyle(
+                              //     fontSize: 14,
+                              //     color: Colors.grey,
+                              //   ),
+                              // ),
+                              // Text(
+                              //   'Time: $time',
+                              //   style: const TextStyle(
+                              //     fontSize: 14,
+                              //     color: Colors.grey,
+                              //   ),
+                              // ),
                               const SizedBox(height: 8),
+
                               ElevatedButton(
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
                                   foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
                                 ),
-                                onPressed: () {
-                                  final name = marker.infoWindow.title ?? 'Unknown';
-                                  final address = marker.infoWindow.snippet ?? 'No vicinity information';
-                                  final imageUrl = '';
-                                  final distance = distanceAndTime['distance'] ?? 'Unknown';
-                                  final time = distanceAndTime['time'] ?? 'Unknown';
-
+                                onPressed: _isPlaceAdded(marker)
+                                    ? null
+                                    : () {
+                                  final placeToAdd = _addPlaceToTrip(marker);
 
                                   setState(() {
-                                    _savedPlaces.add({
-                                      'name': name,
-                                      'address': address,
-                                      'latitude': marker.position.latitude,
-                                      'longitude': marker.position.longitude,
-                                      'distance': distance,
-                                      'time': time,
-                                      'fromDate': _fromDate?.toIso8601String() ?? '',
-                                      'toDate': _toDate?.toIso8601String() ?? '',
-                                    });
-                                    print('on Pressed Add place to trip (_savedPlaceslength): ${_savedPlaces.length}');
+                                    _savedPlaces.add(placeToAdd);
                                   });
                                   Utils.showSnackBar("Place added to trip", true);
                                 },
-                                child: const Text('Add place to trip',
-                                    style: TextStyle(
-                                        color: ColorPalette.primaryColor)),
+
+                                child: Text(
+                                  _isPlaceAdded(marker) ? 'Place added' : 'Add place to trip',
+                                  style: const TextStyle(color: ColorPalette.primaryColor),
+                                ),
                               ),
 
                             ],
@@ -328,11 +341,39 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorPalette.secondaryColor,
-                        foregroundColor: Colors.white,
-                      ),
-                      onPressed: () async {
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorPalette.secondaryColor,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () async {
+                      // Show confirmation dialog
+                      bool result = await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Save Trip'),
+                            content: Text('Are you sure you want to save this trip?'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                              ),
+                              TextButton(
+                                child: Text('Yes'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ) ?? false;
+
+                      if (result) {
+                        List<Map<String, dynamic>> savedPlacesCopy = List.from(_savedPlaces);
+
                         if (_savedPlaces.isNotEmpty && _tripNameController.text.trim().isNotEmpty) {
                           final FirebaseDatabase database = FirebaseDatabase.instance;
                           DatabaseReference placesRef = database
@@ -358,11 +399,15 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                         } else {
                           Utils.showSnackBar("No places saved or trip name is empty", false);
                         }
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryList(uid: userId ?? 'default', tripName: _tripNameController.text)));
-                      },
-                      child: const Text(
-                        'Save Trip',
-                      )),
+                        // Navigate to the next screen
+                        Get.offAll(NavigationPage(uid: userId ?? '',));
+                      }
+                    },
+                    child: const Text(
+                      'Save Trip',
+                    ),
+                  ),
+
                 ),
               ),
             ),

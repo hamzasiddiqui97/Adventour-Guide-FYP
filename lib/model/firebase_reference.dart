@@ -13,7 +13,7 @@ class AddPlacesToFirebaseDb {
         .onValue;
   }
 
-  // New function to get trip names for MyPlan
+  // function to get trip names for MyPlan
   static Stream<DatabaseEvent> getTripsStream(String uid) {
     return database
         .ref()
