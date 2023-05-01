@@ -184,6 +184,7 @@
 // }
 
 import 'dart:math' show atan2, cos, pi, sin, sqrt;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timeline_tile/timeline_tile.dart';
@@ -365,7 +366,9 @@ class _ItineraryListState extends State<ItineraryList> {
                       print('$index. $name (Source)');
                     } else if (index - 1 < distances.length) {
                       String previousName = widget.savedPlaces[index - 1]['name'] ?? 'Unknown';
-                      print('$index. $name (distance from $previousName: ${distances[index - 1].toStringAsFixed(2)} km)');
+                      if (kDebugMode) {
+                        print('$index. $name (distance from $previousName: ${distances[index - 1].toStringAsFixed(2)} km)');
+                      }
                     }
 
                     return FutureBuilder<Map<String, dynamic>?>(

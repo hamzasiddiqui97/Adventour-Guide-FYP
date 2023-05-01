@@ -90,7 +90,7 @@ class _MyAccountState extends State<MyAccount> {
                 ),
               ],
               const SizedBox(height: 20),
-              UnderlineButton(name: 'All my plans', color: Colors.transparent,textColor: Colors.black, width: screenWidth,),
+              // UnderlineButton(name: 'All my plans', color: Colors.transparent,textColor: Colors.black, width: screenWidth,),
               InkWell(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactUsPage()));
