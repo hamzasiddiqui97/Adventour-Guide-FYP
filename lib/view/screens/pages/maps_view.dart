@@ -118,11 +118,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             polylineCoordinates.add(LatLng(point.latitude, point.longitude));
           });
         }
-
-        // List<Map<String, String>> distancesAndTimes = await calculateDistanceAndTime(markers);
-        // String? distance = distancesAndTimes[i]['distance'];
-        // String? time = distancesAndTimes[i]['time'];
-        // print('Distance from ${originLocation.latitude}, ${originLocation.longitude} to ${destinationLocation.latitude}, ${destinationLocation.longitude}: $distance, Time: $time');
       }
 
       Polyline polyline = Polyline(
@@ -132,7 +127,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         points: polylineCoordinates,
       );
 
-      // Assign polylineCoordinates to tempPolylineCoordinates
+      // Assign polylineCoordinates to tempPolylineCoordinates (making copy of polyline points).
       tempPolylineCoordinates = List<LatLng>.from(polylineCoordinates);
 
       setState(() {

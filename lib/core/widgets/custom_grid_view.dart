@@ -4,10 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:google_maps_basics/widgets/sevenDayForecast.dart';
-
 import '../../view/screens/views/nearby_places_list.dart';
 import '../../view/screens/views/search_nearby_restaurant.dart';
-
 
 class CustomGrid extends StatelessWidget {
   const CustomGrid({
@@ -16,22 +14,33 @@ class CustomGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    const double iconSize = 40;
+
+
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Colors.grey.shade50),
-      height: 250,
+          color: Colors.grey.shade100),
+      height: 450,
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(22.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Column(
                   children: [
                     Container(
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+
+                      ),
+
+                      height: 80,
+                      width: 80,
                       child: IconButton(
                         onPressed: () {
                           Navigator.push(
@@ -41,29 +50,37 @@ class CustomGrid extends StatelessWidget {
                           );
                         },
                         icon: const Icon(
-                          Icons.hotel, color: ColorPalette.secondaryColor,
-                          size: 30,),),
+                          Icons.near_me, color: ColorPalette.secondaryColor,
+                          size: iconSize,),),
                     ),
                     const Text('Near Me', textAlign: TextAlign.center),
 
                   ],
                 ),
+                // Column(
+                //   children: [
+                //     Container(
+                //       color: Colors.white,
+                //       child: IconButton(
+                //         onPressed: () {},
+                //         icon: const Icon(Icons.route, color: ColorPalette.secondaryColor,
+                //           size: iconSize,),),
+                //     ),
+                //     const Text('Packages', textAlign: TextAlign.center),
+                //   ],
+                // ),
                 Column(
                   children: [
                     Container(
-                      color: Colors.white,
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.route, color: ColorPalette.secondaryColor,
-                          size: 30,),),
-                    ),
-                    const Text('Packages', textAlign: TextAlign.center),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+
+                      ),
+
+
+                      height: 80,
+                      width: 80,
                       child: IconButton(
                         onPressed: () {
                           Navigator.push(
@@ -73,7 +90,7 @@ class CustomGrid extends StatelessWidget {
                           );
                         },
                         icon: const Icon(Icons.newspaper,
-                          color: ColorPalette.secondaryColor, size: 30,),),
+                          color: ColorPalette.secondaryColor, size: iconSize,),),
                     ),
                     const Text('News', textAlign: TextAlign.center,),
                   ],
@@ -89,7 +106,15 @@ class CustomGrid extends StatelessWidget {
                 Column(
                   children: [
                     Container(
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+
+                      ),
+
+
+                      height: 80,
+                      width: 80,
                       child: IconButton(
                         onPressed: () {
                           // _currentLocation();
@@ -101,7 +126,7 @@ class CustomGrid extends StatelessWidget {
                         },
                         icon: const Icon(
                           Icons.restaurant, color: ColorPalette.secondaryColor,
-                          size: 30,),),
+                          size: iconSize,),),
                     ),
                     const Text('Restaurant', textAlign: TextAlign.center),
                   ],
@@ -109,7 +134,15 @@ class CustomGrid extends StatelessWidget {
                 Column(
                   children: [
                     Container(
-                      color: Colors.white,
+
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+
+                      ),
+
+                      height: 80,
+                      width: 80,
                       child: IconButton(
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
@@ -121,20 +154,36 @@ class CustomGrid extends StatelessWidget {
                         },
                         icon: const Icon(
                           Icons.sunny_snowing, color: ColorPalette.secondaryColor,
-                          size: 30,),),
+                          size: iconSize,),),
                     ),
                     const Text(''
                         'Weather ', textAlign: TextAlign.center),
                   ],
                 ),
+              ],
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
                 Column(
                   children: [
                     Container(
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+
+                      ),
+
+                      height: 80,
+                      width: 80,
                       child: IconButton(
                         onPressed: () {},
                         icon: const Icon(Icons.emoji_transportation,
-                          color: ColorPalette.secondaryColor, size: 30,),),
+                          color: ColorPalette.secondaryColor, size: iconSize,),),
                     ),
                     const Text('Transport', textAlign: TextAlign.center),
                   ],

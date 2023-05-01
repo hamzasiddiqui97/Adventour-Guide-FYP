@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/core/widgets/rounded_button.dart';
 import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
-import 'package:google_maps_basics/view/screens/views/create_custom_trip.dart';
-// import 'package:location/location.dart';
 import '../../../helper/utils.dart';
 import '../../../models/weather.dart';
 
@@ -60,10 +58,13 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
       });
       throw Exception('Failed to load weather data');
     }
-    print('weather: ${response.body}');
-    print('${_weather?.cityName}');
-    print('${_weather?.temp}');
-  }
+    if (kDebugMode) {
+      print('weather response: ${response.body}');
+      print('city name: ${_weather?.cityName}');
+      print('city temperature: ${_weather?.temp}');
+
+    }
+    }
 
   Future<Position?> _determinePosition() async {
     bool serviceEnabled;
@@ -127,7 +128,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                       const Center(child: CircularProgressIndicator()),
                     if (!_isWeatherDataLoading && _weather != null)
                       Text(
-                        "${_weather!.cityName}",
+                        _weather!.cityName,
                         style: myTextStyle,
                       ),
                     const SizedBox(width: 10.0),
@@ -153,20 +154,20 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                   height: 30,
                 ),
                 const CustomGrid(),
-                Center(
-                    child: RoundedButton(
-                      onPress: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CreateCustomTrip()),
-                        );
-                      },
-                      name: 'Create Trip',
-                      textColor: Colors.white,
-                      color: ColorPalette.secondaryColor,
-                      width: 200,
-                    )),
+                // Center(
+                //     child: RoundedButton(
+                //       onPress: () {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => const CreateCustomTrip()),
+                //         );
+                //       },
+                //       name: 'Create Trip',
+                //       textColor: Colors.white,
+                //       color: ColorPalette.secondaryColor,
+                //       width: 200,
+                //     )),
 
               ],
             ),
