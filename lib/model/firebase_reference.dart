@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 
 class AddPlacesToFirebaseDb {
   static final database = FirebaseDatabase.instance;
@@ -53,4 +54,35 @@ class AddPlacesToFirebaseDb {
         .child(placeKey)
         .remove();
   }
+  static Future<void> removeTrip(String uid, String tripName) async {
+    DatabaseReference tripRef = database
+        .ref()
+        .child('users')
+        .child(uid)
+        .child('places')
+        .child(tripName);
+
+    await tripRef.remove();
+  }
+
+  static Future<void> updateTripName(String uid, String oldTripName, String newTripName) async {
+    try {
+      DatabaseReference userRef = database.ref().child('users').child(uid).child('places');
+      DataSnapshot dataSnapshot = (await userRef.child(oldTripName).once()).snapshot;
+
+      if (dataSnapshot.value != null) {
+        Map<String, dynamic> placesData = Map<String, dynamic>.from(dataSnapshot.value as Map);
+        await userRef.child(newTripName).set(placesData);
+        await userRef.child(oldTripName).remove();
+      } else {
+        throw Exception('Trip not found');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      throw Exception('Error updating trip name');
+    }
+  }
+
 }

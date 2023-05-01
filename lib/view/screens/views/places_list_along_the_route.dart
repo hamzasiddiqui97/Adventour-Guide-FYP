@@ -7,6 +7,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 // import 'package:google_maps_basics/view/screens/views/itinerary_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/constant/color_constants.dart';
 import '../../../snackbar_utils.dart';
@@ -216,7 +217,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                   child: Text(
                     _fromDate == null
                         ? 'Choose From Date'
-                        : 'From: ${_fromDate!.month.toString().padLeft(2, '0')}-${_fromDate!.day.toString().padLeft(2, '0')}',
+                        : 'From: ${DateFormat('MM-dd-yyyy').format(_fromDate!)}',
                     style: const TextStyle(color: ColorPalette.secondaryColor),
                   ),
                 ),
@@ -238,7 +239,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                   child: Text(
                     _toDate == null
                         ? 'Choose To Date'
-                        : 'To: ${_toDate!.month.toString().padLeft(2, '0')}-${_toDate!.day.toString().padLeft(2, '0')}',
+                        : 'To: ${DateFormat('MM-dd-yyyy').format(_toDate!)}',
                     style: const TextStyle(color: ColorPalette.secondaryColor),
                   ),
                 ),
