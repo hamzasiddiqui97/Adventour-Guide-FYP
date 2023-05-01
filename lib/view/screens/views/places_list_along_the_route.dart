@@ -16,7 +16,6 @@ class PlacesListAlongTheRoute extends StatefulWidget {
   final List<Marker> markers;
   final List<LatLng> polylineCoordinates;
 
-
   const PlacesListAlongTheRoute({Key? key,
     required this.markers,
     required this.polylineCoordinates})
