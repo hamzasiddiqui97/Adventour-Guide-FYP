@@ -136,7 +136,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     Utils.showSnackBar("Place removed from trip", true);
   }
 
-
   @override
   Widget build(BuildContext context) {
 

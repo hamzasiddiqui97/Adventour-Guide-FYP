@@ -57,6 +57,7 @@ class _MyAccountState extends State<MyAccount> {
                 Text('Logged in as: ${user.displayName}',style: const TextStyle(fontSize: 16.0,)),
                 Text('Email: ${user.email}', style: const TextStyle(fontSize: 16.0,)),
                 const SizedBox(height: 20),
+
                 SizedBox(
                   width: 200,
                   child: ElevatedButton(

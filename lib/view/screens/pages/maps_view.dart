@@ -547,7 +547,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               top: 0,
               child: Container(
                 color: ColorPalette.primaryColor,
-                height: MediaQuery.of(context).size.height * 0.27,
+                height: MediaQuery.of(context).size.height * 0.28,
                 width: MediaQuery.of(context).size.width,
                 child: SingleChildScrollView(
                   child: Column(
@@ -579,7 +579,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                           _handlePressButtonSource();
                                         });
                                   }),
-                              GestureDetector(
+                              InkWell(
+                                splashColor: ColorPalette.secondaryColor,
                                 onTap: () {
                                   setState(() {
                                     showMultipleSearchBars = true;
@@ -604,6 +605,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                             ]),
 
                       ///// MULTIPLE SEARCH BAR FIELD /////
+
                       Container(
                         width: MediaQuery.of(context).size.width * 0.95,
                         child: Column(
@@ -625,6 +627,11 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                             hintText: 'Search Destination',
                                             onPress: () {
                                               _handlePressButtonDestination();
+                                            },
+                                            onPlaceSelected: (String placeName) {
+                                              setState(() {
+                                                multipleDestinations[index] = placeName;
+                                              });
                                             },
                                           ),
                                         ),
@@ -655,6 +662,59 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                           ],
                         ),
                       ),
+
+
+                      // Container(
+                      //   width: MediaQuery.of(context).size.width * 0.95,
+                      //   child: Column(
+                      //     children: [
+                      //       if (showMultipleSearchBars)
+                      //         Column(
+                      //           children: List.generate(
+                      //             multipleDestinations.length,
+                      //                 (index) => Padding(
+                      //               padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      //               child: Row(
+                      //                 children: [
+                      //                   Expanded(
+                      //                     child: SearchBar(
+                      //                       width: MediaQuery.of(context).size.width * 0.8,
+                      //                       controller: TextEditingController(
+                      //                         text: multipleDestinations[index],
+                      //                       ),
+                      //                       hintText: 'Search Destination',
+                      //                       onPress: () {
+                      //                         _handlePressButtonDestination();
+                      //                       },
+                      //                     ),
+                      //                   ),
+                      //                   const SizedBox(width: 10),
+                      //                   GestureDetector(
+                      //                     onTap: () {
+                      //                       setState(() {
+                      //                         multipleDestinations.removeAt(index);
+                      //                       });
+                      //                     },
+                      //                     child: Container(
+                      //                       decoration: BoxDecoration(
+                      //                         borderRadius: BorderRadius.circular(20),
+                      //                         color: Colors.white,
+                      //                       ),
+                      //                       child: const Icon(
+                      //                         Icons.remove,
+                      //                         size: 38,
+                      //                         color: ColorPalette.secondaryColor,
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
