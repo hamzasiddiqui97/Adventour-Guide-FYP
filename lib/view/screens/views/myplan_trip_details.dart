@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/view/screens/pages/viewmapfortrip.dart';
@@ -135,8 +136,10 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                               Map<String, dynamic>? placeDetails =
                                   placeDetailsSnapshot.data;
 
-                              print(
+                              if (kDebugMode) {
+                                print(
                                   'places details snapshot: ${placeDetailsSnapshot.data}');
+                              }
 
                               // Update variables with new data
                               name = placeDetails?['name'] ?? 'No Details found';
@@ -171,27 +174,25 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                                             name,
                                             style: titleStyle,
                                           ),
-                                          Text(
-                                            address,
-                                            style: titleSubHeadingStyle,
-                                          ),
+                                          // Text(
+                                          //   address,
+                                          //   style: titleSubHeadingStyle,
+                                          // ),
                                         ]),
                                     subtitle: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // Text('Address: $address', style: subtitleStyle,),
-                                        Text(
-                                          'Distance: ${distanceWrapper?.rows?[0]?.elements?[0]?.distance?.text.toString()} ',
-                                          style: subtitleStyle,
-                                        ),
-                                        Text(
-                                          'Time to reach: ${distanceWrapper?.rows?[0]?.elements?[0]?.duration?.text.toString()}',
-                                          style: subtitleStyle,
-                                        ),
+                                        Text('Address: $address', style: subtitleStyle,),
+                                        // Text(
+                                        //   'Distance: ${distanceWrapper?.rows?[0]?.elements?[0]?.distance?.text.toString()} ',
+                                        //   style: subtitleStyle,
+                                        // ),
+                                        // Text(
+                                        //   'Time to reach: ${distanceWrapper?.rows?[0]?.elements?[0]?.duration?.text.toString()}',
+                                        //   style: subtitleStyle,
+                                        // ),
                                         Row(
                                           children: [
-
-                                            const SizedBox(width: 20,),
                                             ElevatedButton(onPressed: (){
                                               shareGoogleMaps(latitude: lat,longitude: long);
                                             }, child: const Text("Share Location",style: TextStyle(color: Colors.white),)),

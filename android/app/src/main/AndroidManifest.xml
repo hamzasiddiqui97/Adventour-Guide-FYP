@@ -7,12 +7,13 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
    <application
-        android:label="google_maps_basics"
+        android:label="Adventour and Guide"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBlWPakD86fto9qWr28G5V8UPTYsM3P45Y"/>
+            android:value="AIzaSyBYc1_Xgb0gVA1GtZO3jAd7D3a3aRTzUBY"/>
+<!--            android:value="AIzaSyBlWPakD86fto9qWr28G5V8UPTYsM3P45Y"/>-->
 <!--       android:value="AIzaSyCFGTU8W2PhSKjk5QK4y6Pmtt5k4QrWPFs"/>-->
 
 

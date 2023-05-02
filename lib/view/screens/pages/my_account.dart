@@ -57,6 +57,7 @@ class _MyAccountState extends State<MyAccount> {
                 Text('Logged in as: ${user.displayName}',style: const TextStyle(fontSize: 16.0,)),
                 Text('Email: ${user.email}', style: const TextStyle(fontSize: 16.0,)),
                 const SizedBox(height: 20),
+
                 SizedBox(
                   width: 200,
                   child: ElevatedButton(
@@ -90,7 +91,7 @@ class _MyAccountState extends State<MyAccount> {
                 ),
               ],
               const SizedBox(height: 20),
-              UnderlineButton(name: 'All my plans', color: Colors.transparent,textColor: Colors.black, width: screenWidth,),
+              // UnderlineButton(name: 'All my plans', color: Colors.transparent,textColor: Colors.black, width: screenWidth,),
               InkWell(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactUsPage()));

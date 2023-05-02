@@ -10,6 +10,8 @@ class SearchBar extends StatelessWidget {
   IconButton? suffixIcon;
   TextEditingController? controller;
   VoidCallback? onValueSubmitted;
+  final Function(String)? onPlaceSelected;
+
 
 
   SearchBar({
@@ -19,6 +21,7 @@ class SearchBar extends StatelessWidget {
     this.width,
     this.suffixIcon,
     this.controller,
+    this.onPlaceSelected,
 
   });
 

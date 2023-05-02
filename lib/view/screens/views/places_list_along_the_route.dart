@@ -7,6 +7,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 // import 'package:google_maps_basics/view/screens/views/itinerary_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/constant/color_constants.dart';
 import '../../../snackbar_utils.dart';
@@ -14,7 +15,6 @@ import '../../../snackbar_utils.dart';
 class PlacesListAlongTheRoute extends StatefulWidget {
   final List<Marker> markers;
   final List<LatLng> polylineCoordinates;
-
 
   const PlacesListAlongTheRoute({Key? key,
     required this.markers,
@@ -49,7 +49,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   }
 
   final TextEditingController _tripNameController = TextEditingController();
-
 
   bool _isPlaceAdded(Marker marker) {
     return _savedPlaces.any((place) =>
@@ -118,6 +117,23 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
     print('original markers list: ${widget.markers}');
     Utils.showSnackBar("Places added successfully", true);
+  }
+
+  int _indexOfPlace(Marker marker) {
+    return _savedPlaces.indexWhere((place) =>
+    place['name'] == marker.infoWindow.title &&
+        place['latitude'] == marker.position.latitude &&
+        place['longitude'] == marker.position.longitude);
+  }
+
+  void _removePlaceFromTrip(int index) {
+    setState(() {
+      _savedPlaces.removeAt(index);
+      for (int i = index; i < _savedPlaces.length; i++) {
+        _savedPlaces[i]['sequence'] -= 1;
+      }
+    });
+    Utils.showSnackBar("Place removed from trip", true);
   }
 
   @override
@@ -216,7 +232,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                   child: Text(
                     _fromDate == null
                         ? 'Choose From Date'
-                        : 'From: ${_fromDate!.month.toString().padLeft(2, '0')}-${_fromDate!.day.toString().padLeft(2, '0')}',
+                        : 'From: ${DateFormat('MM-dd-yyyy').format(_fromDate!)}',
                     style: const TextStyle(color: ColorPalette.secondaryColor),
                   ),
                 ),
@@ -238,7 +254,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                   child: Text(
                     _toDate == null
                         ? 'Choose To Date'
-                        : 'To: ${_toDate!.month.toString().padLeft(2, '0')}-${_toDate!.day.toString().padLeft(2, '0')}',
+                        : 'To: ${DateFormat('MM-dd-yyyy').format(_toDate!)}',
                     style: const TextStyle(color: ColorPalette.secondaryColor),
                   ),
                 ),
@@ -303,24 +319,51 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                               // ),
                               const SizedBox(height: 8),
 
+                              // ElevatedButton(
+                              //   style: ButtonStyle(
+                              //     backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
+                              //     foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
+                              //   ),
+                              //   onPressed: _isPlaceAdded(marker)
+                              //       ? null
+                              //       : () {
+                              //     final placeToAdd = _addPlaceToTrip(marker);
+                              //
+                              //     setState(() {
+                              //       _savedPlaces.add(placeToAdd);
+                              //     });
+                              //     Utils.showSnackBar("Place added to trip", true);
+                              //   },
+                              //
+                              //   child: Text(
+                              //     _isPlaceAdded(marker) ? 'Place added' : 'Add place to trip',
+                              //     style: const TextStyle(color: ColorPalette.primaryColor),
+                              //   ),
+                              // ),
+
                               ElevatedButton(
                                 style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
-                                  foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
+                                  backgroundColor: MaterialStateProperty.all<Color>(
+                                      ColorPalette.secondaryColor),
+                                  foregroundColor:
+                                  MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
                                 ),
-                                onPressed: _isPlaceAdded(marker)
-                                    ? null
-                                    : () {
-                                  final placeToAdd = _addPlaceToTrip(marker);
-
-                                  setState(() {
-                                    _savedPlaces.add(placeToAdd);
-                                  });
-                                  Utils.showSnackBar("Place added to trip", true);
+                                onPressed: () {
+                                  int placeIndex = _indexOfPlace(marker);
+                                  if (placeIndex == -1) {
+                                    final placeToAdd = _addPlaceToTrip(marker);
+                                    setState(() {
+                                      _savedPlaces.add(placeToAdd);
+                                    });
+                                    Utils.showSnackBar("Place added to trip", true);
+                                  } else {
+                                    _removePlaceFromTrip(placeIndex);
+                                  }
                                 },
-
                                 child: Text(
-                                  _isPlaceAdded(marker) ? 'Place added' : 'Add place to trip',
+                                  _indexOfPlace(marker) == -1
+                                      ? 'Add place to trip'
+                                      : 'Remove place from trip',
                                   style: const TextStyle(color: ColorPalette.primaryColor),
                                 ),
                               ),

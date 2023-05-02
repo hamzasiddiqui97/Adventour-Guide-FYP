@@ -107,36 +107,39 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 12),
-                        child: MultiSelectBottomSheetField(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: MultiSelectBottomSheetField(
 
-                          initialChildSize: 0.4,
-                          maxChildSize: 0.7,
-                          listType: MultiSelectListType.CHIP,
-                          searchable: true,
-                          buttonText: Text(placeType.isEmpty ? 'All' : placeType.join(', ')),
-                          title: const Text("Area Type"),
-                          selectedColor: ColorPalette.secondaryColor,
-                          selectedItemsTextStyle: const TextStyle(color: Colors.white),
+                            initialChildSize: 0.4,
+                            maxChildSize: 0.7,
+                            listType: MultiSelectListType.CHIP,
+                            searchable: true,
+                            buttonText: Text(placeType.isEmpty ? 'All' : placeType.join(', ')),
+                            title: const Text("Area Type"),
+                            selectedColor: ColorPalette.secondaryColor,
+                            selectedItemsTextStyle: const TextStyle(color: Colors.white),
 
-                          items: placeTypes.map((placeType) => MultiSelectItem<String>(placeType, placeType)).toList(),
-                          onConfirm: (values) {
-                            if (values.isEmpty) {
-                              setState(() {
-                                placeType = ['All'];
-                              });
-                            } else {
-                              setState(() {
-                                placeType = List<String>.from(values.cast<String>());
-                              });
-                            }
-                          },
-
-                          chipDisplay: MultiSelectChipDisplay(
-                            onTap: (value) {
-                              setState(() {
-                                placeType.remove(value);
-                              });
+                            items: placeTypes.map((placeType) => MultiSelectItem<String>(placeType, placeType)).toList(),
+                            onConfirm: (values) {
+                              if (values.isEmpty) {
+                                setState(() {
+                                  placeType = ['All'];
+                                });
+                              } else {
+                                setState(() {
+                                  placeType = List<String>.from(values.cast<String>());
+                                });
+                              }
                             },
+
+                            chipDisplay: MultiSelectChipDisplay(
+                              onTap: (value) {
+                                setState(() {
+                                  placeType.remove(value);
+                                });
+                              },
+                            ),
                           ),
                         ),
                       ),

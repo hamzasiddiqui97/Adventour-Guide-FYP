@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/distanceWrapper.dart' as dw;
 import 'package:dio/dio.dart';
 
+import '../../../core/widgets/customInfoWindowGoogleMaps.dart';
 import '../../../distanceWrapper.dart';
 
 
@@ -54,49 +55,6 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     }
   }
 
-
-  // Future<void> _createPolyline(List<LatLng> points) async {
-  //   List<LatLng> polylineCoordinates = await _getDirections(points);
-  //
-  //   Polyline polyline = Polyline(
-  //     polylineId: PolylineId("route"),
-  //     color: ColorPalette.secondaryColor,
-  //     points: polylineCoordinates,
-  //     width: 5,
-  //   );
-  //
-  //   // Calculate the bounds of the polyline coordinates
-  //   double minLat = polylineCoordinates.first.latitude;
-  //   double maxLat = polylineCoordinates.first.latitude;
-  //   double minLng = polylineCoordinates.first.longitude;
-  //   double maxLng = polylineCoordinates.first.longitude;
-  //   for (LatLng point in polylineCoordinates) {
-  //     if (point.latitude < minLat) minLat = point.latitude;
-  //     if (point.latitude > maxLat) maxLat = point.latitude;
-  //     if (point.longitude < minLng) minLng = point.longitude;
-  //     if (point.longitude > maxLng) maxLng = point.longitude;
-  //   }
-  //
-  //   // Animate the camera to show the entire polyline
-  //   if (polylineCoordinates.isNotEmpty) {
-  //     LatLngBounds bounds = LatLngBounds(
-  //       southwest: LatLng(minLat, minLng),
-  //       northeast: LatLng(maxLat, maxLng),
-  //     );
-  //     _mapController.animateCamera(
-  //       CameraUpdate.newLatLngBounds(
-  //         bounds,
-  //         50.0, // Padding
-  //       ),
-  //     );
-  //   }
-  //
-  //   setState(() {
-  //     _polylines.add(polyline);
-  //   });
-  // }
-
-
   Future<void> _createPolyline(List<LatLng> points) async {
     if (_sortedList == null || _sortedList!.isEmpty) {
       return;
@@ -142,6 +100,7 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     });
   }
 
+
   Set<Marker> createMarkers(List<LatLng> points, List<dw.Element?> distancesList) {
     Set<Marker> markers = {};
     for (int i = 0; i < points.length; i++) {
@@ -150,14 +109,48 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
       );
       int sequence = place['sequence'];
       String name = place['name'];
-      String distance = i == 0 ? '' : ', Distance: ${distancesList[i - 1]?.distance?.text}';
-      String duration = i == 0 ? '' : ', Duration: ${distancesList[i - 1]?.duration?.text}';
+
+      String nextPlaceName;
+      if (i < points.length - 1) {
+        var nextPlace = widget.tempPlaces.values.toList().firstWhere(
+              (place) => place['sequence'] == sequence + 1,
+        );
+        nextPlaceName = nextPlace['name'];
+      } else {
+        nextPlaceName = 'Destination';
+      }
+
+      String distance = i == 0
+          ? (distancesList[i]?.distance?.text ?? 'Unknown')
+          : (i == points.length - 1
+          ? 'N/A'
+          : (distancesList[i - 1]?.distance?.text ?? 'Unknown'));
+      String duration = i == 0
+          ? (distancesList[i]?.duration?.text ?? 'Unknown')
+          : (i == points.length - 1
+          ? 'N/A'
+          : (distancesList[i - 1]?.duration?.text ?? 'Unknown'));
 
       markers.add(Marker(
         markerId: MarkerId('marker$sequence'),
         position: points[i],
-        infoWindow: InfoWindow(title: 'Place $sequence: $name$distance$duration'),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return SizedBox(
+                height: 300,
+                child: CustomInfoWindow(
+                  title: 'Place $sequence: $name',
+                  distance: distance,
+                  duration: duration,
+                  nextPlaceName: nextPlaceName,
+                ),
+              );
+            },
+          );
+        },
       ));
     }
     return markers;
@@ -187,7 +180,6 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     return polylineCoordinates;
   }
 
-
   Dio dio = Dio();
 
   Future<DistanceWrapper?> distance({required LatLng origin, required LatLng destination}) async {
@@ -203,7 +195,7 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
 
     for (int i = 0; i < points.length; i++) {
       LatLng origin = points[i];
-      LatLng destination = points[(i + 1) % points.length]; // Wrap around to the first point
+      LatLng destination = points[(i + 1) % points.length];
 
       DistanceWrapper? distanceWrapper = await distance(origin: origin, destination: destination);
 
@@ -216,27 +208,6 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
       }
     }
   }
-
-
-
-  // Future<void> _printDistances(List<LatLng> points) async {
-  //
-  //   for (int i = 0; i < points.length - 1; i++) {
-  //     LatLng origin = points[i];
-  //     LatLng destination = points[i + 1];
-  //
-  //     DistanceWrapper? distanceWrapper = await distance(origin: origin, destination: destination);
-  //
-  //     if (distanceWrapper != null && distanceWrapper.status == 'OK') {
-  //       dw.Element? element = distanceWrapper.rows?.first?.elements?.first;
-  //       print('Distance between points ${i + 1} and ${i + 2}: ${element?.distance?.text}, Duration: ${element?.duration?.text}');
-  //     } else {
-  //       print('Error: ${distanceWrapper?.status}');
-  //     }
-  //   }
-  // }
-
-
 
 
   @override
@@ -256,8 +227,8 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
           markers: _markers,
           onMapCreated: (GoogleMapController controller) async {
             _mapController = controller;
-            if (widget.list != null) {
-              print('Creating polyline with points: ${widget.list}');
+            if (_sortedList != null) {
+              // print('Creating polyline with points: ${widget.list}');
               print('Creating polyline with _sortedList: ${_sortedList}');
 
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -29,6 +30,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final List<String> _selectedPlaceTypes = [];
 
+  final List<Marker> _attractionMarkers = [];
+
+
   final List<String> _placeTypes = [
     "All",
     // "tourist_attraction",
@@ -47,14 +51,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     "embassy"
   ];
 
-  final sourceController = TextEditingController();
-  final destinationController = TextEditingController();
-
   bool showSearchField = false;
   final Mode _mode = Mode.overlay;
   late GoogleMapController googleMapController;
 
   bool showMultipleSearchBars = false;
+
+  final sourceController = TextEditingController();
+  final List<TextEditingController> destinationControllers = [];
   final List multipleDestinations = [];
 
   @override
@@ -78,7 +82,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     _clearMap();
     polylinePoints = PolylinePoints();
     sourceController.text = 'Source';
-    destinationController.text = 'Destination';
+    destinationControllers.add(TextEditingController(text: 'Destination'));
   }
 
   final List<Marker> _markers = [];
@@ -118,11 +122,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             polylineCoordinates.add(LatLng(point.latitude, point.longitude));
           });
         }
-
-        // List<Map<String, String>> distancesAndTimes = await calculateDistanceAndTime(markers);
-        // String? distance = distancesAndTimes[i]['distance'];
-        // String? time = distancesAndTimes[i]['time'];
-        // print('Distance from ${originLocation.latitude}, ${originLocation.longitude} to ${destinationLocation.latitude}, ${destinationLocation.longitude}: $distance, Time: $time');
       }
 
       Polyline polyline = Polyline(
@@ -132,7 +131,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         points: polylineCoordinates,
       );
 
-      // Assign polylineCoordinates to tempPolylineCoordinates
+      // Assign polylineCoordinates to tempPolylineCoordinates (making copy of polyline points).
       tempPolylineCoordinates = List<LatLng>.from(polylineCoordinates);
 
       setState(() {
@@ -147,13 +146,39 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
       final places = GoogleMapsPlaces(apiKey: googleApiKey);
       getTouristAttractionsAlongPolyline(
-          polylineCoordinates, places, _selectedPlaceTypes);
+          polylineCoordinates, places, _selectedPlaceTypes, context);
     }
+
+
+  void _showFetchingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              CircularProgressIndicator(),
+              SizedBox(width: 10),
+              Text('Fetching nearby places...'),
+            ],
+          ),
+        );
+      },
+    ).then((value) {
+      if (value == null || !value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No places found'),backgroundColor: ColorPalette.secondaryColor,));
+      }
+    });
+  }
 
   void updateMapWithSelectedPlaceType(List<String> _selectedPlaceTypes) {
     // Clear previous markers
-    _markers.clear();
-
+    setState(() {
+      _attractionMarkers.clear();
+    });
     // Get new markers based on selected place types
     final places = GoogleMapsPlaces(apiKey: googleApiKey);
 
@@ -161,11 +186,11 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       if (_placesCache.containsKey(placeType)) {
         // Use cached results if available
         getTouristAttractionsAlongPolyline(
-            polylineCoordinates, places, [placeType]);
+            polylineCoordinates, places, [placeType], context);
       } else {
         // Get new results and store them in the cache
         getTouristAttractionsAlongPolyline(
-            polylineCoordinates, places, [placeType]).then((result) {
+            polylineCoordinates, places, [placeType],context).then((result) {
           _placesCache[placeType] = result;
         });
       }
@@ -181,7 +206,11 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       List<LatLng> polylineCoordinates,
       GoogleMapsPlaces places,
       List<String> _selectedPlaceTypes,
+      BuildContext context
       ) async {
+
+    _showFetchingDialog(context);
+
     final touristAttractions = <PlacesSearchResult>{};
     final uniquePlaceIds = <String>{};
 
@@ -195,7 +224,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
     for (final nearbySearch in searchResults.expand((x) => x)) {
       for (final result in nearbySearch.results) {
-        if (uniquePlaceIds.add(result.placeId)) { // Add this line
+        if (uniquePlaceIds.add(result.placeId)) {
           touristAttractions.add(result);
         }
       }
@@ -212,11 +241,24 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
         icon: BitmapDescriptor.defaultMarkerWithHue(hue),
       ));
+      _attractionMarkers.add(Marker(
+        markerId: MarkerId(place.placeId),
+        position:
+        LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+        infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
+        icon: BitmapDescriptor.defaultMarkerWithHue(hue),
+      ));
     }
 
     setState(() {});
 
-    print('touris attr: ${touristAttractions.length}');
+    if (kDebugMode) {
+      print('tourist attractions list length: ${touristAttractions.length}');
+    }
+
+    // Close the fetching dialog
+    Navigator.pop(context);
+
     return touristAttractions.toList();
   }
 
@@ -346,7 +388,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   // destination search autocomplete button
 
-  Future<void> _handlePressButtonDestination() async {
+  Future<void> _handlePressButtonDestination(int index) async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
         apiKey: kGoogleApiKey,
@@ -365,7 +407,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         components: [Component(Component.country, "pk")]);
 
     if (p != null) {
-      displayPredictionDestination(p, homeScaffoldKey.currentState);
+      displayPredictionDestination(p, homeScaffoldKey.currentState,index);
     } else {
       homeScaffoldKey.currentState?.showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
     }
@@ -379,7 +421,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   List<Destination> destinations = [];
 
   Future<void> displayPredictionDestination(
-      Prediction p, ScaffoldMessengerState? currentState) async {
+      Prediction p, ScaffoldMessengerState? currentState, int index) async {
     GoogleMapsPlaces places = GoogleMapsPlaces(
       apiKey: kGoogleApiKey,
       apiHeaders: await const GoogleApiHeaders().getHeaders(),
@@ -398,9 +440,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
       setState(() {
         destinations.add(newDestination);
+        multipleDestinations[index] = newDestination.name;
       });
 
-      destinationController.text = detail.result.name;
       _markers.add(Marker(
         markerId: MarkerId("destination ${destinations.length}"),
         position: newDestination.location,
@@ -409,7 +451,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       setPolylines();
       setState(() {});
       googleMapController.animateCamera(CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
-      print('desti: ${destinations.toString()}');
+      if (kDebugMode) {
+        print('destinations: ${destinations.toString()}');
+      }
     } else {
       currentState?.showSnackBar(const SnackBar(content: Text('Error: Could not get location')));
     }
@@ -420,11 +464,12 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       _markers.clear();
       _polylines.clear();
       sourceController.clear();
-      destinationController.clear();
+      destinationControllers.clear();
       multipleDestinations.clear();
       showMultipleSearchBars = false;
       _selectedPlaceTypes.clear();
       destinations.clear();
+      _attractionMarkers.clear();
     });
   }
 
@@ -446,7 +491,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             // current location
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
-            markers: _markers.toSet(),
+            markers: {..._markers, ..._attractionMarkers}.toSet(),
           ),
 
           if (!showSearchField)
@@ -509,7 +554,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               top: 0,
               child: Container(
                 color: ColorPalette.primaryColor,
-                height: MediaQuery.of(context).size.height * 0.27,
+                height: MediaQuery.of(context).size.height * 0.28,
                 width: MediaQuery.of(context).size.width,
                 child: SingleChildScrollView(
                   child: Column(
@@ -523,8 +568,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               SearchBar(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.81,
+                                  width: MediaQuery.of(context).size.width * 0.81,
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
@@ -534,20 +578,23 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                     icon: const Icon(Icons.arrow_upward),
                                   ),
                                   controller: sourceController,
+
                                   hintText: 'Search Source',
                                   onPress: () {
                                     Timer(const Duration(milliseconds: 500),
-                                        () {
-                                      _handlePressButtonSource();
-                                    });
+                                            () {
+                                          _handlePressButtonSource();
+                                        });
                                   }),
-                              GestureDetector(
+                              InkWell(
+                                splashColor: ColorPalette.secondaryColor,
                                 onTap: () {
                                   setState(() {
                                     showMultipleSearchBars = true;
-                                    multipleDestinations
-                                        .add(destinationController.text);
-                                    destinationController.text = destinationController.text;
+                                    final TextEditingController controller = TextEditingController(text: 'Destination');
+                                    destinationControllers.add(controller);
+                                    multipleDestinations.add(controller.text);
+
                                   });
                                 },
                                 child: Container(
@@ -565,6 +612,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                             ]),
 
                       ///// MULTIPLE SEARCH BAR FIELD /////
+
                       Container(
                         width: MediaQuery.of(context).size.width * 0.95,
                         child: Column(
@@ -573,23 +621,24 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                               Column(
                                 children: List.generate(
                                   multipleDestinations.length,
-                                  (index) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
+                                      (index) => Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
                                     child: Row(
                                       children: [
                                         Expanded(
                                           child: SearchBar(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.8,
+                                            width: MediaQuery.of(context).size.width * 0.8,
                                             controller: TextEditingController(
                                               text: multipleDestinations[index],
                                             ),
                                             hintText: 'Search Destination',
                                             onPress: () {
-                                              _handlePressButtonDestination();
+                                              _handlePressButtonDestination(index);
+                                            },
+                                            onPlaceSelected: (String placeName) {
+                                              setState(() {
+                                                multipleDestinations[index] = placeName;
+                                              });
                                             },
                                           ),
                                         ),
@@ -597,21 +646,25 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                         GestureDetector(
                                           onTap: () {
                                             setState(() {
-                                              multipleDestinations
-                                                  .removeAt(index);
+                                              // Remove the corresponding marker from the _markers list
+                                              MarkerId markerIdToRemove = MarkerId("destination ${index + 1}");
+                                              _markers.removeWhere((marker) => marker.markerId == markerIdToRemove);
+
+                                              // Remove the corresponding destination from the destinations list
+                                              multipleDestinations.removeAt(index);
+                                              setPolylines();
+
                                             });
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                                              borderRadius: BorderRadius.circular(20),
                                               color: Colors.white,
                                             ),
                                             child: const Icon(
                                               Icons.remove,
                                               size: 38,
-                                              color:
-                                                  ColorPalette.secondaryColor,
+                                              color: ColorPalette.secondaryColor,
                                             ),
                                           ),
                                         ),
