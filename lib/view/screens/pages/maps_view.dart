@@ -496,8 +496,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
           if (!showSearchField)
             Positioned(
-                bottom: 30,
+
+                bottom: 80,
                 left: 10,
+
                 child: ElevatedButton(
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
@@ -521,7 +523,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                     'Places List',
                     style: TextStyle(color: ColorPalette.primaryColor),
                   ),
-                )),
+                ),),
 
           if (!showSearchField)
             Positioned(
@@ -565,6 +567,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                       // search field and add more field button
                       if (showSearchField)
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               SearchBar(
@@ -676,6 +679,44 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                           ],
                         ),
                       ),
+
+
+                      const SizedBox(height: 30,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 200,
+                            child: ElevatedButton(
+
+
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      ColorPalette.secondaryColor)),
+
+                              onPressed: () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlacesListAlongTheRoute(
+                                      markers: _markers.toSet().toList(),
+                                      // distancesAndTimes: distancesAndTimes,
+                                      polylineCoordinates: tempPolylineCoordinates,
+                                    ),
+                                  ),
+                                );
+                              },
+
+                              child: const Text(
+                                'Create Trip',
+                                style: TextStyle(color: ColorPalette.primaryColor),
+                              ),
+                            ),
+                          )
+
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -787,9 +828,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               ),
             ),
 
-          if (!showSearchField)
             Positioned(
-              bottom: 80,
+              bottom: 30,
               left: 10,
               child: ElevatedButton(
                 onPressed: () {
