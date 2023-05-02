@@ -149,6 +149,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
           polylineCoordinates, places, _selectedPlaceTypes, context);
     }
 
+
   void _showFetchingDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -157,7 +158,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         return AlertDialog(
           content: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: const [
               CircularProgressIndicator(),
               SizedBox(width: 10),
               Text('Fetching nearby places...'),
@@ -165,7 +166,12 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
           ),
         );
       },
-    );
+    ).then((value) {
+      if (value == null || !value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No places found'),backgroundColor: ColorPalette.secondaryColor,));
+      }
+    });
   }
 
   void updateMapWithSelectedPlaceType(List<String> _selectedPlaceTypes) {
@@ -382,7 +388,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   // destination search autocomplete button
 
-  Future<void> _handlePressButtonDestination() async {
+  Future<void> _handlePressButtonDestination(int index) async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
         apiKey: kGoogleApiKey,
@@ -401,7 +407,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         components: [Component(Component.country, "pk")]);
 
     if (p != null) {
-      displayPredictionDestination(p, homeScaffoldKey.currentState);
+      displayPredictionDestination(p, homeScaffoldKey.currentState,index);
     } else {
       homeScaffoldKey.currentState?.showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
     }
@@ -415,7 +421,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   List<Destination> destinations = [];
 
   Future<void> displayPredictionDestination(
-      Prediction p, ScaffoldMessengerState? currentState) async {
+      Prediction p, ScaffoldMessengerState? currentState, int index) async {
     GoogleMapsPlaces places = GoogleMapsPlaces(
       apiKey: kGoogleApiKey,
       apiHeaders: await const GoogleApiHeaders().getHeaders(),
@@ -434,6 +440,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
       setState(() {
         destinations.add(newDestination);
+        multipleDestinations[index] = newDestination.name;
       });
 
       _markers.add(Marker(
@@ -561,8 +568,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               SearchBar(
-                                  width:
-                                  MediaQuery.of(context).size.width * 0.81,
+                                  width: MediaQuery.of(context).size.width * 0.81,
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
@@ -572,6 +578,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                     icon: const Icon(Icons.arrow_upward),
                                   ),
                                   controller: sourceController,
+
                                   hintText: 'Search Source',
                                   onPress: () {
                                     Timer(const Duration(milliseconds: 500),
@@ -626,7 +633,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                             ),
                                             hintText: 'Search Destination',
                                             onPress: () {
-                                              _handlePressButtonDestination();
+                                              _handlePressButtonDestination(index);
                                             },
                                             onPlaceSelected: (String placeName) {
                                               setState(() {
@@ -639,7 +646,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                         GestureDetector(
                                           onTap: () {
                                             setState(() {
+                                              // Remove the corresponding marker from the _markers list
+                                              MarkerId markerIdToRemove = MarkerId("destination ${index + 1}");
+                                              _markers.removeWhere((marker) => marker.markerId == markerIdToRemove);
+
+                                              // Remove the corresponding destination from the destinations list
                                               multipleDestinations.removeAt(index);
+                                              setPolylines();
+
                                             });
                                           },
                                           child: Container(
@@ -662,59 +676,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                           ],
                         ),
                       ),
-
-
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width * 0.95,
-                      //   child: Column(
-                      //     children: [
-                      //       if (showMultipleSearchBars)
-                      //         Column(
-                      //           children: List.generate(
-                      //             multipleDestinations.length,
-                      //                 (index) => Padding(
-                      //               padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      //               child: Row(
-                      //                 children: [
-                      //                   Expanded(
-                      //                     child: SearchBar(
-                      //                       width: MediaQuery.of(context).size.width * 0.8,
-                      //                       controller: TextEditingController(
-                      //                         text: multipleDestinations[index],
-                      //                       ),
-                      //                       hintText: 'Search Destination',
-                      //                       onPress: () {
-                      //                         _handlePressButtonDestination();
-                      //                       },
-                      //                     ),
-                      //                   ),
-                      //                   const SizedBox(width: 10),
-                      //                   GestureDetector(
-                      //                     onTap: () {
-                      //                       setState(() {
-                      //                         multipleDestinations.removeAt(index);
-                      //                       });
-                      //                     },
-                      //                     child: Container(
-                      //                       decoration: BoxDecoration(
-                      //                         borderRadius: BorderRadius.circular(20),
-                      //                         color: Colors.white,
-                      //                       ),
-                      //                       child: const Icon(
-                      //                         Icons.remove,
-                      //                         size: 38,
-                      //                         color: ColorPalette.secondaryColor,
-                      //                       ),
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ),
-                      //     ],
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
