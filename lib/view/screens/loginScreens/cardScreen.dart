@@ -107,7 +107,7 @@ class MySampleState extends State<MySample> {
                           cardHolderName: cardHolderName,
                           expiryDate: expiryDate,
                           themeColor: Colors.blue,
-                          textColor: Colors.white,
+                          textColor: Colors.black,
                           cardNumberDecoration: InputDecoration(
                             labelText: 'Number',
                             hintText: 'XXXX XXXX XXXX XXXX',
