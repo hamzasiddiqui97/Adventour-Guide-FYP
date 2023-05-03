@@ -22,8 +22,8 @@ class _MyAccountState extends State<MyAccount> {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final screenWidth = MediaQuery.of(context).size.width;
-    return SafeArea(
-      child: Scaffold(
+    return
+      Scaffold(
         appBar: AppBar(
           elevation: 0,
           automaticallyImplyLeading: false,
@@ -124,7 +124,6 @@ class _MyAccountState extends State<MyAccount> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }

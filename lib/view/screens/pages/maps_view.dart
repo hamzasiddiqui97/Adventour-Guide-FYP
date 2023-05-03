@@ -476,377 +476,379 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-      key: homeScaffoldKey,
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          GoogleMap(
-            zoomControlsEnabled: false,
-            compassEnabled: false,
-            mapType: MapType.normal,
-            initialCameraPosition: _kGooglePlex,
-            onMapCreated: _onMapCreated,
-            polylines: _polylines,
-            // current location
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            markers: {..._markers, ..._attractionMarkers}.toSet(),
-          ),
+      return SafeArea(
+        child: Scaffold(
+        key: homeScaffoldKey,
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            GoogleMap(
+              zoomControlsEnabled: false,
+              compassEnabled: false,
+              mapType: MapType.normal,
+              initialCameraPosition: _kGooglePlex,
+              onMapCreated: _onMapCreated,
+              polylines: _polylines,
+              // current location
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              markers: {..._markers, ..._attractionMarkers}.toSet(),
+            ),
 
-          if (!showSearchField)
-            Positioned(
+            if (!showSearchField)
+              Positioned(
 
-                bottom: 80,
-                left: 10,
+                  bottom: 80,
+                  left: 10,
 
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          ColorPalette.secondaryColor)),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            ColorPalette.secondaryColor)),
 
-                  onPressed: () async {
-                    // final distancesAndTimes = await calculateDistanceAndTime(_markers);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlacesListAlongTheRoute(
-                          markers: _markers.toSet().toList(),
-                          // distancesAndTimes: distancesAndTimes,
-                          polylineCoordinates: tempPolylineCoordinates,
+                    onPressed: () async {
+                      // final distancesAndTimes = await calculateDistanceAndTime(_markers);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlacesListAlongTheRoute(
+                            markers: _markers.toSet().toList(),
+                            // distancesAndTimes: distancesAndTimes,
+                            polylineCoordinates: tempPolylineCoordinates,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
 
-                  child: const Text(
-                    'Places List',
-                    style: TextStyle(color: ColorPalette.primaryColor),
+                    child: const Text(
+                      'Places List',
+                      style: TextStyle(color: ColorPalette.primaryColor),
+                    ),
+                  ),),
+
+            if (!showSearchField)
+              Positioned(
+                top: 30,
+                right: 30,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: ColorPalette.secondaryColor,
+                    borderRadius: BorderRadius.circular(40),
                   ),
-                ),),
-
-          if (!showSearchField)
-            Positioned(
-              top: 30,
-              right: 30,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: ColorPalette.secondaryColor,
-                  borderRadius: BorderRadius.circular(40),
+                  height: 60,
+                  width: 60,
+                  alignment: Alignment.center,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        showSearchField = !showSearchField;
+                      });
+                    },
+                    child: const Icon(
+                      Icons.search,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-                height: 60,
-                width: 60,
-                alignment: Alignment.center,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      showSearchField = !showSearchField;
+              ),
+
+            if (showSearchField)
+              Positioned(
+                top: 0,
+                child: Container(
+                  color: ColorPalette.primaryColor,
+                  height: MediaQuery.of(context).size.height * 0.28,
+                  width: MediaQuery.of(context).size.width,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        // search field and add more field button
+                        if (showSearchField)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SearchBar(
+                                    width: MediaQuery.of(context).size.width * 0.81,
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          showSearchField = false;
+                                        });
+                                      },
+                                      icon: const Icon(Icons.arrow_upward),
+                                    ),
+                                    controller: sourceController,
+
+                                    hintText: 'Search Source',
+                                    onPress: () {
+                                      Timer(const Duration(milliseconds: 500),
+                                              () {
+                                            _handlePressButtonSource();
+                                          });
+                                    }),
+                                InkWell(
+                                  splashColor: ColorPalette.secondaryColor,
+                                  onTap: () {
+                                    setState(() {
+                                      showMultipleSearchBars = true;
+                                      final TextEditingController controller = TextEditingController(text: 'Destination');
+                                      destinationControllers.add(controller);
+                                      multipleDestinations.add(controller.text);
+
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white,
+                                    ),
+                                    child: const Icon(
+                                      Icons.add,
+                                      size: 40,
+                                      color: ColorPalette.secondaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ]),
+
+                        ///// MULTIPLE SEARCH BAR FIELD /////
+
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          child: Column(
+                            children: [
+                              if (showMultipleSearchBars)
+                                Column(
+                                  children: List.generate(
+                                    multipleDestinations.length,
+                                        (index) => Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: SearchBar(
+                                              width: MediaQuery.of(context).size.width * 0.8,
+                                              controller: TextEditingController(
+                                                text: multipleDestinations[index],
+                                              ),
+                                              hintText: 'Search Destination',
+                                              onPress: () {
+                                                _handlePressButtonDestination(index);
+                                              },
+                                              onPlaceSelected: (String placeName) {
+                                                setState(() {
+                                                  multipleDestinations[index] = placeName;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                // Remove the corresponding marker from the _markers list
+                                                MarkerId markerIdToRemove = MarkerId("destination ${index + 1}");
+                                                _markers.removeWhere((marker) => marker.markerId == markerIdToRemove);
+
+                                                // Remove the corresponding destination from the destinations list
+                                                multipleDestinations.removeAt(index);
+                                                setPolylines();
+
+                                              });
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(20),
+                                                color: Colors.white,
+                                              ),
+                                              child: const Icon(
+                                                Icons.remove,
+                                                size: 38,
+                                                color: ColorPalette.secondaryColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+
+
+                        const SizedBox(height: 30,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: ElevatedButton(
+
+
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        ColorPalette.secondaryColor)),
+
+                                onPressed: () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PlacesListAlongTheRoute(
+                                        markers: _markers.toSet().toList(),
+                                        // distancesAndTimes: distancesAndTimes,
+                                        polylineCoordinates: tempPolylineCoordinates,
+                                      ),
+                                    ),
+                                  );
+                                },
+
+                                child: const Text(
+                                  'Create Trip',
+                                  style: TextStyle(color: ColorPalette.primaryColor),
+                                ),
+                              ),
+                            )
+
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            // list of places types
+            if (showSearchField)
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.28,
+                right: 1,
+                left: 1,
+                child: Container(
+                  decoration: const BoxDecoration(color: Colors.transparent),
+                  height: MediaQuery.of(context).size.height / 13,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _placeTypes.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor:
+                                _selectedPlaceTypes.contains(_placeTypes[index])
+                                    ? ColorPalette.primaryColor
+                                    : Colors.black,
+                            backgroundColor:
+                                _selectedPlaceTypes.contains(_placeTypes[index])
+                                    ? ColorPalette.secondaryColor
+                                    : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              if (_selectedPlaceTypes
+                                  .contains(_placeTypes[index])) {
+                                _selectedPlaceTypes.remove(_placeTypes[index]);
+                              } else {
+                                _selectedPlaceTypes.add(_placeTypes[index]);
+                              }
+                              updateMapWithSelectedPlaceType(_selectedPlaceTypes);
+                            });
+                          },
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: _selectedPlaceTypes
+                                    .contains(_placeTypes[index]),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (_selectedPlaceTypes
+                                        .contains(_placeTypes[index])) {
+                                      _selectedPlaceTypes
+                                          .remove(_placeTypes[index]);
+                                    } else {
+                                      _selectedPlaceTypes.add(_placeTypes[index]);
+                                    }
+                                    updateMapWithSelectedPlaceType(
+                                        _selectedPlaceTypes);
+                                  });
+                                },
+                              ),
+                              Text(_placeTypes[index]),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+            // current location
+            if (!showSearchField)
+              Positioned(
+                right: 30,
+                bottom: 30,
+                child: FloatingActionButton(
+                  backgroundColor: ColorPalette.secondaryColor,
+                  onPressed: () async {
+                    _currentLocation().then((value) async {
+                      setState(() {
+                        // source = LatLng(value.latitude, value.longitude);
+                      });
+                      _markers.add(
+                        Marker(
+                          markerId: const MarkerId('current location'),
+                          position: LatLng(value.latitude, value.longitude),
+                          infoWindow: const InfoWindow(title: "Current Location"),
+                        ),
+                      );
+
+                      CameraPosition cameraPosition = CameraPosition(
+                          zoom: 15,
+                          target: LatLng(value.latitude, value.longitude));
+
+                      // GoogleMapController controller =await _controller.future;
+                      googleMapController.animateCamera(
+                          CameraUpdate.newCameraPosition(cameraPosition));
+                      setState(() {});
                     });
                   },
                   child: const Icon(
-                    Icons.search,
-                    color: Colors.white,
+                    Icons.location_on,
+                    color: ColorPalette.primaryColor,
                   ),
                 ),
               ),
-            ),
 
-          if (showSearchField)
-            Positioned(
-              top: 0,
-              child: Container(
-                color: ColorPalette.primaryColor,
-                height: MediaQuery.of(context).size.height * 0.28,
-                width: MediaQuery.of(context).size.width,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      // search field and add more field button
-                      if (showSearchField)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SearchBar(
-                                  width: MediaQuery.of(context).size.width * 0.81,
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        showSearchField = false;
-                                      });
-                                    },
-                                    icon: const Icon(Icons.arrow_upward),
-                                  ),
-                                  controller: sourceController,
-
-                                  hintText: 'Search Source',
-                                  onPress: () {
-                                    Timer(const Duration(milliseconds: 500),
-                                            () {
-                                          _handlePressButtonSource();
-                                        });
-                                  }),
-                              InkWell(
-                                splashColor: ColorPalette.secondaryColor,
-                                onTap: () {
-                                  setState(() {
-                                    showMultipleSearchBars = true;
-                                    final TextEditingController controller = TextEditingController(text: 'Destination');
-                                    destinationControllers.add(controller);
-                                    multipleDestinations.add(controller.text);
-
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Colors.white,
-                                  ),
-                                  child: const Icon(
-                                    Icons.add,
-                                    size: 40,
-                                    color: ColorPalette.secondaryColor,
-                                  ),
-                                ),
-                              ),
-                            ]),
-
-                      ///// MULTIPLE SEARCH BAR FIELD /////
-
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        child: Column(
-                          children: [
-                            if (showMultipleSearchBars)
-                              Column(
-                                children: List.generate(
-                                  multipleDestinations.length,
-                                      (index) => Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: SearchBar(
-                                            width: MediaQuery.of(context).size.width * 0.8,
-                                            controller: TextEditingController(
-                                              text: multipleDestinations[index],
-                                            ),
-                                            hintText: 'Search Destination',
-                                            onPress: () {
-                                              _handlePressButtonDestination(index);
-                                            },
-                                            onPlaceSelected: (String placeName) {
-                                              setState(() {
-                                                multipleDestinations[index] = placeName;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              // Remove the corresponding marker from the _markers list
-                                              MarkerId markerIdToRemove = MarkerId("destination ${index + 1}");
-                                              _markers.removeWhere((marker) => marker.markerId == markerIdToRemove);
-
-                                              // Remove the corresponding destination from the destinations list
-                                              multipleDestinations.removeAt(index);
-                                              setPolylines();
-
-                                            });
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(20),
-                                              color: Colors.white,
-                                            ),
-                                            child: const Icon(
-                                              Icons.remove,
-                                              size: 38,
-                                              color: ColorPalette.secondaryColor,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-
-
-                      const SizedBox(height: 30,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            child: ElevatedButton(
-
-
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      ColorPalette.secondaryColor)),
-
-                              onPressed: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PlacesListAlongTheRoute(
-                                      markers: _markers.toSet().toList(),
-                                      // distancesAndTimes: distancesAndTimes,
-                                      polylineCoordinates: tempPolylineCoordinates,
-                                    ),
-                                  ),
-                                );
-                              },
-
-                              child: const Text(
-                                'Create Trip',
-                                style: TextStyle(color: ColorPalette.primaryColor),
-                              ),
-                            ),
-                          )
-
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          // list of places types
-          if (showSearchField)
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.28,
-              right: 1,
-              left: 1,
-              child: Container(
-                decoration: const BoxDecoration(color: Colors.transparent),
-                height: MediaQuery.of(context).size.height / 13,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _placeTypes.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor:
-                              _selectedPlaceTypes.contains(_placeTypes[index])
-                                  ? ColorPalette.primaryColor
-                                  : Colors.black,
-                          backgroundColor:
-                              _selectedPlaceTypes.contains(_placeTypes[index])
-                                  ? ColorPalette.secondaryColor
-                                  : Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            if (_selectedPlaceTypes
-                                .contains(_placeTypes[index])) {
-                              _selectedPlaceTypes.remove(_placeTypes[index]);
-                            } else {
-                              _selectedPlaceTypes.add(_placeTypes[index]);
-                            }
-                            updateMapWithSelectedPlaceType(_selectedPlaceTypes);
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            Checkbox(
-                              value: _selectedPlaceTypes
-                                  .contains(_placeTypes[index]),
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  if (_selectedPlaceTypes
-                                      .contains(_placeTypes[index])) {
-                                    _selectedPlaceTypes
-                                        .remove(_placeTypes[index]);
-                                  } else {
-                                    _selectedPlaceTypes.add(_placeTypes[index]);
-                                  }
-                                  updateMapWithSelectedPlaceType(
-                                      _selectedPlaceTypes);
-                                });
-                              },
-                            ),
-                            Text(_placeTypes[index]),
-                          ],
-                        ),
-                      ),
-                    );
+              Positioned(
+                bottom: 30,
+                left: 10,
+                child: ElevatedButton(
+                  onPressed: () {
+                    _clearMap();
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette
+                        .secondaryColor, // Change the button color here
+                  ),
+                  child: const Text(
+                    'Clear Markers',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
-            ),
-
-          // current location
-          if (!showSearchField)
-            Positioned(
-              right: 30,
-              bottom: 30,
-              child: FloatingActionButton(
-                backgroundColor: ColorPalette.secondaryColor,
-                onPressed: () async {
-                  _currentLocation().then((value) async {
-                    setState(() {
-                      // source = LatLng(value.latitude, value.longitude);
-                    });
-                    _markers.add(
-                      Marker(
-                        markerId: const MarkerId('current location'),
-                        position: LatLng(value.latitude, value.longitude),
-                        infoWindow: const InfoWindow(title: "Current Location"),
-                      ),
-                    );
-
-                    CameraPosition cameraPosition = CameraPosition(
-                        zoom: 15,
-                        target: LatLng(value.latitude, value.longitude));
-
-                    // GoogleMapController controller =await _controller.future;
-                    googleMapController.animateCamera(
-                        CameraUpdate.newCameraPosition(cameraPosition));
-                    setState(() {});
-                  });
-                },
-                child: const Icon(
-                  Icons.location_on,
-                  color: ColorPalette.primaryColor,
-                ),
-              ),
-            ),
-
-            Positioned(
-              bottom: 30,
-              left: 10,
-              child: ElevatedButton(
-                onPressed: () {
-                  _clearMap();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorPalette
-                      .secondaryColor, // Change the button color here
-                ),
-                child: const Text(
-                  'Clear Markers',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
+          ],
+        ),
+    ),
+      );
   }
 }

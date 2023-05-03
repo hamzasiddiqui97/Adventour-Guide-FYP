@@ -69,138 +69,136 @@ class _SignUpState extends State<SignUp> {
   }
 
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () async => false,
-        child: Scaffold(
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(30),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 160,
-                    width: 160,
-                    child: Lottie.asset(
-                        'assets/splash_screen_animation/login-hello.json'),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(30),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 160,
+                  width: 160,
+                  child: Lottie.asset(
+                      'assets/splash_screen_animation/login-hello.json'),
+                ),
+                const Text(
+                  'Sign Up',
+                  style: TextStyle(fontSize: 30),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: emailController,
+                  cursorColor: Colors.black,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    errorText: _emailError,
+                    prefixIcon: const Icon(Icons.email),
                   ),
-                  const Text(
-                    'Sign Up',
-                    style: TextStyle(fontSize: 30),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    controller: emailController,
-                    cursorColor: Colors.black,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      errorText: _emailError,
-                      prefixIcon: const Icon(Icons.email),
+                  onChanged: (value) {
+                    validateInputs();
+                  },
+                  autofillHints: const [AutofillHints.email],
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                TextFormField(
+                  controller: passwordController,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    errorText: _passwordError,
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isObscure
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
                     ),
-                    onChanged: (value) {
-                      validateInputs();
-                    },
-                    autofillHints: const [AutofillHints.email],
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  TextFormField(
-                    controller: passwordController,
-                    textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      errorText: _passwordError,
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(_isObscure
-                            ? Icons.visibility_off
-                            : Icons.visibility),
-                        onPressed: () {
-                          setState(() {
-                            _isObscure = !_isObscure;
-                          });
-                        },
-                      ),
+                  obscureText: _isObscure,
+                  onChanged: (value) {
+                    validateInputs();
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: confirmPasswordController,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    errorText: _confirmPasswordError,
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isConfirmObscure
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isConfirmObscure = !_isConfirmObscure;
+                        });
+                      },
                     ),
-                    obscureText: _isObscure,
-                    onChanged: (value) {
-                      validateInputs();
-                    },
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    controller: confirmPasswordController,
-                    textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
-                      labelText: 'Confirm Password',
-                      errorText: _confirmPasswordError,
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(_isConfirmObscure
-                            ? Icons.visibility_off
-                            : Icons.visibility),
-                        onPressed: () {
-                          setState(() {
-                            _isConfirmObscure = !_isConfirmObscure;
-                          });
-                        },
-                      ),
-                    ),
-                    obscureText: _isConfirmObscure,
-                    onChanged: (value) {
-                      validateInputs();
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                    onPressed: signUp,
+                  obscureText: _isConfirmObscure,
+                  onChanged: (value) {
+                    validateInputs();
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: signUp,
 
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorPalette.secondaryColor,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 40),
-                    ),
-                    // style: ButtonStyle(
-                    //   backgroundColor: MaterialStateProperty.all<Color>(
-                    //       ColorPalette.secondaryColor),
-                    //   foregroundColor: MaterialStateProperty.all<Color>(
-                    //       ColorPalette.primaryColor),
-                    // ),
-                    child: const Text('Sign Up'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.secondaryColor,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 40),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(color: Colors.black, fontSize: 16),
-                      text: 'Already have an account?  ',
-                      children: [
-                        TextSpan(
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = widget.onClickSignIn,
-                          text: 'Log In',
-                          style: const TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: ColorPalette.secondaryColor,
-                          ),
+                  // style: ButtonStyle(
+                  //   backgroundColor: MaterialStateProperty.all<Color>(
+                  //       ColorPalette.secondaryColor),
+                  //   foregroundColor: MaterialStateProperty.all<Color>(
+                  //       ColorPalette.primaryColor),
+                  // ),
+                  child: const Text('Sign Up'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: Colors.black, fontSize: 16),
+                    text: 'Already have an account?  ',
+                    children: [
+                      TextSpan(
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = widget.onClickSignIn,
+                        text: 'Log In',
+                        style: const TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: ColorPalette.secondaryColor,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

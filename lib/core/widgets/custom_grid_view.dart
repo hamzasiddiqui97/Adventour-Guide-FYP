@@ -20,6 +20,14 @@ class CustomGrid extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade400,
+            blurRadius: 5.0,
+            spreadRadius: 0.0,
+            offset: Offset(0.0, 2.0),
+        ),
+        ],
           borderRadius: BorderRadius.circular(20),
           color: Colors.grey.shade100),
       height: 450,
@@ -36,9 +44,15 @@ class CustomGrid extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
-
+                        boxShadow:  [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 6,
+                            spreadRadius: 0.0,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
-
                       height: 80,
                       width: 80,
                       child: IconButton(
@@ -73,9 +87,17 @@ class CustomGrid extends StatelessWidget {
                   children: [
                     Container(
                       decoration: BoxDecoration(
+
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
-
+                        boxShadow:  [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 6,
+                            spreadRadius: 0.0,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
 
 
@@ -107,9 +129,17 @@ class CustomGrid extends StatelessWidget {
                   children: [
                     Container(
                       decoration: BoxDecoration(
+
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
-
+                        boxShadow:  [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 6,
+                            spreadRadius: 0.0,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
 
 
@@ -138,7 +168,14 @@ class CustomGrid extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
-
+                        boxShadow:  [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 6,
+                            spreadRadius: 0.0,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
 
                       height: 80,
@@ -175,7 +212,14 @@ class CustomGrid extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
-
+                        boxShadow:  [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 6,
+                            spreadRadius: 0.0,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
 
                       height: 80,

@@ -36,41 +36,39 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: IndexedStack(
+        index: _currentIndex,
+        children: pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: onTap,
+        currentIndex: _currentIndex,
+        showUnselectedLabels: true,
+        unselectedItemColor: Colors.grey,
+        selectedItemColor: ColorPalette.secondaryColor,
+        elevation: 0,
+        type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
-        body: IndexedStack(
-          index: _currentIndex,
-          children: pages,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          onTap: onTap,
-          currentIndex: _currentIndex,
-          showUnselectedLabels: true,
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: ColorPalette.secondaryColor,
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "Home",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: "Maps",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.emoji_transportation),
-              label: "My Plans",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: "Profile",
-            ),
-          ],
-        ),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: "Maps",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.emoji_transportation),
+            label: "My Plans",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Profile",
+          ),
+        ],
       ),
     );
   }

@@ -59,124 +59,122 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: ColorPalette.primaryColor,
-          backgroundColor: ColorPalette.secondaryColor,
-          title: const Text(
-            'Nearby Places',
-          ),
-          centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        foregroundColor: ColorPalette.primaryColor,
+        backgroundColor: ColorPalette.secondaryColor,
+        title: const Text(
+          'Nearby Places',
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      labelText: "Radius",
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: ColorPalette.secondaryColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      prefixIcon:
-                          Icon(Icons.radar, color: ColorPalette.secondaryColor),
-                      hintText: "Enter radius",
-                      contentPadding: EdgeInsets.all(20),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 1.5,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: "Radius",
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ColorPalette.secondaryColor),
                     ),
-                    onChanged: (newRadius) => setRadius(newRadius),
-                    keyboardType: TextInputType.number,
-                    maxLength: 4,
-                    expands: false,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    prefixIcon:
+                        Icon(Icons.radar, color: ColorPalette.secondaryColor),
+                    hintText: "Enter radius",
+                    contentPadding: EdgeInsets.all(20),
                   ),
+                  onChanged: (newRadius) => setRadius(newRadius),
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                  expands: false,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const Text('Area Type:'),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: MultiSelectBottomSheetField(
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  const Text('Area Type:'),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: MultiSelectBottomSheetField(
 
-                            initialChildSize: 0.4,
-                            maxChildSize: 0.7,
-                            listType: MultiSelectListType.CHIP,
-                            searchable: true,
-                            buttonText: Text(placeType.isEmpty ? 'All' : placeType.join(', ')),
-                            title: const Text("Area Type"),
-                            selectedColor: ColorPalette.secondaryColor,
-                            selectedItemsTextStyle: const TextStyle(color: Colors.white),
+                          initialChildSize: 0.4,
+                          maxChildSize: 0.7,
+                          listType: MultiSelectListType.CHIP,
+                          searchable: true,
+                          buttonText: Text(placeType.isEmpty ? 'All' : placeType.join(', ')),
+                          title: const Text("Area Type"),
+                          selectedColor: ColorPalette.secondaryColor,
+                          selectedItemsTextStyle: const TextStyle(color: Colors.white),
 
-                            items: placeTypes.map((placeType) => MultiSelectItem<String>(placeType, placeType)).toList(),
-                            onConfirm: (values) {
-                              if (values.isEmpty) {
-                                setState(() {
-                                  placeType = ['All'];
-                                });
-                              } else {
-                                setState(() {
-                                  placeType = List<String>.from(values.cast<String>());
-                                });
-                              }
+                          items: placeTypes.map((placeType) => MultiSelectItem<String>(placeType, placeType)).toList(),
+                          onConfirm: (values) {
+                            if (values.isEmpty) {
+                              setState(() {
+                                placeType = ['All'];
+                              });
+                            } else {
+                              setState(() {
+                                placeType = List<String>.from(values.cast<String>());
+                              });
+                            }
+                          },
+
+                          chipDisplay: MultiSelectChipDisplay(
+                            onTap: (value) {
+                              setState(() {
+                                placeType.remove(value);
+                              });
                             },
-
-                            chipDisplay: MultiSelectChipDisplay(
-                              onTap: (value) {
-                                setState(() {
-                                  placeType.remove(value);
-                                });
-                              },
-                            ),
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
 
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          ColorPalette.secondaryColor)),
-                  onPressed: () async {
-                    setState(() {
-                      loading = true;
-                    });
-                    await updateLocation();
-                    await getNearbyPlaces();
-                    setState(() {
-                      loading = false;
-                    });
-                  },
-                  child: const Text(
-                    "Nearby Places",
-                    style: TextStyle(
-                      color: ColorPalette.primaryColor,
-                    ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        ColorPalette.secondaryColor)),
+                onPressed: () async {
+                  setState(() {
+                    loading = true;
+                  });
+                  await updateLocation();
+                  await getNearbyPlaces();
+                  setState(() {
+                    loading = false;
+                  });
+                },
+                child: const Text(
+                  "Nearby Places",
+                  style: TextStyle(
+                    color: ColorPalette.primaryColor,
                   ),
                 ),
-                if (loading)
-                  const Center(child: CircularProgressIndicator(color: ColorPalette.secondaryColor),),
-                if (!loading && (nearbyPlacesResponse.results == null || nearbyPlacesResponse.results!.isEmpty))
-                  const Center(child: Text("No results found")),
-                if (nearbyPlacesResponse.results != null)
-                  for (int i = 0; i < nearbyPlacesResponse.results!.length; i++)
-                    nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
-              ],
-            ),
+              ),
+              if (loading)
+                const Center(child: CircularProgressIndicator(color: ColorPalette.secondaryColor),),
+              if (!loading && (nearbyPlacesResponse.results == null || nearbyPlacesResponse.results!.isEmpty))
+                const Center(child: Text("No results found")),
+              if (nearbyPlacesResponse.results != null)
+                for (int i = 0; i < nearbyPlacesResponse.results!.length; i++)
+                  nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
+            ],
           ),
         ),
       ),

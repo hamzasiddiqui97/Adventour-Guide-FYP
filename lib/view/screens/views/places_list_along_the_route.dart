@@ -144,318 +144,313 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
 
     if (widget.markers.isEmpty) {
-      return SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-              backgroundColor: ColorPalette.secondaryColor,
-              foregroundColor: ColorPalette.primaryColor,
-              centerTitle: true,
-              title: const Text('Places on Route')),
-          body: const Center(child: Text('No points found')),
-        ),
+      return Scaffold(
+        appBar: AppBar(
+            backgroundColor: ColorPalette.secondaryColor,
+            foregroundColor: ColorPalette.primaryColor,
+            centerTitle: true,
+            title: const Text('Places on Route')),
+        body: const Center(child: Text('No points found')),
       );
     }
 
-    return SafeArea(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
+        centerTitle: true,
+        title: const Text('Places Along the Route'),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: ColorPalette.secondaryColor,
-          foregroundColor: ColorPalette.primaryColor,
-          centerTitle: true,
-          title: const Text('Places Along the Route'),
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: TextField(
-                      controller: _tripNameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Enter Trip Name',
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLength: 20,
-                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                      onChanged: (value) {
-                        if (value.trim().isEmpty) {
-                          Utils.showSnackBar("Trip name cannot be empty", false);
-                        }
-                      },
+                const SizedBox(height: 8),
+                Expanded(
+                  child: TextField(
+                    controller: _tripNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter Trip Name',
+                      border: OutlineInputBorder(),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(ColorPalette.primaryColor),
-                      backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor),
-                    ),
-                    onPressed: () {
-                      if (_tripNameController.text.trim().isNotEmpty) {
-                        // Close the text field.
-                        FocusScope.of(context).unfocus();
-                        _saveTrip();
-                      } else {
+                    maxLength: 20,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                    onChanged: (value) {
+                      if (value.trim().isEmpty) {
                         Utils.showSnackBar("Trip name cannot be empty", false);
                       }
                     },
-                    child: const Text('Save'),
-                  ),
-                ],
-              ),
-            ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton(
-                  onPressed: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2100),
-                    );
-
-                    if (pickedDate != null) {
-                      setState(() {
-                        _fromDate = pickedDate;
-                      });
-                    }
-                  },
-                  child: Text(
-                    _fromDate == null
-                        ? 'Choose From Date'
-                        : 'From: ${DateFormat('MM-dd-yyyy').format(_fromDate!)}',
-                    style: const TextStyle(color: ColorPalette.secondaryColor),
                   ),
                 ),
-                TextButton(
-                  onPressed: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2100),
-                    );
-
-                    if (pickedDate != null) {
-                      setState(() {
-                        _toDate = pickedDate;
-                      });
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(ColorPalette.primaryColor),
+                    backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor),
+                  ),
+                  onPressed: () {
+                    if (_tripNameController.text.trim().isNotEmpty) {
+                      // Close the text field.
+                      FocusScope.of(context).unfocus();
+                      _saveTrip();
+                    } else {
+                      Utils.showSnackBar("Trip name cannot be empty", false);
                     }
                   },
-                  child: Text(
-                    _toDate == null
-                        ? 'Choose To Date'
-                        : 'To: ${DateFormat('MM-dd-yyyy').format(_toDate!)}',
-                    style: const TextStyle(color: ColorPalette.secondaryColor),
-                  ),
+                  child: const Text('Save'),
                 ),
               ],
             ),
+          ),
 
-            if (_isTripNameSaved)
-              Expanded(
-              child: ListView.builder(
-                itemCount: widget.markers.length,
-                itemBuilder: (context, index) {
-                  final marker = widget.markers.elementAt(index);
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                  );
 
-                  return GestureDetector(
-                      // onTap: () {
-                      //   final marker = widget.markers.elementAt(index);
-                      //   final name = marker.infoWindow.title ?? 'Unknown';
-                      //   final address = marker.infoWindow.snippet ??
-                      //       'No vicinity information';
-                      //   final imageUrl = '';
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => PlacesDetail(
-                      //         name: name,
-                      //         address: address,
-                      //         imageUrl: imageUrl,
-                      //       ),
-                      //     ),
-                      //   );
-                      // },
-                      child: Card(
-                        margin: const EdgeInsets.all(8),
-                        elevation: 4,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                marker.infoWindow.title ?? 'Unknown',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-
-                              // Text(
-                              //   distanceText,
-                              //   style: const TextStyle(
-                              //     fontSize: 14,
-                              //     color: Colors.grey,
-                              //   ),
-                              // ),
-                              // Text(
-                              //   'Time: $time',
-                              //   style: const TextStyle(
-                              //     fontSize: 14,
-                              //     color: Colors.grey,
-                              //   ),
-                              // ),
-                              const SizedBox(height: 8),
-
-                              // ElevatedButton(
-                              //   style: ButtonStyle(
-                              //     backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
-                              //     foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
-                              //   ),
-                              //   onPressed: _isPlaceAdded(marker)
-                              //       ? null
-                              //       : () {
-                              //     final placeToAdd = _addPlaceToTrip(marker);
-                              //
-                              //     setState(() {
-                              //       _savedPlaces.add(placeToAdd);
-                              //     });
-                              //     Utils.showSnackBar("Place added to trip", true);
-                              //   },
-                              //
-                              //   child: Text(
-                              //     _isPlaceAdded(marker) ? 'Place added' : 'Add place to trip',
-                              //     style: const TextStyle(color: ColorPalette.primaryColor),
-                              //   ),
-                              // ),
-
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<Color>(
-                                      ColorPalette.secondaryColor),
-                                  foregroundColor:
-                                  MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
-                                ),
-                                onPressed: () {
-                                  int placeIndex = _indexOfPlace(marker);
-                                  if (placeIndex == -1) {
-                                    final placeToAdd = _addPlaceToTrip(marker);
-                                    setState(() {
-                                      _savedPlaces.add(placeToAdd);
-                                    });
-                                    Utils.showSnackBar("Place added to trip", true);
-                                  } else {
-                                    _removePlaceFromTrip(placeIndex);
-                                  }
-                                },
-                                child: Text(
-                                  _indexOfPlace(marker) == -1
-                                      ? 'Add place to trip'
-                                      : 'Remove place from trip',
-                                  style: const TextStyle(color: ColorPalette.primaryColor),
-                                ),
-                              ),
-
-                            ],
-                          ),
-                        ),
-                      ));
+                  if (pickedDate != null) {
+                    setState(() {
+                      _fromDate = pickedDate;
+                    });
+                  }
                 },
-              ),
-            ),
-            if (_isTripNameSaved)
-
-              SizedBox(
-              height: MediaQuery.of(context).size.height * 0.12,
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorPalette.secondaryColor,
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () async {
-                      // Show confirmation dialog
-                      bool result = await showDialog<bool>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Save Trip'),
-                            content: Text('Are you sure you want to save this trip?'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(false);
-                                },
-                              ),
-                              TextButton(
-                                child: Text('Yes'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      ) ?? false;
-
-                      if (result) {
-                        List<Map<String, dynamic>> savedPlacesCopy = List.from(_savedPlaces);
-
-                        if (_savedPlaces.isNotEmpty && _tripNameController.text.trim().isNotEmpty) {
-                          final FirebaseDatabase database = FirebaseDatabase.instance;
-                          DatabaseReference placesRef = database
-                              .ref()
-                              .child("users")
-                              .child(userId!)
-                              .child("places")
-                              .child(_tripNameController.text);
-
-                          for (int i = 0; i < _savedPlaces.length; i++) {
-                            try {
-                              await placesRef.push().set(_savedPlaces[i]);
-                            } catch (error) {
-                              print("Failed to add place: $error");
-                              Utils.showSnackBar("Failed to add place", false);
-                            }
-                          }
-
-                          setState(() {
-                            _savedPlaces.clear();
-                          });
-                          Utils.showSnackBar("Places added successfully", true);
-                        } else {
-                          Utils.showSnackBar("No places saved or trip name is empty", false);
-                        }
-                        // Navigate to the next screen
-                        Get.offAll(NavigationPage(uid: userId ?? '',));
-                      }
-                    },
-                    child: const Text(
-                      'Save Trip',
-                    ),
-                  ),
-
+                child: Text(
+                  _fromDate == null
+                      ? 'Choose From Date'
+                      : 'From: ${DateFormat('MM-dd-yyyy').format(_fromDate!)}',
+                  style: const TextStyle(color: ColorPalette.secondaryColor),
                 ),
               ),
+              TextButton(
+                onPressed: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                  );
+
+                  if (pickedDate != null) {
+                    setState(() {
+                      _toDate = pickedDate;
+                    });
+                  }
+                },
+                child: Text(
+                  _toDate == null
+                      ? 'Choose To Date'
+                      : 'To: ${DateFormat('MM-dd-yyyy').format(_toDate!)}',
+                  style: const TextStyle(color: ColorPalette.secondaryColor),
+                ),
+              ),
+            ],
+          ),
+
+          if (_isTripNameSaved)
+            Expanded(
+            child: ListView.builder(
+              itemCount: widget.markers.length,
+              itemBuilder: (context, index) {
+                final marker = widget.markers.elementAt(index);
+
+                return GestureDetector(
+                    // onTap: () {
+                    //   final marker = widget.markers.elementAt(index);
+                    //   final name = marker.infoWindow.title ?? 'Unknown';
+                    //   final address = marker.infoWindow.snippet ??
+                    //       'No vicinity information';
+                    //   final imageUrl = '';
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => PlacesDetail(
+                    //         name: name,
+                    //         address: address,
+                    //         imageUrl: imageUrl,
+                    //       ),
+                    //     ),
+                    //   );
+                    // },
+                    child: Card(
+                      margin: const EdgeInsets.all(8),
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              marker.infoWindow.title ?? 'Unknown',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+
+                            // Text(
+                            //   distanceText,
+                            //   style: const TextStyle(
+                            //     fontSize: 14,
+                            //     color: Colors.grey,
+                            //   ),
+                            // ),
+                            // Text(
+                            //   'Time: $time',
+                            //   style: const TextStyle(
+                            //     fontSize: 14,
+                            //     color: Colors.grey,
+                            //   ),
+                            // ),
+                            const SizedBox(height: 8),
+
+                            // ElevatedButton(
+                            //   style: ButtonStyle(
+                            //     backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
+                            //     foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
+                            //   ),
+                            //   onPressed: _isPlaceAdded(marker)
+                            //       ? null
+                            //       : () {
+                            //     final placeToAdd = _addPlaceToTrip(marker);
+                            //
+                            //     setState(() {
+                            //       _savedPlaces.add(placeToAdd);
+                            //     });
+                            //     Utils.showSnackBar("Place added to trip", true);
+                            //   },
+                            //
+                            //   child: Text(
+                            //     _isPlaceAdded(marker) ? 'Place added' : 'Add place to trip',
+                            //     style: const TextStyle(color: ColorPalette.primaryColor),
+                            //   ),
+                            // ),
+
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all<Color>(
+                                    ColorPalette.secondaryColor),
+                                foregroundColor:
+                                MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
+                              ),
+                              onPressed: () {
+                                int placeIndex = _indexOfPlace(marker);
+                                if (placeIndex == -1) {
+                                  final placeToAdd = _addPlaceToTrip(marker);
+                                  setState(() {
+                                    _savedPlaces.add(placeToAdd);
+                                  });
+                                  Utils.showSnackBar("Place added to trip", true);
+                                } else {
+                                  _removePlaceFromTrip(placeIndex);
+                                }
+                              },
+                              child: Text(
+                                _indexOfPlace(marker) == -1
+                                    ? 'Add place to trip'
+                                    : 'Remove place from trip',
+                                style: const TextStyle(color: ColorPalette.primaryColor),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ));
+              },
             ),
-          ],
-        ),
+          ),
+          if (_isTripNameSaved)
+
+            SizedBox(
+            height: MediaQuery.of(context).size.height * 0.12,
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.secondaryColor,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () async {
+                    // Show confirmation dialog
+                    bool result = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Save Trip'),
+                          content: Text('Are you sure you want to save this trip?'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Yes'),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    ) ?? false;
+
+                    if (result) {
+                      List<Map<String, dynamic>> savedPlacesCopy = List.from(_savedPlaces);
+
+                      if (_savedPlaces.isNotEmpty && _tripNameController.text.trim().isNotEmpty) {
+                        final FirebaseDatabase database = FirebaseDatabase.instance;
+                        DatabaseReference placesRef = database
+                            .ref()
+                            .child("users")
+                            .child(userId!)
+                            .child("places")
+                            .child(_tripNameController.text);
+
+                        for (int i = 0; i < _savedPlaces.length; i++) {
+                          try {
+                            await placesRef.push().set(_savedPlaces[i]);
+                          } catch (error) {
+                            print("Failed to add place: $error");
+                            Utils.showSnackBar("Failed to add place", false);
+                          }
+                        }
+
+                        setState(() {
+                          _savedPlaces.clear();
+                        });
+                        Utils.showSnackBar("Places added successfully", true);
+                      } else {
+                        Utils.showSnackBar("No places saved or trip name is empty", false);
+                      }
+                      // Navigate to the next screen
+                      Get.offAll(NavigationPage(uid: userId ?? '',));
+                    }
+                  },
+                  child: const Text(
+                    'Save Trip',
+                  ),
+                ),
+
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

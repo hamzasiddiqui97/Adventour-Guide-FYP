@@ -19,6 +19,7 @@ class HomePageNavBar extends StatefulWidget {
 
 class _HomePageNavBarState extends State<HomePageNavBar> {
 
+  // weather api
   String apiKey = '97f6f37816c2c554f9f209bd1b7b7afe';
   Weather? _weather;
   bool _isWeatherDataLoading = true;
@@ -121,54 +122,57 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                 const SizedBox(
                   height: 25,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (_isWeatherDataLoading)
-                      const Center(child: CircularProgressIndicator()),
-                    if (!_isWeatherDataLoading && _weather != null)
-                      Text(
-                        _weather!.cityName,
-                        style: myTextStyle,
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow:  [
+                      BoxShadow(
+                        color: Colors.grey.shade400,
+                        blurRadius: 3,
+                        spreadRadius: 0,
+                        offset: Offset(0.0, 2.0),
                       ),
-                    const SizedBox(width: 10.0),
+                    ],
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey.shade50,
 
-                    if (!_isWeatherDataLoading && _weather != null)
-                      MapString.mapStringToIcon(
-                        context,
-                        '${_weather?.currently}',
-                        30,
-                      ),
-                    const SizedBox(width: 10.0),
-                    if (_weather != null)
-                      Text(
-                        "${_weather!.temp.round()} °C",
-                        style: const TextStyle(
-                          color: ColorPalette.secondaryColor,
-                          fontSize: 25.0,
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  height: 100,
+                  // color: Colors.orange,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (_isWeatherDataLoading)
+                        const Center(child: CircularProgressIndicator()),
+                      if (!_isWeatherDataLoading && _weather != null)
+                        Text(
+                          _weather!.cityName,
+                          style: myTextStyle,
                         ),
-                      ),
-                  ],
+                      const SizedBox(width: 10.0),
+
+                      if (!_isWeatherDataLoading && _weather != null)
+                        MapString.mapStringToIcon(
+                          context,
+                          '${_weather?.currently}',
+                          30,
+                        ),
+                      const SizedBox(width: 10.0),
+                      if (_weather != null)
+                        Text(
+                          "${_weather!.temp.round()} °C",
+                          style: const TextStyle(
+                            color: ColorPalette.secondaryColor,
+                            fontSize: 25.0,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 const SizedBox(
                   height: 30,
                 ),
                 const CustomGrid(),
-                // Center(
-                //     child: RoundedButton(
-                //       onPress: () {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (context) => const CreateCustomTrip()),
-                //         );
-                //       },
-                //       name: 'Create Trip',
-                //       textColor: Colors.white,
-                //       color: ColorPalette.secondaryColor,
-                //       width: 200,
-                //     )),
-
               ],
             ),
           ),
