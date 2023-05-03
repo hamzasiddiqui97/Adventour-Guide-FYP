@@ -43,90 +43,88 @@ class _NearbyRestaurantSourceState extends State<NearbyRestaurantSource> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: ColorPalette.primaryColor,
-          backgroundColor: ColorPalette.secondaryColor,
-          title: const Text(
-            'Nearby Restaurants',
-          ),
-          centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        foregroundColor: ColorPalette.primaryColor,
+        backgroundColor: ColorPalette.secondaryColor,
+        title: const Text(
+          'Nearby Restaurants',
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      labelText: "Radius",
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                        BorderSide(color: ColorPalette.secondaryColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      prefixIcon:
-                      Icon(Icons.radar, color: ColorPalette.secondaryColor),
-                      hintText: "Enter radius",
-                      contentPadding: EdgeInsets.all(20),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 1.5,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: "Radius",
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                      BorderSide(color: ColorPalette.secondaryColor),
                     ),
-                    onChanged: (newRadius) => setRadius(newRadius),
-                    keyboardType: TextInputType.number,
-                    maxLength: 4,
-                    expands: false,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    prefixIcon:
+                    Icon(Icons.radar, color: ColorPalette.secondaryColor),
+                    hintText: "Enter radius",
+                    contentPadding: EdgeInsets.all(20),
+                  ),
+                  onChanged: (newRadius) => setRadius(newRadius),
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                  expands: false,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  const Text('Area Type:'),
+                  DropdownButton(
+                    hint: Text(placeType == '' ? 'All' : placeType),
+                    items: placeTypes
+                        .map((placeType) => DropdownMenuItem(
+                      value: placeType == 'All' ? '' : placeType,
+                      child: Text(placeType),
+                    ))
+                        .toList(),
+                    onChanged: (String? newPlaceType) {
+                      setState(() => placeType = newPlaceType!);
+                    },
+                    enableFeedback: true,
+                    menuMaxHeight: 250.0,
+                  ),
+                ],
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        ColorPalette.secondaryColor)),
+                onPressed: () {
+                  updateLocation();
+                  getNearbyPlaces();
+                },
+                child: const Text(
+                  "Nearby Places",
+                  style: TextStyle(
+                    color: ColorPalette.primaryColor,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const Text('Area Type:'),
-                    DropdownButton(
-                      hint: Text(placeType == '' ? 'All' : placeType),
-                      items: placeTypes
-                          .map((placeType) => DropdownMenuItem(
-                        value: placeType == 'All' ? '' : placeType,
-                        child: Text(placeType),
-                      ))
-                          .toList(),
-                      onChanged: (String? newPlaceType) {
-                        setState(() => placeType = newPlaceType!);
-                      },
-                      enableFeedback: true,
-                      menuMaxHeight: 250.0,
-                    ),
-                  ],
-                ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          ColorPalette.secondaryColor)),
-                  onPressed: () {
-                    updateLocation();
-                    getNearbyPlaces();
-                  },
-                  child: const Text(
-                    "Nearby Places",
-                    style: TextStyle(
-                      color: ColorPalette.primaryColor,
-                    ),
-                  ),
-                ),
-                if (nearbyPlacesResponse.results == null ||
-                    nearbyPlacesResponse.results!.isEmpty)
-                  const Center(child: Text("No results found")),
-                if (nearbyPlacesResponse.results != null)
-                  for (int i = 0; i < nearbyPlacesResponse.results!.length; i++)
-                    nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
-              ],
-            ),
+              ),
+              if (nearbyPlacesResponse.results == null ||
+                  nearbyPlacesResponse.results!.isEmpty)
+                const Center(child: Text("No results found")),
+              if (nearbyPlacesResponse.results != null)
+                for (int i = 0; i < nearbyPlacesResponse.results!.length; i++)
+                  nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
+            ],
           ),
         ),
       ),
