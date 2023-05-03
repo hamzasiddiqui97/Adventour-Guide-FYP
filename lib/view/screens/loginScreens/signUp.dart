@@ -294,6 +294,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
   bool _isConfirmObscure = true;
 
   final _formKey = GlobalKey<FormState>();
+  String? _hotelNameError;
   String? _emailError;
   String? _passwordError;
   String? _confirmPasswordError;
@@ -308,6 +309,10 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
 
   void validateInputs() {
     setState(() {
+      _hotelNameError = hotelNameController.text.isEmpty
+          ? 'Please enter a hotel name'
+          : null;
+
       _emailError =
           emailController.text.isEmpty || !emailController.text.contains('@')
               ? 'Please enter a valid email address'
@@ -325,211 +330,284 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
   }
 
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () async => false,
-        child: Scaffold(
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(30),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 160,
-                    width: 160,
-                    child: Lottie.asset(
-                        'assets/splash_screen_animation/hotelSignUp.json'),
-                  ),
-                  const Text(
-                    'Hotel Sign Up',
-                    style: TextStyle(fontSize: 30),
-                  ),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(30),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 160,
+                  width: 160,
+                  child: Lottie.asset(
+                      'assets/splash_screen_animation/hotelSignUp.json'),
+                ),
+                const Text(
+                  'Hotel Sign Up',
+                  style: TextStyle(fontSize: 30),
+                ),
 
-                  const SizedBox(
-                    height: 30,
+                const SizedBox(
+                  height: 30,
+                ),
+                TextFormField(
+
+                  controller: hotelNameController,
+                  cursorColor: Colors.black,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: 'Hotel Name',
+                    errorText: _emailError,
+                    prefixIcon: const Icon(
+                      Icons.person_pin_circle_rounded,
+                      size: 30,
+                    ),
                   ),
-                  TextFormField(
-                    controller: hotelNameController,
-                    cursorColor: Colors.black,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      labelText: 'Hotel Name',
-                      errorText: _emailError,
-                      prefixIcon: const Icon(
-                        Icons.person_pin_circle_rounded,
-                        size: 30,
+                  onChanged: (value) {
+                    validateInputs();
+                  },
+                  autofillHints: const [AutofillHints.email],
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                TextFormField(
+
+                  controller: emailController,
+                  cursorColor: Colors.black,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    errorText: _emailError,
+                    prefixIcon: const Icon(Icons.email),
+                  ),
+                  onChanged: (value) {
+                    validateInputs();
+                  },
+                  autofillHints: const [AutofillHints.email],
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                TextFormField(
+                  controller: passwordController,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    errorText: _passwordError,
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isObscure
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: _isObscure,
+                  onChanged: (value) {
+                    validateInputs();
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: confirmPasswordController,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    errorText: _confirmPasswordError,
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isConfirmObscure
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isConfirmObscure = !_isConfirmObscure;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: _isConfirmObscure,
+                  onChanged: (value) {
+                    validateInputs();
+                  },
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                // ElevatedButton(
+                //   onPressed: (){},
+                //
+                //   style: ElevatedButton.styleFrom(
+                //
+                //     backgroundColor: ColorPalette.secondaryColor,
+                //     foregroundColor: Colors.white,
+                //     minimumSize: const Size(double.infinity, 40),
+                //   ),
+                //   // style: ButtonStyle(
+                //   //   backgroundColor: MaterialStateProperty.all<Color>(
+                //   //       ColorPalette.secondaryColor),
+                //   //   foregroundColor: MaterialStateProperty.all<Color>(
+                //   //       ColorPalette.primaryColor),
+                //   // ),
+                //   child: const Text('Next'),
+                // ),
+                // InkWell(
+                //   onTap: () {
+                //     Get.to(
+                //       () => HotelOwnerSignUpDetail(
+                //         hotelNameController: hotelNameController.text,
+                //         emailNameController: emailController.text,
+                //         passwordController: passwordController.text,
+                //         fireStore: fireStore,
+                //       ),
+                //     );
+                //     // mainController.role.value=radioValue!;
+                //     // print(mainController.role.value);
+                //     // Navigator.push(
+                //     //   context,
+                //     //   MaterialPageRoute(builder: (context) => const AuthPage()),
+                //     // );
+                //   },
+                //   child: Container(
+                //     height: 45,
+                //     width: 180,
+                //     decoration: const BoxDecoration(
+                //         color: Colors.black,
+                //         borderRadius: BorderRadius.all(Radius.circular(10))),
+                //     child: Center(
+                //       child: Row(
+                //         mainAxisAlignment: MainAxisAlignment.center,
+                //         crossAxisAlignment: CrossAxisAlignment.center,
+                //         children: const [
+                //           SizedBox(
+                //             width: 25,
+                //           ),
+                //           Text(
+                //             "Next",
+                //             style: TextStyle(
+                //                 fontWeight: FontWeight.bold,
+                //                 color: Colors.white,
+                //                 fontSize: 20),
+                //           ),
+                //           SizedBox(
+                //             width: 5,
+                //           ),
+                //           Icon(
+                //             Icons.navigate_next_rounded,
+                //             color: Colors.white,
+                //             size: 40,
+                //           )
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
+                SizedBox(
+                  width: MediaQuery.of(context).size.width /1.2,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(3),
                       ),
+                      backgroundColor: ColorPalette.secondaryColor,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 40),
                     ),
-                    onChanged: (value) {
+                    onPressed: () {
                       validateInputs();
-                    },
-                    autofillHints: const [AutofillHints.email],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  TextFormField(
-                    controller: emailController,
-                    cursorColor: Colors.black,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      errorText: _emailError,
-                      prefixIcon: const Icon(Icons.email),
-                    ),
-                    onChanged: (value) {
-                      validateInputs();
-                    },
-                    autofillHints: const [AutofillHints.email],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  TextFormField(
-                    controller: passwordController,
-                    textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      errorText: _passwordError,
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(_isObscure
-                            ? Icons.visibility_off
-                            : Icons.visibility),
-                        onPressed: () {
-                          setState(() {
-                            _isObscure = !_isObscure;
-                          });
-                        },
-                      ),
-                    ),
-                    obscureText: _isObscure,
-                    onChanged: (value) {
-                      validateInputs();
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    controller: confirmPasswordController,
-                    textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
-                      labelText: 'Confirm Password',
-                      errorText: _confirmPasswordError,
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(_isConfirmObscure
-                            ? Icons.visibility_off
-                            : Icons.visibility),
-                        onPressed: () {
-                          setState(() {
-                            _isConfirmObscure = !_isConfirmObscure;
-                          });
-                        },
-                      ),
-                    ),
-                    obscureText: _isConfirmObscure,
-                    onChanged: (value) {
-                      validateInputs();
-                    },
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  // ElevatedButton(
-                  //   onPressed: (){},
-                  //
-                  //   style: ElevatedButton.styleFrom(
-                  //
-                  //     backgroundColor: ColorPalette.secondaryColor,
-                  //     foregroundColor: Colors.white,
-                  //     minimumSize: const Size(double.infinity, 40),
-                  //   ),
-                  //   // style: ButtonStyle(
-                  //   //   backgroundColor: MaterialStateProperty.all<Color>(
-                  //   //       ColorPalette.secondaryColor),
-                  //   //   foregroundColor: MaterialStateProperty.all<Color>(
-                  //   //       ColorPalette.primaryColor),
-                  //   // ),
-                  //   child: const Text('Next'),
-                  // ),
-                  InkWell(
-                    onTap: () {
-                      Get.to(
-                        () => HotelOwnerSignUpDetail(
-                          hotelNameController: hotelNameController.text,
-                          emailNameController: emailController.text,
-                          passwordController: passwordController.text,
-                          fireStore: fireStore,
-                        ),
-                      );
-                      // mainController.role.value=radioValue!;
-                      // print(mainController.role.value);
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => const AuthPage()),
-                      // );
-                    },
-                    child: Container(
-                      height: 45,
-                      width: 180,
-                      decoration: const BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
-                            SizedBox(
-                              width: 25,
-                            ),
-                            Text(
-                              "Next",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 20),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Icon(
-                              Icons.navigate_next_rounded,
-                              color: Colors.white,
-                              size: 40,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                      text: 'Already have an account?  ',
-                      children: [
-                        TextSpan(
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = widget.onClickSignIn,
-                          text: 'Log In',
-                          style: const TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: ColorPalette.secondaryColor,
+                      if (_hotelNameError == null &&
+                          _emailError == null &&
+                          _passwordError == null &&
+                          _confirmPasswordError == null) {
+                        Get.to(
+                              () => HotelOwnerSignUpDetail(
+                            hotelNameController: hotelNameController.text,
+                            emailNameController: emailController.text,
+                            passwordController: passwordController.text,
+                            fireStore: fireStore,
                           ),
-                        ),
-                      ],
+                        );
+                      } else {
+                        // Show snackbar with an error message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please fill all fields correctly'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+
+                    child: const Text(
+                      "Next",
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                          fontSize: 20),
                     ),
+
+                    // child: ElevatedButton(
+                    //   onPressed: () {},
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: ColorPalette.secondaryColor,
+                    //     foregroundColor: Colors.white,
+                    //     minimumSize: const Size(double.infinity, 40),
+                    //   ),
+                    //   child: const Text('Sign In'),
+                    // ),
+                    //
+                    // child: Container(
+                    //   height: 45,
+                    //   width: 180,
+                    //   decoration: const BoxDecoration(
+                    //       color: ColorPalette.secondaryColor,
+                    //       borderRadius: BorderRadius.all(Radius.circular(10))),
+                    //   child: const Center(
+                    //     child: Text(
+                    //       "Next",
+                    //       style: TextStyle(
+                    //           fontWeight: FontWeight.bold,
+                    //           color: Colors.white,
+                    //           fontSize: 20),
+                    //     ),
+                    //   ),
+                    // ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                    text: 'Already have an account?  ',
+                    children: [
+                      TextSpan(
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = widget.onClickSignIn,
+                        text: 'Log In',
+                        style: const TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: ColorPalette.secondaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -659,6 +737,8 @@ class _HotelOwnerSignUpDetailState extends State<HotelOwnerSignUpDetail> {
       }
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {

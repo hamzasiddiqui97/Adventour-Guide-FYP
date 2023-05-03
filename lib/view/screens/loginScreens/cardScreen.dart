@@ -46,11 +46,11 @@ class MySampleState extends State<MySample> {
         resizeToAvoidBottomInset: false,
         body: Container(
           decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: ExactAssetImage('assets/bg.png'),
-              fit: BoxFit.fill,
-            ),
-            color: Colors.black,
+            // image: DecorationImage(
+            //   image: ExactAssetImage('assets/bg.png'),
+            //   fit: BoxFit.fill,
+            // ),
+            color: Colors.white,
           ),
           child: SafeArea(
             child: Column(
@@ -84,7 +84,7 @@ class MySampleState extends State<MySample> {
                     CustomCardTypeIcon(
                       cardType: CardType.mastercard,
                       cardImage: Image.asset(
-                        'assets/mastercard.png',
+                        'assets/images/MastercardLogo.png',
                         height: 48,
                         width: 48,
                       ),
@@ -111,30 +111,30 @@ class MySampleState extends State<MySample> {
                           cardNumberDecoration: InputDecoration(
                             labelText: 'Number',
                             hintText: 'XXXX XXXX XXXX XXXX',
-                            hintStyle: const TextStyle(color: Colors.white),
-                            labelStyle: const TextStyle(color: Colors.white),
+                            hintStyle: const TextStyle(color: Colors.black),
+                            labelStyle: const TextStyle(color:  Colors.black),
                             focusedBorder: border,
                             enabledBorder: border,
                           ),
                           expiryDateDecoration: InputDecoration(
-                            hintStyle: const TextStyle(color: Colors.white),
-                            labelStyle: const TextStyle(color: Colors.white),
+                            hintStyle: const TextStyle(color: Colors.black),
+                            labelStyle: const TextStyle(color: Colors.black),
                             focusedBorder: border,
                             enabledBorder: border,
                             labelText: 'Expired Date',
                             hintText: 'XX/XX',
                           ),
                           cvvCodeDecoration: InputDecoration(
-                            hintStyle: const TextStyle(color: Colors.white),
-                            labelStyle: const TextStyle(color: Colors.white),
+                            hintStyle: const TextStyle(color: Colors.black),
+                            labelStyle: const TextStyle(color:  Colors.black),
                             focusedBorder: border,
                             enabledBorder: border,
                             labelText: 'CVV',
                             hintText: 'XXX',
                           ),
                           cardHolderDecoration: InputDecoration(
-                            hintStyle: const TextStyle(color: Colors.white),
-                            labelStyle: const TextStyle(color: Colors.white),
+                            hintStyle: const TextStyle(color: Colors.black),
+                            labelStyle: const TextStyle(color:  Colors.black),
                             focusedBorder: border,
                             enabledBorder: border,
                             labelText: 'Card Holder',
@@ -152,7 +152,7 @@ class MySampleState extends State<MySample> {
                               const Text(
                                 'Glassmorphism',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: 18,
                                 ),
                               ),
@@ -160,7 +160,7 @@ class MySampleState extends State<MySample> {
                               Switch(
                                 value: useGlassMorphism,
                                 inactiveTrackColor: Colors.grey,
-                                activeColor: Colors.white,
+                                activeColor: ColorPalette.secondaryColor,
                                 activeTrackColor: Colors.grey,
                                 onChanged: (bool value) => setState(() {
                                   useGlassMorphism = value;
@@ -177,7 +177,7 @@ class MySampleState extends State<MySample> {
                               const Text(
                                 'Card Image',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: 18,
                                 ),
                               ),
@@ -185,7 +185,7 @@ class MySampleState extends State<MySample> {
                               Switch(
                                 value: useBackgroundImage,
                                 inactiveTrackColor: Colors.grey,
-                                activeColor: Colors.white,
+                                activeColor: ColorPalette.secondaryColor,
                                 activeTrackColor: Colors.grey,
                                 onChanged: (bool value) => setState(() {
                                   useBackgroundImage = value;
@@ -205,13 +205,8 @@ class MySampleState extends State<MySample> {
                             decoration: BoxDecoration(
                               gradient:  const LinearGradient(
                                 colors: <Color>[
-                                  Colors.grey,
-                                  Colors.grey,
-                                  Colors.grey,
-                                  Colors.grey,
-                                  Colors.grey,
-                                  Colors.grey,
-                                  Colors.grey,
+                                  ColorPalette.secondaryColor,
+                                  ColorPalette.secondaryColor,
                                 ],
                                 begin: Alignment(-1, -4),
                                 end: Alignment(1, 4),
@@ -224,7 +219,7 @@ class MySampleState extends State<MySample> {
                             child: const Text(
                               'Validate',
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Colors.white,
                                 fontFamily: 'halter',
                                 fontSize: 14,
                                 package: 'flutter_credit_card',
