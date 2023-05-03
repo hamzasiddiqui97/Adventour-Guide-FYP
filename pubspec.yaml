@@ -66,6 +66,8 @@ dependencies:
   timeline_tile: ^2.0.0
   share_plus: ^6.3.4
   dio: ^5.1.1
+  image_picker: ^0.8.7+4
+  flutter_credit_card: ^3.0.6
 
   # flutter_geocoder: ^0.2.2-nullsafety
   # geocode: ^1.0.2

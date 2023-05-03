@@ -284,6 +284,7 @@ class _SignInState extends State<SignIn> {
       Utils.showSnackBar('Sign in failed. Please try again later.',false);
     }
   }
+
   signInWithGoogle() async {
     try {
       GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();

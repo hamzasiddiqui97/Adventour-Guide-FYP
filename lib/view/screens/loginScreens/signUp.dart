@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -5,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
+import 'package:google_maps_basics/view/screens/loginScreens/cardScreen.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 
 import '../pages/main_page.dart';
@@ -211,11 +215,12 @@ class _SignUpState extends State<SignUp> {
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(
-          child: CircularProgressIndicator(),
-        ));
+              child: CircularProgressIndicator(),
+            ));
     try {
       if (passwordController.text == confirmPasswordController.text) {
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
@@ -225,6 +230,8 @@ class _SignUpState extends State<SignUp> {
         // User has been successfully registered
         // Add any additional actions to be performed after successful registration
         //adding to the firestore
+
+        ///adding the tourist to the firebase
         CollectionReference customers = fireStore.collection('Tourist');
         customers.add({
           'Email': emailController.text,
@@ -332,7 +339,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     height: 160,
                     width: 160,
                     child: Lottie.asset(
@@ -454,7 +461,14 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
                   // ),
                   InkWell(
                     onTap: () {
-                      Get.to(() => const HotelOwnerSignUpDetail());
+                      Get.to(
+                        () => HotelOwnerSignUpDetail(
+                          hotelNameController: hotelNameController.text,
+                          emailNameController: emailController.text,
+                          passwordController: passwordController.text,
+                          fireStore: fireStore,
+                        ),
+                      );
                       // mainController.role.value=radioValue!;
                       // print(mainController.role.value);
                       // Navigator.push(
@@ -472,7 +486,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
+                          children: const [
                             SizedBox(
                               width: 25,
                             ),
@@ -543,8 +557,9 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
         // User has been successfully registered
         // Add any additional actions to be performed after successful registration
         //adding to the firestore
-        CollectionReference customers = fireStore.collection('Tourist');
+        CollectionReference customers = fireStore.collection('Hotel Owner');
         customers.add({
+          'Hotel Name': hotelNameController.text,
           'Email': emailController.text,
           'Password': passwordController.text
         });
@@ -576,16 +591,77 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
 }
 
 class HotelOwnerSignUpDetail extends StatefulWidget {
-  const HotelOwnerSignUpDetail({Key? key}) : super(key: key);
+  const HotelOwnerSignUpDetail({
+    Key? key,
+    required this.hotelNameController,
+    required this.emailNameController,
+    required this.passwordController,
+    required this.fireStore,
+  }) : super(key: key);
+
+  final String hotelNameController;
+  final String emailNameController;
+  final String passwordController;
+  final FirebaseFirestore fireStore;
 
   @override
-  State<HotelOwnerSignUpDetail> createState() => _HotelOwnerSignUpDetailState();
+  State<HotelOwnerSignUpDetail> createState() => _HotelOwnerSignUpDetailState(
+        hotelNameController,
+        emailNameController,
+        passwordController,
+        fireStore,
+      );
 }
 
 class _HotelOwnerSignUpDetailState extends State<HotelOwnerSignUpDetail> {
+  final String hotelNameController;
+  final String emailNameController;
+  final String passwordController;
+  final FirebaseFirestore fireStore;
+  File? _image1;
+  File? _image2;
+  File? _image3;
+  final picker = ImagePicker();
+
+  _HotelOwnerSignUpDetailState(this.hotelNameController,
+      this.emailNameController, this.passwordController, this.fireStore);
+
   // final  = TextEditingController();
   // final passwordController = TextEditingController();
   // final confirmPasswordController = TextEditingController();
+  Future<void> _getImage1({required ImageSource source}) async {
+    final pickedFile = await picker.pickImage(source: source);
+    setState(() {
+      if (pickedFile != null) {
+        _image1 = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future<void> _getImage2({required ImageSource source}) async {
+    final pickedFile = await picker.pickImage(source: source);
+    setState(() {
+      if (pickedFile != null) {
+        _image2 = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future<void> _getImage3({required ImageSource source}) async {
+    final pickedFile = await picker.pickImage(source: source);
+    setState(() {
+      if (pickedFile != null) {
+        _image3 = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -608,7 +684,7 @@ class _HotelOwnerSignUpDetailState extends State<HotelOwnerSignUpDetail> {
               const SizedBox(
                 height: 30,
               ),
-              Text(
+              const Text(
                 "Select Images",
                 style: TextStyle(fontSize: 22),
                 textAlign: TextAlign.start,
@@ -617,8 +693,9 @@ class _HotelOwnerSignUpDetailState extends State<HotelOwnerSignUpDetail> {
                 height: 20,
               ),
               Container(
-                height: 140,
-                width: 340,
+                height: 100,
+                width: 310,
+                padding: const EdgeInsets.symmetric(horizontal: 50),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.all(
@@ -636,21 +713,171 @@ class _HotelOwnerSignUpDetailState extends State<HotelOwnerSignUpDetail> {
                   ],
                 ),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      height: 80,
-                      width: 80,
+                      height: 40,
+                      width: 40,
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        // color: Colors.black,
                         border: Border.all(width: 1.0, color: Colors.grey),
                         borderRadius: BorderRadius.circular(5.0),
                         // dashPattern: [6, 3], // [dash length, space length]
+                      ),
+                      child: Center(
+                        child: _image1 == null
+                            ? IconButton(
+                                onPressed: () {
+                                  _getImage1(
+                                    source: ImageSource.gallery,
+                                    // fileName: _image1!,
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.add,
+                                ),
+                              )
+                            : Image.file(
+                                _image1!,
+                                fit: BoxFit.fill,
+                              ),
+                      ),
+                    ),
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        // color: Colors.black,
+                        border: Border.all(width: 1.0, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5.0),
+                        // dashPattern: [6, 3], // [dash length, space length]
+                      ),
+                      child: Center(
+                        child: _image2 == null
+                            ? IconButton(
+                                onPressed: () {
+                                  _getImage2(
+                                    source: ImageSource.gallery,
+                                    // fileName: _image1!,
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.add,
+                                ),
+                              )
+                            : Image.file(
+                                _image2!,
+                                fit: BoxFit.fill,
+                              ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _getImage3(
+                          source: ImageSource.gallery,
+                        );
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          // color: Colors.black,
+                          border: Border.all(width: 1.0, color: Colors.grey),
+                          borderRadius: BorderRadius.circular(5.0),
+                          // dashPattern: [6, 3], // [dash length, space length]
+                        ),
+                        child: _image3 == null
+                            ? IconButton(
+                                onPressed: () {
+                                  _getImage3(
+                                    source: ImageSource.gallery,
+                                    // fileName: _image1!,
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.add,
+                                ),
+                              )
+                            : Image.file(
+                                _image3!,
+                                fit: BoxFit.fill,
+                              ),
                       ),
                     ),
                   ],
                 ),
               ),
 
+              SizedBox(
+                height: 20,
+              ),
+              InkWell(
+                onTap: () {
+                  Get.to(
+                    MySample(),
+                  );
+                },
+                child: Container(
+                  height: 50,
+                  width: 200,
+                  decoration: const BoxDecoration(
+                    color: Colors.orangeAccent,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(
+                        10,
+                      ),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Enter Card Details",
+                      style: TextStyle(
+                        fontSize: 19,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              InkWell(
+                onTap: () {
+                  // Get.to(
+                  //   MySample(),
+                  // );
+                  CollectionReference customers =
+                      fireStore.collection('Hotel Owner');
+                  customers.add({
+                    'Hotel Name': hotelNameController,
+                    'Email': emailNameController,
+                    'Password': passwordController,
+                    'image1': _image1,
+                    'image2': _image2,
+                    'image3': _image3,
+                  });
+                },
+                child: Container(
+                  height: 50,
+                  width: 200,
+                  decoration: const BoxDecoration(
+                    color: Colors.orangeAccent,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(
+                        10,
+                      ),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Confirm",
+                      style: TextStyle(
+                        fontSize: 19,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               // TextFormField(
               //   controller: hotelNameController,
               //   cursorColor: Colors.black,
@@ -744,7 +971,7 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     height: 160,
                     width: 160,
                     child: Lottie.asset(
@@ -828,7 +1055,6 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
                   ),
                   ElevatedButton(
                     onPressed: signUp,
-
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorPalette.secondaryColor,
                       foregroundColor: Colors.white,
@@ -847,7 +1073,10 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
                   ),
                   RichText(
                     text: TextSpan(
-                      style: TextStyle(color: Colors.black, fontSize: 16),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
                       text: 'Already have an account?  ',
                       children: [
                         TextSpan(
@@ -875,11 +1104,12 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) return;
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-              child: CircularProgressIndicator(),
-            ));
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
     try {
       if (passwordController.text == confirmPasswordController.text) {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -889,7 +1119,9 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
         // User has been successfully registered
         // Add any additional actions to be performed after successful registration
         //adding to the firestore
-        CollectionReference customers = fireStore.collection('Tourist');
+
+        /// Should be done by saad, add the signUp details
+        CollectionReference customers = fireStore.collection('Transport Owner');
         customers.add({
           'Email': emailController.text,
           'Password': passwordController.text
