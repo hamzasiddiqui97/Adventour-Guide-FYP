@@ -11,6 +11,7 @@ import 'package:google_maps_basics/view/screens/loginScreens/cardScreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 
+import '../../../model/firebase_reference.dart';
 import '../pages/main_page.dart';
 
 class SignUp extends StatefulWidget {
@@ -217,26 +218,27 @@ class _SignUpState extends State<SignUp> {
             ));
     try {
       if (passwordController.text == confirmPasswordController.text) {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
         // Get the UID of the newly created user
         String uid = userCredential.user!.uid;
+        AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
+        addPlacesToFirebaseDb.saveUserCredentials(uid, emailController.text.trim(), passwordController.text.trim());
 
         // User has been successfully registered
         // Add any additional actions to be performed after successful registration
         //adding to the firestore
 
-        ///adding the tourist to the firebase
+        // ///adding the tourist to the firebase
         CollectionReference customers = fireStore.collection('Tourist');
         customers.add({
           'Email': emailController.text,
           'Password': passwordController.text
         });
         Utils.showSnackBar("Account is created Successfully!", true);
-        print('sign up: uid of user: $uid');
+      print('sign up: uid of user: $uid');
         Navigator.of(context).pop(); // Dismiss the progress dialog
         Navigator.pushReplacement(
           context,
@@ -1204,6 +1206,7 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
           'Email': emailController.text,
           'Password': passwordController.text
         });
+
         Utils.showSnackBar("Account is created Sucessfully!", true);
       } else {
         // Password and Confirm Password do not match

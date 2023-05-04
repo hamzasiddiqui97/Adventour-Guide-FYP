@@ -28,7 +28,6 @@ class AddPlacesToFirebaseDb {
         .child('tourist')
         .child(uid)
         .child('places')
-        .child('credential')
         .child(tripName)
         .onValue;
   }
@@ -74,6 +73,7 @@ class AddPlacesToFirebaseDb {
         .child('tourist')
         .child(uid)
         .child('places')
+
         .child(tripName)
         .child(placeKey)
         .remove();
@@ -86,6 +86,7 @@ class AddPlacesToFirebaseDb {
         .child('tourist')
         .child(uid)
         .child('places')
+
         .child(tripName);
 
     await tripRef.remove();

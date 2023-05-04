@@ -236,73 +236,71 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     num totalTimeInSeconds = totalTime % 60;
     formattedTime = '${totalTimeInHours}h ${totalTimeInMinutes}m ${totalTimeInSeconds}s';
 
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            title: Text(widget.title ?? 'Map'),
-            backgroundColor: ColorPalette.secondaryColor,
-            foregroundColor: ColorPalette.primaryColor,
-          ),
-          body: Stack(
-            children: [
-              GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: widget.list?.first ?? const LatLng(0, 0),
-                  zoom: 13,
-                ),
-                markers: _markers,
-                onMapCreated: (GoogleMapController controller) async {
-                  _mapController = controller;
-                  if (_sortedList != null) {
-                    // print('Creating polyline with points: ${widget.list}');
-                    print('Creating polyline with _sortedList: ${_sortedList}');
-
-                    await _mapController.animateCamera(
-                      CameraUpdate.newCameraPosition(
-                        CameraPosition(
-                          target: _sortedList!.first,
-                          zoom: 13,
-                        ),
-                      ),
-                    );
-                    _createPolyline(_sortedList!);
-                  }
-                },
-                polylines: _polylines,
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title ?? 'Map'),
+          backgroundColor: ColorPalette.secondaryColor,
+          foregroundColor: ColorPalette.primaryColor,
+        ),
+        body: Stack(
+          children: [
+            GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: widget.list?.first ?? const LatLng(0, 0),
+                zoom: 13,
               ),
-              Positioned(
-                top: 20,
-                left: 20,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      const BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 5,
-                        offset: Offset(0, 2),
+              markers: _markers,
+              onMapCreated: (GoogleMapController controller) async {
+                _mapController = controller;
+                if (_sortedList != null) {
+                  // print('Creating polyline with points: ${widget.list}');
+                  print('Creating polyline with _sortedList: ${_sortedList}');
+
+                  await _mapController.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: _sortedList!.first,
+                        zoom: 13,
                       ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Total Distance: $formattedDistance',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Total Time: $formattedTime',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+                    ),
+                  );
+                  _createPolyline(_sortedList!);
+                }
+              },
+              polylines: _polylines,
+            ),
+            Positioned(
+              top: 20,
+              left: 20,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [
+                    const BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
-              )
-            ],
-          )),
-    );
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Distance: $formattedDistance',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Total Time: $formattedTime',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ));
   }
 }

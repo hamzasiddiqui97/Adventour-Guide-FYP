@@ -24,7 +24,6 @@ class TripPlacesDetails extends StatefulWidget {
 }
 
 class _TripPlacesDetailsState extends State<TripPlacesDetails> {
-
   Map<int, dynamic> tempPlaces = {};
 
   DistanceWrapper? distanceWrapper;
@@ -34,10 +33,10 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
       const TextStyle(fontSize: 17, fontWeight: FontWeight.bold);
   TextStyle subtitleStyle = const TextStyle(fontSize: 15);
   void shareGoogleMaps({double? latitude, double? longitude}) {
-    final String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    final String googleMapsUrl =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
     Share.share(googleMapsUrl);
   }
-
 
   // Initialize variables here
   String name = 'No Details found';
@@ -47,19 +46,21 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
   double? lat = 0;
   double? long = 0;
 
-
   final List<LatLng> ListofLatLong = [];
   Dio dio = Dio();
 
   //// AIzaSyCqIl--QAPbgr_cRpLTwtvDWjS31Dkgin4       muneeb's Google Api key
-  Future<DistanceWrapper?> distance({double? sourcelat, double? sourcelong, double? destinationlat, double? destinationlong}) async {
+  Future<DistanceWrapper?> distance(
+      {double? sourcelat,
+      double? sourcelong,
+      double? destinationlat,
+      double? destinationlong}) async {
     final response = await dio.get(
       'https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${sourcelat},${sourcelong}&origins=${destinationlat},${destinationlong}&key=$googleApiKey',
     );
-     distanceWrapper = DistanceWrapper.fromJson(response.data);
+    distanceWrapper = DistanceWrapper.fromJson(response.data);
     return distanceWrapper;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -75,40 +76,45 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
             child: StreamBuilder<DatabaseEvent>(
               stream: AddPlacesToFirebaseDb.getPlacesStream(
                   widget.uid, widget.tripName),
-              builder:
-                  (BuildContext context, AsyncSnapshot<DatabaseEvent> snapshot) {
-                    if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
-                      Map<dynamic, dynamic> values =
-                          snapshot.data!.snapshot.value as Map<dynamic, dynamic>? ?? {};
+              builder: (BuildContext context,
+                  AsyncSnapshot<DatabaseEvent> snapshot) {
+                if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
 
+                  if (kDebugMode) {
+                    print('Snapshot data: ${snapshot.data!.snapshot.value}');
+                  }
 
-                      // Filter out the fromDate and toDate keys
-                      values.remove('fromDate');
-                      values.remove('toDate');
-                      // List<dynamic> places = values.values.toList();
-                      print('Places data: $values'); // Add this line
+                  Map<dynamic, dynamic> values =
+                      snapshot.data!.snapshot.value as Map<dynamic, dynamic>? ??
+                          {};
 
-                      // Sort places based on their sequence
-                      // append data in temp list with sequence as key and all details as value
-                      for (var entry in values.entries) {
-                        int sequence = entry.value['sequence'] as int;
-                        tempPlaces[sequence] = entry.value;
-                      }
-                      List<MapEntry<int, dynamic>> sortedEntries = tempPlaces.entries.toList();
-                      sortedEntries.sort((a, b) => a.key.compareTo(b.key));
-                      tempPlaces = Map<int, dynamic>.fromEntries(sortedEntries);
-                      print('temp places keys${tempPlaces}');
+                  // Filter out the fromDate and toDate keys
+                  values.remove('fromDate');
+                  values.remove('toDate');
+                  // List<dynamic> places = values.values.toList();
+                  print('Places data: $values'); // Add this line
 
+                  // Sort places based on their sequence
+                  // append data in temp list with sequence as key and all details as value
+                  for (var entry in values.entries) {
+                    int sequence = entry.value['sequence'] as int;
+                    tempPlaces[sequence] = entry.value;
+                  }
+                  List<MapEntry<int, dynamic>> sortedEntries =
+                      tempPlaces.entries.toList();
+                  sortedEntries.sort((a, b) => a.key.compareTo(b.key));
+                  tempPlaces = Map<int, dynamic>.fromEntries(sortedEntries);
+                  print('temp places keys${tempPlaces}');
 
-                      LatLng? previousLocation;
+                  LatLng? previousLocation;
 
-
-                      return ListView.builder(
+                  return ListView.builder(
                     shrinkWrap: true,
                     // itemCount: places.length,
-                        itemCount: tempPlaces.length,
+                    itemCount: tempPlaces.length,
                     itemBuilder: (BuildContext context, int index) {
-                      String? placeKey = values.keys.elementAt(index) as String?;
+                      String? placeKey =
+                          values.keys.elementAt(index) as String?;
                       if (placeKey == null) {
                         return const Center(child: Text('Invalid place data'));
                       }
@@ -118,7 +124,6 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                         builder: (BuildContext context,
                             AsyncSnapshot<Map<String, dynamic>?>
                                 placeDetailsSnapshot) {
-
                           if (placeDetailsSnapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const Center(child: SizedBox());
@@ -132,6 +137,10 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                                     false);
                               },
                             );
+                          } else {
+                            if (kDebugMode) {
+                              print('Place details snapshot data: ${placeDetailsSnapshot.data}');
+                            }
                           }
 
                           if (placeDetailsSnapshot.hasData) {
@@ -140,21 +149,23 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
 
                             if (kDebugMode) {
                               print(
-                                'places details snapshot: ${placeDetailsSnapshot.data}');
+                                  'places details snapshot: ${placeDetailsSnapshot.data}');
                             }
 
                             // Update variables with new data
                             name = placeDetails?['name'] ?? 'No Details found';
-                            address = placeDetails?['address'] ?? 'No address found';
-                            distance2 = placeDetails?['distance'] ?? 'No distance found';
+                            address =
+                                placeDetails?['address'] ?? 'No address found';
+                            distance2 = placeDetails?['distance'] ??
+                                'No distance found';
                             time = placeDetails?['time'] ?? 'No data found';
                             lat = placeDetails?['latitude'] ?? 0;
                             long = placeDetails?['longitude'] ?? 0;
 
                             if (lat != null && long != null) {
-                              ListofLatLong.add(LatLng(lat ??0 , long??0));
+                              ListofLatLong.add(LatLng(lat ?? 0, long ?? 0));
                               if (index == 0) {
-                                previousLocation = LatLng(lat ?? 0, long?? 0);
+                                previousLocation = LatLng(lat ?? 0, long ?? 0);
                               } else {
                                 distance(
                                   sourcelat: previousLocation?.latitude,
@@ -162,7 +173,7 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                                   destinationlat: lat,
                                   destinationlong: long,
                                 );
-                                previousLocation = LatLng(lat??0, long??0);
+                                previousLocation = LatLng(lat ?? 0, long ?? 0);
                               }
                             }
 
@@ -170,7 +181,8 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                               margin: const EdgeInsets.all(16),
                               child: ListTile(
                                   title: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           name,
@@ -182,9 +194,13 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                                         // ),
                                       ]),
                                   subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text('Address: $address', style: subtitleStyle,),
+                                      Text(
+                                        'Address: $address',
+                                        style: subtitleStyle,
+                                      ),
                                       // Text(
                                       //   'Distance: ${distanceWrapper?.rows?[0]?.elements?[0]?.distance?.text.toString()} ',
                                       //   style: subtitleStyle,
@@ -195,9 +211,17 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                                       // ),
                                       Row(
                                         children: [
-                                          ElevatedButton(onPressed: (){
-                                            shareGoogleMaps(latitude: lat,longitude: long);
-                                          }, child: const Text("Share Location",style: TextStyle(color: Colors.white),)),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                shareGoogleMaps(
+                                                    latitude: lat,
+                                                    longitude: long);
+                                              },
+                                              child: const Text(
+                                                "Share Location",
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              )),
                                         ],
                                       )
                                     ],
@@ -210,7 +234,8 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
                       );
                     },
                   );
-                } else {
+                }
+                else {
                   return const Center(child: Text('No places for this trip'));
                 }
               },
@@ -223,7 +248,10 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
               child: ElevatedButton(
                   onPressed: () {
                     print(ListofLatLong.toString());
-                    Get.to(ViewMapForTrip(list: ListofLatLong, tempPlaces: tempPlaces,));
+                    Get.to(ViewMapForTrip(
+                      list: ListofLatLong,
+                      tempPlaces: tempPlaces,
+                    ));
                   },
                   child: const Text(
                     "View Map",

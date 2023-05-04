@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
-// import 'package:google_maps_basics/view/screens/views/itinerary_list.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
@@ -92,7 +91,13 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
     final FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference placesRef =
-    database.ref().child("users").child('tourist').child(userId!).child("places").child(_tripNameController.text);
+    database
+        .ref()
+        .child("users")
+        .child('tourist')
+        .child(userId!)
+        .child("places")
+        .child(_tripNameController.text);
 
     await placesRef.set({
       'fromDate': _fromDate!.toIso8601String(),
@@ -103,7 +108,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     for (int i = 0; i < _savedPlaces.length; i++) {
       final placeData = _savedPlaces[i];
       try {
-        await placesRef.child("places").push().set(placeData);
+        await placesRef.push().set(placeData);
         print("Place added ${placeData['name']}");
       } catch (error) {
         print("Failed to add place: $error");
@@ -264,23 +269,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                 final marker = widget.markers.elementAt(index);
 
                 return GestureDetector(
-                    // onTap: () {
-                    //   final marker = widget.markers.elementAt(index);
-                    //   final name = marker.infoWindow.title ?? 'Unknown';
-                    //   final address = marker.infoWindow.snippet ??
-                    //       'No vicinity information';
-                    //   final imageUrl = '';
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => PlacesDetail(
-                    //         name: name,
-                    //         address: address,
-                    //         imageUrl: imageUrl,
-                    //       ),
-                    //     ),
-                    //   );
-                    // },
                     child: Card(
                       margin: const EdgeInsets.all(8),
                       elevation: 4,
@@ -298,43 +286,10 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                             ),
                             const SizedBox(height: 4),
 
-                            // Text(
-                            //   distanceText,
-                            //   style: const TextStyle(
-                            //     fontSize: 14,
-                            //     color: Colors.grey,
-                            //   ),
-                            // ),
-                            // Text(
-                            //   'Time: $time',
-                            //   style: const TextStyle(
-                            //     fontSize: 14,
-                            //     color: Colors.grey,
-                            //   ),
-                            // ),
+
                             const SizedBox(height: 8),
 
-                            // ElevatedButton(
-                            //   style: ButtonStyle(
-                            //     backgroundColor: MaterialStateProperty.all<Color>(ColorPalette.secondaryColor),
-                            //     foregroundColor: MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
-                            //   ),
-                            //   onPressed: _isPlaceAdded(marker)
-                            //       ? null
-                            //       : () {
-                            //     final placeToAdd = _addPlaceToTrip(marker);
-                            //
-                            //     setState(() {
-                            //       _savedPlaces.add(placeToAdd);
-                            //     });
-                            //     Utils.showSnackBar("Place added to trip", true);
-                            //   },
-                            //
-                            //   child: Text(
-                            //     _isPlaceAdded(marker) ? 'Place added' : 'Add place to trip',
-                            //     style: const TextStyle(color: ColorPalette.primaryColor),
-                            //   ),
-                            // ),
+
 
                             ElevatedButton(
                               style: ButtonStyle(
@@ -417,7 +372,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                         DatabaseReference placesRef = database
                             .ref()
                             .child("users")
-                        .child('tourist')
+                            .child('tourist')
                             .child(userId!)
                             .child("places")
                             .child(_tripNameController.text);
