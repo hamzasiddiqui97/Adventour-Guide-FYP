@@ -11,20 +11,14 @@ import 'package:dio/dio.dart';
 import '../../../core/widgets/customInfoWindowGoogleMaps.dart';
 import '../../../distanceWrapper.dart';
 
-
-
 class ViewMapForTrip extends StatefulWidget {
-
-  const ViewMapForTrip({Key? key,this.list,this.title, required this.tempPlaces}) : super(key: key);
+  const ViewMapForTrip(
+      {Key? key, this.list, this.title, required this.tempPlaces})
+      : super(key: key);
   final List<LatLng>? list;
   final String? title;
 
-
-
-
   final Map<int, dynamic> tempPlaces;
-
-
 
   @override
   State<ViewMapForTrip> createState() => _ViewMapForTripState();
@@ -33,12 +27,14 @@ class ViewMapForTrip extends StatefulWidget {
 class _ViewMapForTripState extends State<ViewMapForTrip> {
 
 
+  String formattedDistance = '';
+  String formattedTime = '';
+
   late GoogleMapController _mapController;
   Set<Polyline> _polylines = {};
   Set<Marker> _markers = {};
   List<LatLng>? _sortedList;
   List<dw.Element?> distancesList = [];
-
 
   @override
   void initState() {
@@ -46,7 +42,9 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     if (widget.list != null) {
       List<dynamic> tempPlacesList = widget.tempPlaces.values.toList();
       tempPlacesList.sort((a, b) => a['sequence'].compareTo(b['sequence']));
-      _sortedList = tempPlacesList.map((point) => LatLng(point['latitude'], point['longitude'])).toList();
+      _sortedList = tempPlacesList
+          .map((point) => LatLng(point['latitude'], point['longitude']))
+          .toList();
       _calculateDistances(_sortedList!).then((_) {
         setState(() {
           _markers = createMarkers(_sortedList!, distancesList);
@@ -63,7 +61,7 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     List<LatLng> polylineCoordinates = await _getDirections(points);
 
     Polyline polyline = Polyline(
-      polylineId: PolylineId("route"),
+      polylineId: const PolylineId("route"),
       color: ColorPalette.secondaryColor,
       points: polylineCoordinates,
       width: 5,
@@ -100,13 +98,15 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     });
   }
 
-
-  Set<Marker> createMarkers(List<LatLng> points, List<dw.Element?> distancesList) {
+  Set<Marker> createMarkers(
+      List<LatLng> points, List<dw.Element?> distancesList) {
     Set<Marker> markers = {};
     for (int i = 0; i < points.length; i++) {
       var place = widget.tempPlaces.values.toList().firstWhere(
-            (place) => place['latitude'] == points[i].latitude && place['longitude'] == points[i].longitude,
-      );
+            (place) =>
+                place['latitude'] == points[i].latitude &&
+                place['longitude'] == points[i].longitude,
+          );
       int sequence = place['sequence'];
       String name = place['name'];
 
@@ -114,7 +114,7 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
       if (i < points.length - 1) {
         var nextPlace = widget.tempPlaces.values.toList().firstWhere(
               (place) => place['sequence'] == sequence + 1,
-        );
+            );
         nextPlaceName = nextPlace['name'];
       } else {
         nextPlaceName = 'Destination';
@@ -123,13 +123,13 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
       String distance = i == 0
           ? (distancesList[i]?.distance?.text ?? 'Unknown')
           : (i == points.length - 1
-          ? 'N/A'
-          : (distancesList[i - 1]?.distance?.text ?? 'Unknown'));
+              ? 'N/A'
+              : (distancesList[i - 1]?.distance?.text ?? 'Unknown'));
       String duration = i == 0
           ? (distancesList[i]?.duration?.text ?? 'Unknown')
           : (i == points.length - 1
-          ? 'N/A'
-          : (distancesList[i - 1]?.duration?.text ?? 'Unknown'));
+              ? 'N/A'
+              : (distancesList[i - 1]?.duration?.text ?? 'Unknown'));
 
       markers.add(Marker(
         markerId: MarkerId('marker$sequence'),
@@ -156,7 +156,6 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     return markers;
   }
 
-
   Future<List<LatLng>> _getDirections(List<LatLng> points) async {
     List<LatLng> polylineCoordinates = [];
     String waypoints = '';
@@ -165,15 +164,20 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
       waypoints += '${points[i].latitude},${points[i].longitude}|';
     }
 
-    String url = 'https://maps.googleapis.com/maps/api/directions/json?origin=${points.first.latitude},${points.first.longitude}&destination=${points.last.latitude},${points.last.longitude}&waypoints=optimize:true|${waypoints}&key=$googleApiKey';
+    String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=${points.first.latitude},${points.first.longitude}&destination=${points.last.latitude},${points.last.longitude}&waypoints=optimize:true|${waypoints}&key=$googleApiKey';
     http.Response response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
       if (jsonResponse['routes'].isNotEmpty) {
-        String encodedPolyline = jsonResponse['routes'][0]['overview_polyline']['points'];
-        polylineCoordinates = PolylinePoints().decodePolyline(encodedPolyline).map((point) => LatLng(point.latitude, point.longitude)).toList();
+        String encodedPolyline =
+            jsonResponse['routes'][0]['overview_polyline']['points'];
+        polylineCoordinates = PolylinePoints()
+            .decodePolyline(encodedPolyline)
+            .map((point) => LatLng(point.latitude, point.longitude))
+            .toList();
       }
     }
 
@@ -182,7 +186,8 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
 
   Dio dio = Dio();
 
-  Future<DistanceWrapper?> distance({required LatLng origin, required LatLng destination}) async {
+  Future<DistanceWrapper?> distance(
+      {required LatLng origin, required LatLng destination}) async {
     final response = await dio.get(
       'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.latitude},${origin.longitude}&destinations=${destination.latitude},${destination.longitude}&key=AIzaSyCqIl--QAPbgr_cRpLTwtvDWjS31Dkgin4',
     );
@@ -197,7 +202,8 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
       LatLng origin = points[i];
       LatLng destination = points[(i + 1) % points.length];
 
-      DistanceWrapper? distanceWrapper = await distance(origin: origin, destination: destination);
+      DistanceWrapper? distanceWrapper =
+          await distance(origin: origin, destination: destination);
 
       if (distanceWrapper != null && distanceWrapper.status == 'OK') {
         dw.Element? element = distanceWrapper.rows?.first?.elements?.first;
@@ -209,43 +215,94 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    num totalDistance = distancesList
+        .where((element) => element != null)
+        .map((element) => element!.distance!.value)
+        .fold<num>(0, (a, b) => a + b!);
+
+    num totalTime = distancesList
+        .where((element) => element != null)
+        .map((element) => element!.duration!.value)
+        .fold<num>(0, (a, b) => a + b!);
+
+    String formattedDistance = totalDistance >= 1000
+        ? '${(totalDistance / 1000).toStringAsFixed(2)} km'
+        : '${totalDistance.toInt()} m';
+
+    int totalTimeInHours = (totalTime / 3600).floor();
+    int totalTimeInMinutes = ((totalTime % 3600) / 60).floor();
+    num totalTimeInSeconds = totalTime % 60;
+    formattedTime = '${totalTimeInHours}h ${totalTimeInMinutes}m ${totalTimeInSeconds}s';
+
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title ?? 'Map'),
-          backgroundColor: ColorPalette.secondaryColor,
-          foregroundColor: ColorPalette.primaryColor,
-        ),
-        body: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: widget.list?.first ?? LatLng(0, 0),
-            zoom: 13,
+          appBar: AppBar(
+            title: Text(widget.title ?? 'Map'),
+            backgroundColor: ColorPalette.secondaryColor,
+            foregroundColor: ColorPalette.primaryColor,
           ),
-          markers: _markers,
-          onMapCreated: (GoogleMapController controller) async {
-            _mapController = controller;
-            if (_sortedList != null) {
-              // print('Creating polyline with points: ${widget.list}');
-              print('Creating polyline with _sortedList: ${_sortedList}');
+          body: Stack(
+            children: [
+              GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: widget.list?.first ?? const LatLng(0, 0),
+                  zoom: 13,
+                ),
+                markers: _markers,
+                onMapCreated: (GoogleMapController controller) async {
+                  _mapController = controller;
+                  if (_sortedList != null) {
+                    // print('Creating polyline with points: ${widget.list}');
+                    print('Creating polyline with _sortedList: ${_sortedList}');
 
-
-              await _mapController.animateCamera(
-                CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                    target: _sortedList!.first,
-                    zoom: 13,
+                    await _mapController.animateCamera(
+                      CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target: _sortedList!.first,
+                          zoom: 13,
+                        ),
+                      ),
+                    );
+                    _createPolyline(_sortedList!);
+                  }
+                },
+                polylines: _polylines,
+              ),
+              Positioned(
+                top: 20,
+                left: 20,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: [
+                      const BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 5,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Total Distance: $formattedDistance',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Total Time: $formattedTime',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ),
-              );
-              _createPolyline(_sortedList!);
-            }
-          },
-          polylines: _polylines,
-        ),
-      ),
+              )
+            ],
+          )),
     );
   }
 }

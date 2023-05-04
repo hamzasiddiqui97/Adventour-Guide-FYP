@@ -214,15 +214,18 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
               },
             ),
           ),
-          ElevatedButton(
-              onPressed: () {
-                print(ListofLatLong.toString());
-                Get.to(ViewMapForTrip(list: ListofLatLong, tempPlaces: tempPlaces,));
-              },
-              child: const Text(
-                "View Map",
-                style: TextStyle(color: Colors.white),
-              )),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: ElevatedButton(
+                onPressed: () {
+                  print(ListofLatLong.toString());
+                  Get.to(ViewMapForTrip(list: ListofLatLong, tempPlaces: tempPlaces,));
+                },
+                child: const Text(
+                  "View Map",
+                  style: TextStyle(color: Colors.white),
+                )),
+          ),
         ],
       ),
     );

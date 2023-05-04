@@ -9,6 +9,7 @@ import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet_fiel
 import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'nearby_on_maps.dart';
 
@@ -288,6 +289,13 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
     });
   }
 
+
+  void shareGoogleMaps({double? latitude, double? longitude}) {
+    final String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    Share.share(googleMapsUrl);
+  }
+
+
   Widget nearbyPlacesWidget(Results results) {
     return SafeArea(
       child: Center(
@@ -371,29 +379,51 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.secondaryColor,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MapsViewScreen(
-                          latitude: results.geometry!.location!.lat!,
-                          longitude: results.geometry!.location!.lng!,
-                          title: results.name!,
-                        ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorPalette.secondaryColor,
                       ),
-                    );
-                  },
-                  child: const Text(
-                    'Show on Map',
-                    style: TextStyle(color: Colors.white),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapsViewScreen(
+                              latitude: results.geometry!.location!.lat!,
+                              longitude: results.geometry!.location!.lng!,
+                              title: results.name!,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Show on Map',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
-                ),
+                  Padding(
+
+                    padding: const EdgeInsets.all(8),
+
+                    child:
+                    ElevatedButton(
+
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white, backgroundColor: ColorPalette.secondaryColor, // Text Color (Foreground color)
+                        ),
+                        onPressed: (){
+
+                      shareGoogleMaps(latitude: latitude,longitude: longitude);
+                    },
+                        child: const Text("Share Location",style: TextStyle(color: Colors.white),)),
+
+                  ),
+
+                ]
               ),
             ],
           ),
