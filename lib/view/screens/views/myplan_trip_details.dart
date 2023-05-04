@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/view/screens/pages/viewmapfortrip.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -50,9 +51,10 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
   final List<LatLng> ListofLatLong = [];
   Dio dio = Dio();
 
+  //// AIzaSyCqIl--QAPbgr_cRpLTwtvDWjS31Dkgin4       muneeb's Google Api key
   Future<DistanceWrapper?> distance({double? sourcelat, double? sourcelong, double? destinationlat, double? destinationlong}) async {
     final response = await dio.get(
-      'https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${sourcelat},${sourcelong}&origins=${destinationlat},${destinationlong}&key=AIzaSyCqIl--QAPbgr_cRpLTwtvDWjS31Dkgin4',
+      'https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${sourcelat},${sourcelong}&origins=${destinationlat},${destinationlong}&key=$googleApiKey',
     );
      distanceWrapper = DistanceWrapper.fromJson(response.data);
     return distanceWrapper;
@@ -216,15 +218,18 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width,
-            child: ElevatedButton(
-                onPressed: () {
-                  print(ListofLatLong.toString());
-                  Get.to(ViewMapForTrip(list: ListofLatLong, tempPlaces: tempPlaces,));
-                },
-                child: const Text(
-                  "View Map",
-                  style: TextStyle(color: Colors.white),
-                )),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: ElevatedButton(
+                  onPressed: () {
+                    print(ListofLatLong.toString());
+                    Get.to(ViewMapForTrip(list: ListofLatLong, tempPlaces: tempPlaces,));
+                  },
+                  child: const Text(
+                    "View Map",
+                    style: TextStyle(color: Colors.white),
+                  )),
+            ),
           ),
         ],
       ),

@@ -2,7 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/forgot_password.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
@@ -28,6 +30,8 @@ class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
   String? _emailError;
   String? _passwordError;
+  AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
+
 
   @override
   void dispose() {
@@ -220,6 +224,7 @@ class _SignInState extends State<SignIn> {
         password: passwordController.text.trim(),
       );
 
+
       // Dismiss the loading widget
       Navigator.of(context).pop();
 
@@ -229,6 +234,9 @@ class _SignInState extends State<SignIn> {
         // Get the user's UID
         String uid = FirebaseAuth.instance.currentUser!.uid;
         print('Get the users UID: ${uid.toString()}');
+
+        // Save user email in the database (Password should not be stored)
+        addPlacesToFirebaseDb.saveUserCredentials(uid, emailController.text.trim(), passwordController.text.trim());
 
         // Navigate to the home screen
         Navigator.of(context).pushReplacement(

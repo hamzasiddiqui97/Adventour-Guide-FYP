@@ -4,12 +4,31 @@ import 'package:flutter/foundation.dart';
 class AddPlacesToFirebaseDb {
   static final database = FirebaseDatabase.instance;
 
+
+  void saveUserCredentials(String uid, String email, String password) {
+    database
+        .ref()
+        .child('users')
+        .child('tourist')
+        .child(uid)
+        .child('credential')
+        .set({'email': email, 'password' :password})
+        .catchError((error) {
+      if (kDebugMode) {
+        print('Error saving user credentials: $error');
+      }
+    });
+  }
+
+
   static Stream<DatabaseEvent> getPlacesStream(String uid, String tripName) {
     return database
         .ref()
         .child('users')
+        .child('tourist')
         .child(uid)
         .child('places')
+        .child('credential')
         .child(tripName)
         .onValue;
   }
@@ -19,15 +38,18 @@ class AddPlacesToFirebaseDb {
     return database
         .ref()
         .child('users')
+        .child('tourist')
         .child(uid)
         .child('places')
         .onValue;
   }
 
-  static Future<Map<String, dynamic>?> getPlaceDetails(String uid, String tripName, String placeKey) async {
+  static Future<Map<String, dynamic>?> getPlaceDetails(
+      String uid, String tripName, String placeKey) async {
     DatabaseReference placeRef = database
         .ref()
         .child('users')
+        .child('tourist')
         .child(uid)
         .child('places')
         .child(tripName)
@@ -37,7 +59,8 @@ class AddPlacesToFirebaseDb {
     DataSnapshot dataSnapshot = event.snapshot;
 
     if (dataSnapshot.value != null) {
-      Map<String, dynamic> result = Map<String, dynamic>.from(dataSnapshot.value as Map);
+      Map<String, dynamic> result =
+          Map<String, dynamic>.from(dataSnapshot.value as Map);
       return result;
     } else {
       return null;
@@ -48,16 +71,19 @@ class AddPlacesToFirebaseDb {
     database
         .ref()
         .child('users')
+        .child('tourist')
         .child(uid)
         .child('places')
         .child(tripName)
         .child(placeKey)
         .remove();
   }
+
   static Future<void> removeTrip(String uid, String tripName) async {
     DatabaseReference tripRef = database
         .ref()
         .child('users')
+        .child('tourist')
         .child(uid)
         .child('places')
         .child(tripName);
@@ -65,13 +91,21 @@ class AddPlacesToFirebaseDb {
     await tripRef.remove();
   }
 
-  static Future<void> updateTripName(String uid, String oldTripName, String newTripName) async {
+  static Future<void> updateTripName(
+      String uid, String oldTripName, String newTripName) async {
     try {
-      DatabaseReference userRef = database.ref().child('users').child(uid).child('places');
-      DataSnapshot dataSnapshot = (await userRef.child(oldTripName).once()).snapshot;
+      DatabaseReference userRef = database
+          .ref()
+          .child('users')
+          .child('tourist')
+          .child(uid)
+          .child('places');
+      DataSnapshot dataSnapshot =
+          (await userRef.child(oldTripName).once()).snapshot;
 
       if (dataSnapshot.value != null) {
-        Map<String, dynamic> placesData = Map<String, dynamic>.from(dataSnapshot.value as Map);
+        Map<String, dynamic> placesData =
+            Map<String, dynamic>.from(dataSnapshot.value as Map);
         await userRef.child(newTripName).set(placesData);
         await userRef.child(oldTripName).remove();
       } else {
@@ -84,5 +118,4 @@ class AddPlacesToFirebaseDb {
       throw Exception('Error updating trip name');
     }
   }
-
 }

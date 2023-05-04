@@ -189,7 +189,7 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
   Future<DistanceWrapper?> distance(
       {required LatLng origin, required LatLng destination}) async {
     final response = await dio.get(
-      'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.latitude},${origin.longitude}&destinations=${destination.latitude},${destination.longitude}&key=AIzaSyCqIl--QAPbgr_cRpLTwtvDWjS31Dkgin4',
+      'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.latitude},${origin.longitude}&destinations=${destination.latitude},${destination.longitude}&key=$googleApiKey',
     );
     DistanceWrapper distanceWrapper = DistanceWrapper.fromJson(response.data);
     return distanceWrapper;

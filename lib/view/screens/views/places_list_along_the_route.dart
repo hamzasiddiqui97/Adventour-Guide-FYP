@@ -92,7 +92,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
     final FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference placesRef =
-    database.ref().child("users").child(userId!).child("places").child(_tripNameController.text);
+    database.ref().child("users").child('tourist').child(userId!).child("places").child(_tripNameController.text);
 
     await placesRef.set({
       'fromDate': _fromDate!.toIso8601String(),
@@ -138,7 +138,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
   @override
   Widget build(BuildContext context) {
-
 
     print('Markers in PlacesListAlongTheRoute: ${widget.markers.length}');
 
@@ -418,6 +417,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                         DatabaseReference placesRef = database
                             .ref()
                             .child("users")
+                        .child('tourist')
                             .child(userId!)
                             .child("places")
                             .child(_tripNameController.text);
