@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
@@ -7,6 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/distanceWrapper.dart' as dw;
 import 'package:dio/dio.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/widgets/customInfoWindowGoogleMaps.dart';
 import '../../../distanceWrapper.dart';
@@ -164,8 +167,12 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
       waypoints += '${points[i].latitude},${points[i].longitude}|';
     }
 
+    int departureTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    String trafficModel = "best_guess";
+    String travelMode = "driving";
+
     String url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=${points.first.latitude},${points.first.longitude}&destination=${points.last.latitude},${points.last.longitude}&waypoints=optimize:true|${waypoints}&key=$googleApiKey';
+        'https://maps.googleapis.com/maps/api/directions/json?origin=${points.first.latitude},${points.first.longitude}&destination=${points.last.latitude},${points.last.longitude}&waypoints=optimize:true|${waypoints}&key=$googleApiKey&departure_time=$departureTime&traffic_model=$trafficModel&mode=$travelMode';
     http.Response response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -173,16 +180,81 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
 
       if (jsonResponse['routes'].isNotEmpty) {
         String encodedPolyline =
-            jsonResponse['routes'][0]['overview_polyline']['points'];
+        jsonResponse['routes'][0]['overview_polyline']['points'];
         polylineCoordinates = PolylinePoints()
             .decodePolyline(encodedPolyline)
             .map((point) => LatLng(point.latitude, point.longitude))
             .toList();
+
+        // Reorder points based on optimized waypoint order
+        List<int> waypointOrder = List<int>.from(jsonResponse['routes'][0]['waypoint_order']);
+        List<LatLng> sortedOptimizedList = [
+          points.first, // Start point
+          ...waypointOrder.map((index) => points[index + 1]), // Waypoints in optimized order
+          points.last, // End point
+        ];
+
+        // Update _sortedList with the optimized order
+        setState(() {
+          _sortedList = sortedOptimizedList;
+        });
       }
     }
 
     return polylineCoordinates;
   }
+
+
+  String generateShareableLink(List<LatLng> points) {
+    String waypoints = '';
+
+    for (int i = 1; i < points.length - 1; i++) {
+      waypoints += '${points[i].latitude},${points[i].longitude}|';
+    }
+
+    return 'https://www.google.com/maps/dir/?api=1&origin=${points.first.latitude},${points.first.longitude}&destination=${points.last.latitude},${points.last.longitude}&waypoints=${waypoints}&travelmode=driving';
+  }
+
+  // Future<List<LatLng>> _getDirections(List<LatLng> points) async {
+  //   List<LatLng> polylineCoordinates = [];
+  //   String waypoints = '';
+  //
+  //   for (int i = 1; i < points.length - 1; i++) {
+  //     waypoints += '${points[i].latitude},${points[i].longitude}|';
+  //   }
+  //
+  //   String url =
+  //       'https://maps.googleapis.com/maps/api/directions/json?origin=${points.first.latitude},${points.first.longitude}&destination=${points.last.latitude},${points.last.longitude}&waypoints=optimize:true|${waypoints}&key=$googleApiKey';
+  //   http.Response response = await http.get(Uri.parse(url));
+  //
+  //   if (response.statusCode == 200) {
+  //     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+  //
+  //     if (jsonResponse['routes'].isNotEmpty) {
+  //       String encodedPolyline =
+  //       jsonResponse['routes'][0]['overview_polyline']['points'];
+  //       polylineCoordinates = PolylinePoints()
+  //           .decodePolyline(encodedPolyline)
+  //           .map((point) => LatLng(point.latitude, point.longitude))
+  //           .toList();
+  //
+  //       // Reorder points based on optimized waypoint order
+  //       List<int> waypointOrder = List<int>.from(jsonResponse['routes'][0]['waypoint_order']);
+  //       List<LatLng> sortedOptimizedList = [
+  //         points.first, // Start point
+  //         ...waypointOrder.map((index) => points[index + 1]), // Waypoints in optimized order
+  //         points.last, // End point
+  //       ];
+  //
+  //       // Update _sortedList with the optimized order
+  //       setState(() {
+  //         _sortedList = sortedOptimizedList;
+  //       });
+  //     }
+  //   }
+  //
+  //   return polylineCoordinates;
+  // }
 
   Dio dio = Dio();
 
@@ -215,6 +287,42 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
     }
   }
 
+  void shareRoute() {
+    String routeString = "Route:\n";
+
+    for (int i = 0; i < _sortedList!.length; i++) {
+      var place = widget.tempPlaces.values.toList().firstWhere(
+            (place) =>
+        place['latitude'] == _sortedList![i].latitude &&
+            place['longitude'] == _sortedList![i].longitude,
+      );
+      int sequence = place['sequence'];
+      String name = place['name'];
+      LatLng location = _sortedList![i];
+
+      routeString +=
+      "Place $sequence: $name (${location.latitude}, ${location.longitude})\n";
+    }
+
+    Share.share(routeString);
+  }
+
+  void _launchURL() async {
+    String googleMapsUrl = 'https://www.google.com/maps/dir/';
+
+    for (LatLng point in _sortedList!) {
+      googleMapsUrl += '${point.latitude},${point.longitude}/';
+    }
+
+    if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+      await launchUrl(Uri.parse(googleMapsUrl));
+    } else {
+      throw 'Could not launch $googleMapsUrl';
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     num totalDistance = distancesList
@@ -241,9 +349,18 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
           title: Text(widget.title ?? 'Map'),
           backgroundColor: ColorPalette.secondaryColor,
           foregroundColor: ColorPalette.primaryColor,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.share),
+            onPressed: shareRoute,
+            ),
+            IconButton(onPressed: _launchURL, icon: const Icon(Icons.navigation)),
+
+          ],
         ),
         body: Stack(
           children: [
+
             GoogleMap(
               initialCameraPosition: CameraPosition(
                 target: widget.list?.first ?? const LatLng(0, 0),
@@ -254,7 +371,7 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
                 _mapController = controller;
                 if (_sortedList != null) {
                   // print('Creating polyline with points: ${widget.list}');
-                  print('Creating polyline with _sortedList: ${_sortedList}');
+                  print('Creating polyline with _sortedList: $_sortedList');
 
                   await _mapController.animateCamera(
                     CameraUpdate.newCameraPosition(

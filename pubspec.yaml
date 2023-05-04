@@ -68,6 +68,7 @@ dependencies:
   dio: ^5.1.1
   image_picker: ^0.8.7+4
   flutter_credit_card: ^3.0.6
+  url_launcher: ^6.1.10
 
   # flutter_geocoder: ^0.2.2-nullsafety
   # geocode: ^1.0.2

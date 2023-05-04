@@ -35,7 +35,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final List<String> _placeTypes = [
     "All",
-    // "tourist_attraction",
+    "tourist_attraction",
     "gas_station",
     "restaurant",
     "cafe",
