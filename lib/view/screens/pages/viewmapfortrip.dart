@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -371,7 +372,9 @@ class _ViewMapForTripState extends State<ViewMapForTrip> {
                 _mapController = controller;
                 if (_sortedList != null) {
                   // print('Creating polyline with points: ${widget.list}');
-                  print('Creating polyline with _sortedList: $_sortedList');
+                  if (kDebugMode) {
+                    print('Creating polyline with _sortedList: $_sortedList');
+                  }
 
                   await _mapController.animateCamera(
                     CameraUpdate.newCameraPosition(
