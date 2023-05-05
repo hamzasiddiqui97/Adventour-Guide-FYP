@@ -10,7 +10,10 @@ class MapsViewScreen extends StatefulWidget {
   final double longitude;
   final String title;
 
-  MapsViewScreen({required this.latitude, required this.longitude,required this.title});
+  final String rating;
+  final String vicinity;
+
+  MapsViewScreen({required this.latitude, required this.longitude,required this.title, required this.rating, required this.vicinity});
 
   @override
   _MapsViewScreenState createState() => _MapsViewScreenState();
@@ -27,10 +30,26 @@ class _MapsViewScreenState extends State<MapsViewScreen> {
   void dispose() {
     _mapController.dispose();
     super.dispose();
-
   }
+
+
   @override
   Widget build(BuildContext context) {
+
+    Set<Marker> _createMarker() {
+      return <Marker>{
+        Marker(
+          markerId: MarkerId('place_marker'),
+          position: LatLng(widget.latitude, widget.longitude),
+          infoWindow: InfoWindow(
+            title: widget.title,
+            snippet: '${widget.vicinity} And Rating: ${widget.rating} ',
+          ),
+        ),
+      };
+    }
+
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: Colors.transparent,
@@ -49,18 +68,19 @@ class _MapsViewScreenState extends State<MapsViewScreen> {
               target: LatLng(widget.latitude, widget.longitude),
               zoom: 13,
             ),
-            markers: {
-              Marker(
-                markerId: const MarkerId("selected_place"),
-                position: LatLng(widget.latitude, widget.longitude),
-                infoWindow: InfoWindow(
-                  title: widget.title,
-                ),
-              ),
-            },
+            // markers: {
+            //   Marker(
+            //     markerId: const MarkerId("selected_place"),
+            //     position: LatLng(widget.latitude, widget.longitude),
+            //     infoWindow: InfoWindow(
+            //       title: widget.title,
+            //     ),
+            //   ),
+            // },,
             onMapCreated: (GoogleMapController controller) {
               _mapController = controller;
             },
+            markers: _createMarker(),
           ),
         ),
       ),

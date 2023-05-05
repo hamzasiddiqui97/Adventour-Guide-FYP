@@ -395,6 +395,9 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                               latitude: results.geometry!.location!.lat!,
                               longitude: results.geometry!.location!.lng!,
                               title: results.name!,
+                              rating: results.rating?.toString() ?? "Not Available",
+                              vicinity: results.vicinity ?? "",
+
                             ),
                           ),
                         );
