@@ -5,6 +5,7 @@ import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/NearbyResponse.dart';
 import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
 import 'nearby_on_maps.dart';
 
 class NearbyRestaurantSource extends StatefulWidget {
@@ -26,6 +27,13 @@ class _NearbyRestaurantSourceState extends State<NearbyRestaurantSource> {
     'restaurant',
     'cafe',
   ];
+
+
+  void shareGoogleMaps({double? latitude, double? longitude}) {
+    final String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    Share.share(googleMapsUrl);
+  }
+
 
   NearbyPlacesResponse nearbyPlacesResponse = NearbyPlacesResponse();
 
@@ -273,30 +281,57 @@ class _NearbyRestaurantSourceState extends State<NearbyRestaurantSource> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.secondaryColor,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MapsViewScreen(
-                          latitude: results.geometry!.location!.lat!,
-                          longitude: results.geometry!.location!.lng!,
-                          title: results.name!,
+              Row(
+                children: [
+                  Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorPalette.secondaryColor,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MapsViewScreen(
+                            latitude: results.geometry!.location!.lat!,
+                            longitude: results.geometry!.location!.lng!,
+                            title: results.name!,
+                            rating: results.rating?.toString() ?? "Not Available",
+                            vicinity: results.vicinity ?? "",
+
+
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Navigate',
-                    style: TextStyle(color: Colors.white),
+                      );
+                    },
+                    child: const Text(
+                      'Show On Map',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
+
+                  Padding(
+
+                    padding: const EdgeInsets.all(8),
+
+                    child:
+                    ElevatedButton(
+
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white, backgroundColor: ColorPalette.secondaryColor, // Text Color (Foreground color)
+                        ),
+                        onPressed: (){
+
+                          shareGoogleMaps(latitude: latitude,longitude: longitude);
+                        },
+                        child: const Text("Share Location",style: TextStyle(color: Colors.white),)),
+
+                  ),
+                ]
               ),
+
             ],
           ),
         ),
