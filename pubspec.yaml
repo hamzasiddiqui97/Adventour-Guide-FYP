@@ -68,6 +68,10 @@ dependencies:
   dio: ^5.1.1
   image_picker: ^0.8.7+4
   flutter_credit_card: ^3.0.6
+  responsive_sizer: ^3.1.1
+  fluttertoast: ^8.2.1
+  video_player: ^2.6.1
+  video_thumbnail: ^0.5.3
 
   # flutter_geocoder: ^0.2.2-nullsafety
   # geocode: ^1.0.2

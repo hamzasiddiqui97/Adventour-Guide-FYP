@@ -892,7 +892,7 @@ class _HotelOwnerSignUpDetailState extends State<HotelOwnerSignUpDetail> {
               InkWell(
                 onTap: () {
                   Get.to(
-                    MySample(),
+                    CreditCard(),
                   );
                 },
                 child: Container(

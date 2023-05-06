@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_basics/controllers/mainController.dart';
+import 'package:google_maps_basics/view/screens/views/addProperty.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
@@ -16,9 +19,7 @@ class HomePageNavBar extends StatefulWidget {
   _HomePageNavBarState createState() => _HomePageNavBarState();
 }
 
-
 class _HomePageNavBarState extends State<HomePageNavBar> {
-
   // weather api
   String apiKey = '97f6f37816c2c554f9f209bd1b7b7afe';
   Weather? _weather;
@@ -63,9 +64,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
       print('weather response: ${response.body}');
       print('city name: ${_weather?.cityName}');
       print('city temperature: ${_weather?.temp}');
-
     }
-    }
+  }
 
   Future<Position?> _determinePosition() async {
     bool serviceEnabled;
@@ -104,17 +104,18 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    final MainController mainController = Get.put(MainController());
 
     const TextStyle myTextStyle = TextStyle(
       fontSize: 25,
       color: Colors.black,
-      fontWeight: FontWeight.normal,);
+      fontWeight: FontWeight.normal,
+    );
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
       child: WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
-
           body: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,7 +125,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    boxShadow:  [
+                    boxShadow: [
                       BoxShadow(
                         color: Colors.grey.shade400,
                         blurRadius: 3,
@@ -134,7 +135,6 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                     ],
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.grey.shade50,
-
                   ),
                   width: MediaQuery.of(context).size.width,
                   height: 100,
@@ -150,7 +150,6 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                           style: myTextStyle,
                         ),
                       const SizedBox(width: 10.0),
-
                       if (!_isWeatherDataLoading && _weather != null)
                         MapString.mapStringToIcon(
                           context,
@@ -172,7 +171,61 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                 const SizedBox(
                   height: 30,
                 ),
-                const CustomGrid(),
+                mainController.role.value == "Hotel Owner"
+                    ? Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              "Hello!, Hotel Owner",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: InkWell(
+                                onTap: (){
+                                  Get.to(PropertyAdd());
+                                },
+                                child: Container(
+                                  height: 50,
+                                  width: 200,
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    color: ColorPalette.secondaryColor,
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(
+                                        10,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Icon(
+                                        Icons.add,
+                                        size: 26,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        "Post Data",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    : const CustomGrid(),
               ],
             ),
           ),

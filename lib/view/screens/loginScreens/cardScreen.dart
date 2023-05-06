@@ -3,16 +3,18 @@ import 'package:flutter_credit_card/credit_card_brand.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 
-void main() => runApp(MySample());
+void main() => runApp(const CreditCard());
 
-class MySample extends StatefulWidget {
+class CreditCard extends StatefulWidget {
+  const CreditCard({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
-    return MySampleState();
+    return CreditCardState();
   }
 }
 
-class MySampleState extends State<MySample> {
+class CreditCardState extends State<CreditCard> {
   String cardNumber = '';
   String expiryDate = '';
   String cardHolderName = '';
