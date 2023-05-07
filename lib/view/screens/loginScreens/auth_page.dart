@@ -3,9 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_maps_basics/controllers/mainController.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/login.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/signUp.dart';
-// import 'package:google_maps_basics/view/screens/loginScreens/signUp.dart';
-// import 'package:google_maps_basics/view/screens/loginScreens/signUp.dart';
-// import 'package:google_maps_basics/view/screens/loginScreens/signUp.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
