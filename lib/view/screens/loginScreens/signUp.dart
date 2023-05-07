@@ -287,7 +287,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
   AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
   final MainController mainController = Get.put(MainController());
 
-  final hotelNameController = TextEditingController();
+  // final hotelNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -295,7 +295,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
   bool _isConfirmObscure = true;
 
   final _formKey = GlobalKey<FormState>();
-  String? _hotelNameError;
+  // String? _hotelNameError;
   String? _emailError;
   String? _passwordError;
   String? _confirmPasswordError;
@@ -310,8 +310,8 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
 
   void validateInputs() {
     setState(() {
-      _hotelNameError =
-      hotelNameController.text.isEmpty ? 'Please enter a hotel name' : null;
+      // _hotelNameError =
+      // hotelNameController.text.isEmpty ? 'Please enter a hotel name' : null;
 
       _emailError =
       emailController.text.isEmpty || !emailController.text.contains('@')
@@ -354,26 +354,26 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
                 const SizedBox(
                   height: 30,
                 ),
-                TextFormField(
-                  controller: hotelNameController,
-                  cursorColor: Colors.black,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    labelText: 'Hotel Name',
-                    errorText: _emailError,
-                    prefixIcon: const Icon(
-                      Icons.person_pin_circle_rounded,
-                      size: 30,
-                    ),
-                  ),
-                  onChanged: (value) {
-                    validateInputs();
-                  },
-                  autofillHints: const [AutofillHints.email],
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
+                // TextFormField(
+                //   controller: hotelNameController,
+                //   cursorColor: Colors.black,
+                //   textInputAction: TextInputAction.next,
+                //   decoration: InputDecoration(
+                //     labelText: 'Hotel Name',
+                //     errorText: _emailError,
+                //     prefixIcon: const Icon(
+                //       Icons.person_pin_circle_rounded,
+                //       size: 30,
+                //     ),
+                //   ),
+                //   onChanged: (value) {
+                //     validateInputs();
+                //   },
+                //   autofillHints: const [AutofillHints.email],
+                // ),
+                // const SizedBox(
+                //   height: 12,
+                // ),
                 TextFormField(
                   controller: emailController,
                   cursorColor: Colors.black,
@@ -456,7 +456,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 40),
                     ),
-                    onPressed: signUp,
+                    onPressed: signUpForHotelOwner,
                     // onPressed: () {
                     //   validateInputs();
                     //   signUp;
@@ -497,92 +497,19 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
       ),
     );
   }
-  // Future signUpxd() async {
-  //   final isValid = _formKey.currentState!.validate();
-  //   if (!isValid) return;
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (context) =>
-  //     const Center(
-  //       child: CircularProgressIndicator(),
-  //     ),
-  //   );
-  //   try {
-  //     if (passwordController.text == confirmPasswordController.text) {
-  //       UserCredential userCredential =
-  //       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //         email: emailController.text.trim(),
-  //         password: passwordController.text.trim(),
-  //       );
-  //
-  //       // Get the UID of the newly created user
-  //       // User has been successfully registered
-  //       // adding to the database
-  //       String uid = userCredential.user!.uid;
-  //
-  //       addPlacesToFirebaseDb.saveUserCredentials(
-  //           uid, emailController.text.trim(), mainController.role.value);
-  //       print('sign up: uid of user: $uid');
-  //       print('sign up: role: ${mainController.role.value}');
-  //
-  //       Utils.showSnackBar("Account is created Sucessfully!", true);
-  //       Navigator.of(context).pop(); // Dismiss the progress dialog
-  //
-  //       // Navigate to the correct page based on the user's role
-  //       if (mainController.role.value == "Tourist") {
-  //         Navigator.pushReplacement(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => NavigationPage(uid: uid)),
-  //         );
-  //       } else if (mainController.role.value == "Hotel Owner") {
-  //         Navigator.pushReplacement(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => HotelOwnerPage(uid: uid)),
-  //         );
-  //       } else if (mainController.role.value == "Transport Owner") {
-  //         Navigator.pushReplacement(
-  //           context,
-  //           MaterialPageRoute(
-  //               builder: (context) => TransportationOwnerPage(uid: uid)),
-  //         );
-  //       }
-  //     } else {
-  //       // Password and Confirm Password do not match
-  //       throw FirebaseAuthException(
-  //           code: "passwords-dont-match",
-  //           message: "Password and Confirm Password do not match.");
-  //     }
-  //   } on FirebaseAuthException catch (e) {
-  //     String errorMessage = "An error occurred while signing up.";
-  //     if (e.code == "email-already-in-use") {
-  //       errorMessage = "The email address is already in use.";
-  //     } else if (e.code == "invalid-email") {
-  //       errorMessage = "The email address is invalid.";
-  //     } else if (e.code == "weak-password") {
-  //       errorMessage = "The password is too weak.";
-  //     } else if (e.code == "passwords-dont-match") {
-  //       errorMessage = "Password and Confirm Password do not match.";
-  //     }
-  //     Utils.showSnackBar(errorMessage, false);
-  //   } catch (e) {
-  //     Utils.showSnackBar("An error occurred while signing up.", false);
-  //   } finally {
-  //     Navigator.of(context).pop(); // Dismiss the progress dialog
-  //   }
-  // }
 
 
-  Future signUp() async {
+  Future signUpForHotelOwner() async {
     final isValid = _formKey.currentState!.validate();
-    // if (!isValid) return;
+    if (!isValid) return;
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) =>
-        const Center(
-          child: CircularProgressIndicator(),
-        ));
+      context: context,
+      barrierDismissible: false,
+      builder: (context) =>
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
     try {
       if (passwordController.text == confirmPasswordController.text) {
         UserCredential userCredential =
@@ -591,10 +518,6 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
           password: passwordController.text.trim(),
         );
 
-        // User has been successfully registered
-        // Add any additional actions to be performed after successful registration
-        //adding to the database
-
         String uid = userCredential.user!.uid;
 
         addPlacesToFirebaseDb.saveUserCredentials(
@@ -602,31 +525,16 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
         print('sign up: uid of user: $uid');
         print('sign up: role: ${mainController.role.value}');
 
-        // if (mainController.role.value == "Tourist") {
-        //   Navigator.pushReplacement(
-        //     context,
-        //     MaterialPageRoute(builder: (context) => NavigationPage(uid: uid)),
-        //   );
-        // }
-        // else if (mainController.role.value == "Hotel Owner") {
-        //   Navigator.pushReplacement(
-        //     context,
-        //     MaterialPageRoute(builder: (context) => HotelOwnerPage(uid: uid)),
-        //   );
-        Get.off(()=> HotelOwnerPage(uid: uid,));
-        // }
-        // else if (mainController.role.value == "Transport Owner") {
-        //   Navigator.pushReplacement(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => TransportationOwnerPage(uid: uid)),
-        //   );
-        // }
-
         Utils.showSnackBar("Account is created Sucessfully!", true);
+        Navigator.of(context).pop(); // Dismiss the progress dialog
 
+        if (mainController.role.value == "Hotel Owner") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HotelOwnerPage(uid: uid)),
+          );
+        }
       } else {
-        // Password and Confirm Password do not match
         throw FirebaseAuthException(
             code: "passwords-dont-match",
             message: "Password and Confirm Password do not match.");
@@ -644,11 +552,12 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
       }
       Utils.showSnackBar(errorMessage, false);
     } catch (e) {
-      Utils.showSnackBar("An error occurred while signing up", false);
+      Utils.showSnackBar("An error occurred while signing up.", false);
     } finally {
       Navigator.of(context).pop(); // Dismiss the progress dialog
     }
   }
+
 }
 
 // class HotelOwnerSignUpDetail extends StatefulWidget {

@@ -22,11 +22,15 @@ class MyAccount extends StatefulWidget {
 
 class _MyAccountState extends State<MyAccount> {
 
+  final MainController mainController = Get.put(MainController());
+
+
   @override
   Widget build(BuildContext context) {
-    final MainController mainController = Get.put(MainController());
-    String role;
 
+    String userRole = mainController.role.value;
+
+    print('user role in my account : $userRole');
     final user = FirebaseAuth.instance.currentUser;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -164,26 +168,22 @@ class _MyAccountState extends State<MyAccount> {
               ),
             ),
 
-            Obx(() {
-              return Visibility(
-                visible: mainController.role.value == "Hotel Owner",
-                child: InkWell(
-                  onTap: () {
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) => DeleteAccountPage()));
-                    Get.to(
-                      () => const HotelOwnerPosting(),
-                    );
-                  },
-                  enableFeedback: true,
-                  child: UnderlineButton(
-                    name: 'View My Postings',
-                    color: Colors.transparent,
-                    textColor: Colors.black,
-                    width: screenWidth,
-                  ),
+            Visibility(
+              visible: mainController.role.value == "Hotel Owner",
+              child: InkWell(
+                onTap: () {
+                  Get.to(() => const HotelOwnerPosting());
+                },
+                enableFeedback: true,
+                child: UnderlineButton(
+                  name: 'View My Postings',
+                  color: Colors.transparent,
+                  textColor: Colors.black,
+                  width: screenWidth,
                 ),
-              );
-            }),
+              ),
+            ),
+
           ],
         ),
       ),
