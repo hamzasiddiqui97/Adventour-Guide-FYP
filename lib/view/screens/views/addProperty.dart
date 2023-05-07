@@ -1062,7 +1062,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   String imageUrl5 = '';
   String imageUrl6 = '';
 
-  VideoPlayerController? _videoPlayerController;
+  // VideoPlayerController? _videoPlayerController;
 
   // VideoPlayerController? _cameraVideoPlayerController;
   // File? _video;

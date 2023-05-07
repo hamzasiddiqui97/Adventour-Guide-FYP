@@ -1,16 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/view/screens/pages/home_view.dart';
 import 'package:google_maps_basics/view/screens/pages/my_account.dart';
 
-import 'view/screens/views/addProperty.dart';
 
 class HotelOwnerPage extends StatefulWidget {
-  final String uid;
+  final String? uid;
 
-  const HotelOwnerPage({Key? key, required this.uid}) : super(key: key);
+  const HotelOwnerPage({Key? key, this.uid}) : super(key: key);
 
   @override
   State<HotelOwnerPage> createState() => _HotelOwnerPageState();
@@ -24,8 +21,6 @@ class _HotelOwnerPageState extends State<HotelOwnerPage> {
     super.initState();
     pages = [
       HomePageNavBar(),
-      // HomePageGoogleMaps(),
-      // MyPlan(uid: widget.uid),
       MyAccount(),
     ];
   }
