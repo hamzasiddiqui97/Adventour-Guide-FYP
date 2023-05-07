@@ -1,9 +1,25 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_maps_basics/model/vehicle.dart';
 import 'package:google_maps_basics/models/PropertyModel.dart';
 
 class AddPlacesToFirebaseDb {
   static final database = FirebaseDatabase.instance;
+
+  Future<void> addVehicleToDatabase(String ownerId, Vehicle newVehicle) async {
+    try {
+      await database
+          .ref()
+          .child('users')
+          .child('transport owner')
+          .child(ownerId)
+          .child('vehicle')
+          .push()
+          .set(newVehicle.toMap());
+    } catch (e) {
+      print('Error adding vehicle: $e');
+    }
+  }
 
   Future<void> saveUserCredentials(
       String uid, String email, String role) async {

@@ -1,8 +1,8 @@
 // lib/models/vehicle.dart
 
 class Vehicle {
-  final String id;
   final String name;
+  final String id;
   final String description;
   final String ownerId;
   final String type;

@@ -13,6 +13,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../controllers/mainController.dart';
 import '../../../hotel_owner_dummy_screen.dart';
+import '../../../pages/add_new_vehicle_page.dart';
+import '../../../pages/transport_owner_dashboard_page.dart';
 import '../../../transport_owner_dummy_screen.dart';
 
 class SignIn extends StatefulWidget {
@@ -267,7 +269,7 @@ class _SignInState extends State<SignIn> {
         } else if (userRole == "Transport Owner") {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => TransportationOwnerPage(uid: uid),
+              builder: (context) => TransportOwnerDashboardPage(uid: uid),
             ),
           );
         } else {
