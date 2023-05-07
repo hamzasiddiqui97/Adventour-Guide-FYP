@@ -2,13 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_basics/pages/transport_owner_dashboard_page.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:google_maps_basics/transport_owner_dummy_screen.dart';
-import 'package:google_maps_basics/view/screens/loginScreens/auth_page.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-
-import 'controllers/mainController.dart';
 import 'hotel_owner_dummy_screen.dart';
 import 'model/firebase_reference.dart';
 import 'view/screens/loginScreens/roleSelection.dart';
@@ -127,7 +125,7 @@ class MyApp extends StatelessWidget {
                           } else if (role == 'Hotel Owner') {
                             return HotelOwnerPage(uid: snapshot.data!.uid);
                           } else if (role == 'Transport Owner') {
-                            return TransportationOwnerPage(
+                            return TransportOwnerDashboardPage(
                                 uid: snapshot.data!.uid);
                           } else {
                             return RoleSelection();

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_basics/provider/auth_provider.dart';
@@ -61,10 +62,11 @@ class _LoginPageState extends State<LoginPage> {
                         _email!, _password!);
 
                     if (userRole == "transport_owner") {
+                      String uid = FirebaseAuth.instance.currentUser!.uid;
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => TransportOwnerDashboardPage(),
+                          builder: (context) => TransportOwnerDashboardPage(uid: uid,),
                         ),
                       );
                     }

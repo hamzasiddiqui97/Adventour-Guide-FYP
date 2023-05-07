@@ -1066,7 +1066,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   // VideoPlayerController? _cameraVideoPlayerController;
   // File? _video;
-  final picker = ImagePicker();
+  // final picker = ImagePicker();
 
 // This funcion will helps you to pick a Video File
 //   pickVideo() async {
