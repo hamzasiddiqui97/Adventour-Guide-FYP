@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_basics/controllers/mainController.dart';
+import 'package:google_maps_basics/view/screens/views/addProperty.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
@@ -87,12 +90,10 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
         return null;
       }
     }
-
     if (permission == LocationPermission.deniedForever) {
       // Permissions are permanently denied
       return null;
     }
-
     // Get current location
     try {
       return await Geolocator.getCurrentPosition();
@@ -104,7 +105,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
 
   @override
   Widget build(BuildContext context) {
-
+    final MainController mainController = Get.put(MainController());
     const TextStyle myTextStyle = TextStyle(
       fontSize: 25,
       color: Colors.black,
@@ -115,7 +116,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
         onWillPop: () async => false,
         child: Scaffold(
 
-          body: SingleChildScrollView(
+          body: mainController.role.value=="Tourist"?
+          SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -173,6 +175,23 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                   height: 30,
                 ),
                 const CustomGrid(),
+              ],
+            ),
+          ): SafeArea(
+            child: Column(
+              children: [
+              Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // await FirebaseAuth.instance.signOut();
+                      // Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                      Get.to(() => PropertyAdd());
+                    },
+                    child: const Text(
+                      'Post data',
+                    ),
+                  ),
+                )
               ],
             ),
           ),

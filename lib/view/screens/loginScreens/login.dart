@@ -11,6 +11,10 @@ import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:lottie/lottie.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../controllers/mainController.dart';
+import '../../../hotel_owner_dummy_screen.dart';
+import '../../../transport_owner_dummy_screen.dart';
+
 class SignIn extends StatefulWidget {
   final VoidCallback onClickSignUp;
 
@@ -31,6 +35,8 @@ class _SignInState extends State<SignIn> {
   String? _emailError;
   String? _passwordError;
   AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
+  final MainController mainController = Get.put(MainController());
+
 
 
   @override
@@ -73,9 +79,9 @@ class _SignInState extends State<SignIn> {
                 child: Lottie.asset(
                     'assets/splash_screen_animation/login-hello.json'),
               ),
-              const Text(
-                'Login',
-                style: TextStyle(fontSize: 30),
+              Text(
+                '${mainController.role.value} Login',
+                style: const TextStyle(fontSize: 30),
               ),
               const SizedBox(
                 height: 20,
@@ -146,7 +152,7 @@ class _SignInState extends State<SignIn> {
                 onPressed: () {
                   validateInputs();
                   if (_formKey.currentState!.validate()) {
-                    signIn();
+                    signIn(mainController.role.value);
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -207,7 +213,7 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  Future signIn() async {
+  Future signIn(String expectedRole) async {
     if (_formKey.currentState == null || _formKey.currentState!.validate()) {
       showDialog(
         context: context,
@@ -224,27 +230,49 @@ class _SignInState extends State<SignIn> {
         password: passwordController.text.trim(),
       );
 
-
       // Dismiss the loading widget
       Navigator.of(context).pop();
 
       // Check if the sign-in was successful
       if (FirebaseAuth.instance.currentUser != null) {
-
         // Get the user's UID
         String uid = FirebaseAuth.instance.currentUser!.uid;
-        print('Get the users UID: ${uid.toString()}');
+
+        // Get the user role from the database
+        AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
+        String userRole = await addPlacesToFirebaseDb.getUserRole(uid);
+
+        // Check if the user role matches the expected role
+        if (userRole != expectedRole) {
+          Utils.showSnackBar("This email is registered as a $userRole. Please sign in from the correct page.", false);
+          return;
+        }
 
         // Save user email in the database (Password should not be stored)
-        addPlacesToFirebaseDb.saveUserCredentials(uid, emailController.text.trim(), passwordController.text.trim());
+        addPlacesToFirebaseDb.saveUserCredentials(uid, emailController.text.trim(), userRole);
 
-        // Navigate to the home screen
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => NavigationPage(uid: uid,),
-          ),
-        );
-
+        // Navigate to the appropriate screen based on the user role
+        if (userRole == "Tourist") {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => NavigationPage(uid: uid),
+            ),
+          );
+        } else if (userRole == "Hotel Owner") {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HotelOwnerPage(uid: uid),
+            ),
+          );
+        } else if (userRole == "Transport Owner") {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => TransportationOwnerPage(uid: uid),
+            ),
+          );
+        } else {
+          Utils.showSnackBar("Invalid role. Please contact support.", false);
+        }
       } else {
         showDialog(
           context: context,
@@ -280,11 +308,11 @@ class _SignInState extends State<SignIn> {
       }
       // Dismiss the loading widget
       Navigator.of(context).pop();
-      Utils.showSnackBar(errorMessage,false);
+      Utils.showSnackBar(errorMessage, false);
     } catch (e) {
       // Dismiss the loading widget
       Navigator.of(context).pop();
-      Utils.showSnackBar('Sign in failed. Please try again later.',false);
+      Utils.showSnackBar('Sign in failed. Please try again later.', false);
     }
   }
 
@@ -297,17 +325,46 @@ class _SignInState extends State<SignIn> {
         idToken: googleAuth?.idToken,
       );
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-      print('Sign in success\n Username: ${userCredential.user?.displayName}');
-
+      print('Sign in success\nUsername: ${userCredential.user?.displayName}');
 
       // Get the user's UID
       String uid = FirebaseAuth.instance.currentUser!.uid;
 
-      // Navigate to the home screen after successful sign-in
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => NavigationPage(uid: uid)),
-      );
+      // Get the user role from the database
+      AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
+      String userRole = await addPlacesToFirebaseDb.getUserRole(uid);
+
+      // Check if the user role matches the expected role
+      if (userRole != mainController.role.value) {
+        Utils.showSnackBar("You are signed in as a $userRole. Please sign in from the correct page.", false);
+        return;
+      }
+
+      // Save user email in the database (Password should not be stored)
+      addPlacesToFirebaseDb.saveUserCredentials(uid, googleUser?.email ?? '', userRole);
+
+      // Navigate to the appropriate screen based on the user role
+      if (userRole == "Tourist") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => NavigationPage(uid: uid),
+          ),
+        );
+      } else if (userRole == "Hotel Owner") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HotelOwnerPage(uid: uid),
+          ),
+        );
+      } else if (userRole == "Transport Owner") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => TransportationOwnerPage(uid: uid),
+          ),
+        );
+      } else {
+        Utils.showSnackBar("Invalid role. Please contact support.", false);
+      }
     } catch (e) {
       if (e is PlatformException) {
         // Handle the exception here
@@ -318,4 +375,5 @@ class _SignInState extends State<SignIn> {
       }
     }
   }
+
 }
