@@ -1,15 +1,10 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
-import 'package:google_maps_basics/view/screens/loginScreens/cardScreen.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../controllers/mainController.dart';
@@ -461,33 +456,13 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 40),
                     ),
-                    onPressed: () {
-                      validateInputs();
-                      if (_hotelNameError == null &&
-                          _emailError == null &&
-                          _passwordError == null &&
-                          _confirmPasswordError == null) {
-                        Get.to(
-                              () =>
-                              HotelOwnerSignUpDetail(
-                                hotelNameController: hotelNameController.text,
-                                emailNameController: emailController.text,
-                                passwordController: passwordController.text,
-                                fireStore: fireStore,
-                              ),
-                        );
-                      } else {
-                        // Show snackbar with an error message
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please fill all fields correctly'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    },
+                    onPressed: signUp,
+                    // onPressed: () {
+                    //   validateInputs();
+                    //   signUp;
+                    //   },
                     child: const Text(
-                      "Next",
+                      "Sign Up",
                       style: TextStyle(
                           fontWeight: FontWeight.normal,
                           color: Colors.white,
@@ -522,10 +497,85 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
       ),
     );
   }
+  // Future signUpxd() async {
+  //   final isValid = _formKey.currentState!.validate();
+  //   if (!isValid) return;
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) =>
+  //     const Center(
+  //       child: CircularProgressIndicator(),
+  //     ),
+  //   );
+  //   try {
+  //     if (passwordController.text == confirmPasswordController.text) {
+  //       UserCredential userCredential =
+  //       await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  //         email: emailController.text.trim(),
+  //         password: passwordController.text.trim(),
+  //       );
+  //
+  //       // Get the UID of the newly created user
+  //       // User has been successfully registered
+  //       // adding to the database
+  //       String uid = userCredential.user!.uid;
+  //
+  //       addPlacesToFirebaseDb.saveUserCredentials(
+  //           uid, emailController.text.trim(), mainController.role.value);
+  //       print('sign up: uid of user: $uid');
+  //       print('sign up: role: ${mainController.role.value}');
+  //
+  //       Utils.showSnackBar("Account is created Sucessfully!", true);
+  //       Navigator.of(context).pop(); // Dismiss the progress dialog
+  //
+  //       // Navigate to the correct page based on the user's role
+  //       if (mainController.role.value == "Tourist") {
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => NavigationPage(uid: uid)),
+  //         );
+  //       } else if (mainController.role.value == "Hotel Owner") {
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => HotelOwnerPage(uid: uid)),
+  //         );
+  //       } else if (mainController.role.value == "Transport Owner") {
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(
+  //               builder: (context) => TransportationOwnerPage(uid: uid)),
+  //         );
+  //       }
+  //     } else {
+  //       // Password and Confirm Password do not match
+  //       throw FirebaseAuthException(
+  //           code: "passwords-dont-match",
+  //           message: "Password and Confirm Password do not match.");
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     String errorMessage = "An error occurred while signing up.";
+  //     if (e.code == "email-already-in-use") {
+  //       errorMessage = "The email address is already in use.";
+  //     } else if (e.code == "invalid-email") {
+  //       errorMessage = "The email address is invalid.";
+  //     } else if (e.code == "weak-password") {
+  //       errorMessage = "The password is too weak.";
+  //     } else if (e.code == "passwords-dont-match") {
+  //       errorMessage = "Password and Confirm Password do not match.";
+  //     }
+  //     Utils.showSnackBar(errorMessage, false);
+  //   } catch (e) {
+  //     Utils.showSnackBar("An error occurred while signing up.", false);
+  //   } finally {
+  //     Navigator.of(context).pop(); // Dismiss the progress dialog
+  //   }
+  // }
+
 
   Future signUp() async {
     final isValid = _formKey.currentState!.validate();
-    if (!isValid) return;
+    // if (!isValid) return;
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -535,15 +585,46 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
         ));
     try {
       if (passwordController.text == confirmPasswordController.text) {
+        UserCredential userCredential =
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
+
         // User has been successfully registered
         // Add any additional actions to be performed after successful registration
         //adding to the database
 
+        String uid = userCredential.user!.uid;
+
+        addPlacesToFirebaseDb.saveUserCredentials(
+            uid, emailController.text.trim(), mainController.role.value);
+        print('sign up: uid of user: $uid');
+        print('sign up: role: ${mainController.role.value}');
+
+        // if (mainController.role.value == "Tourist") {
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => NavigationPage(uid: uid)),
+        //   );
+        // }
+        // else if (mainController.role.value == "Hotel Owner") {
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => HotelOwnerPage(uid: uid)),
+        //   );
+        Get.off(()=> HotelOwnerPage(uid: uid,));
+        // }
+        // else if (mainController.role.value == "Transport Owner") {
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => TransportationOwnerPage(uid: uid)),
+        //   );
+        // }
+
         Utils.showSnackBar("Account is created Sucessfully!", true);
+
       } else {
         // Password and Confirm Password do not match
         throw FirebaseAuthException(
@@ -570,414 +651,415 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
   }
 }
 
-class HotelOwnerSignUpDetail extends StatefulWidget {
-  const HotelOwnerSignUpDetail({
-    Key? key,
-    required this.hotelNameController,
-    required this.emailNameController,
-    required this.passwordController,
-    required this.fireStore,
-  }) : super(key: key);
+// class HotelOwnerSignUpDetail extends StatefulWidget {
+//   const HotelOwnerSignUpDetail({
+//     Key? key,
+//     required this.hotelNameController,
+//     required this.emailNameController,
+//     required this.passwordController,
+//     required this.fireStore,
+//   }) : super(key: key);
+//
+//   final String hotelNameController;
+//   final String emailNameController;
+//   final String passwordController;
+//   final FirebaseFirestore fireStore;
+//
+//   @override
+//   State<HotelOwnerSignUpDetail> createState() =>
+//       _HotelOwnerSignUpDetailState(
+//         hotelNameController,
+//         emailNameController,
+//         passwordController,
+//         fireStore,
+//       );
+// }
 
-  final String hotelNameController;
-  final String emailNameController;
-  final String passwordController;
-  final FirebaseFirestore fireStore;
-
-  @override
-  State<HotelOwnerSignUpDetail> createState() =>
-      _HotelOwnerSignUpDetailState(
-        hotelNameController,
-        emailNameController,
-        passwordController,
-        fireStore,
-      );
-}
-
-class _HotelOwnerSignUpDetailState extends State<HotelOwnerSignUpDetail> {
-  final String hotelNameController;
-  final String emailNameController;
-  final String passwordController;
-  final FirebaseFirestore fireStore;
-  File? _image1;
-  File? _image2;
-  File? _image3;
-  String? image1Url;
-  String? image2Url;
-  String? image3Url;
-  final picker = ImagePicker();
-
-  _HotelOwnerSignUpDetailState(this.hotelNameController,
-      this.emailNameController, this.passwordController, this.fireStore);
-
-  Future<void> _getImage1({required ImageSource source}) async {
-    PickedFile? pickedFile = await ImagePicker().getImage(
-      source: ImageSource.gallery,
-      maxWidth: 1800,
-      maxHeight: 1800,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _image1 = File(pickedFile.path);
-      });
-    }
-    if (_image1 == null) return;
-    //Import dart:core
-    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-
-    /*Step 2: Upload to Firebase storage*/
-    //Install firebase_storage
-    //Import the library
-
-    //Get a reference to storage root
-    Reference referenceRoot = FirebaseStorage.instance.ref();
-    Reference referenceDirImages = referenceRoot.child('images');
-
-    //Create a reference for the image to be stored
-    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
-
-    //Handle errors/success
-    try {
-      //Store the file
-      await referenceImageToUpload.putFile(
-        File(
-          _image1!.path,
-        ),
-      );
-      //Success: get the download URL
-      image1Url = await referenceImageToUpload.getDownloadURL();
-      print(image1Url);
-    } catch (error) {
-      //Some error occurred
-    }
-}
-
-Future<void> _getImage2({required ImageSource source}) async {
-  PickedFile? pickedFile = await ImagePicker().getImage(
-    source: ImageSource.gallery,
-    maxWidth: 1800,
-    maxHeight: 1800,
-  );
-  if (pickedFile != null) {
-    setState(() {
-      _image2 = File(pickedFile.path);
-    });
-  }
-  if (_image2 == null) return;
-  //Import dart:core
-  String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-
-  /*Step 2: Upload to Firebase storage*/
-  //Install firebase_storage
-  //Import the library
-
-  //Get a reference to storage root
-  Reference referenceRoot = FirebaseStorage.instance.ref();
-  Reference referenceDirImages = referenceRoot.child('images');
-
-  //Create a reference for the image to be stored
-  Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
-
-  //Handle errors/success
-  try {
-    //Store the file
-    await referenceImageToUpload.putFile(
-      File(
-        _image2!.path,
-      ),
-    );
-    //Success: get the download URL
-    image2Url = await referenceImageToUpload.getDownloadURL();
-    print(image2Url);
-  } catch (error) {
-    //Some error occurred
-  }
-}
-
-Future<void> _getImage3({required ImageSource source}) async {
-  PickedFile? pickedFile = await ImagePicker().getImage(
-    source: ImageSource.gallery,
-    maxWidth: 1800,
-    maxHeight: 1800,
-  );
-  if (pickedFile != null) {
-    setState(() {
-      _image3 = File(pickedFile.path);
-    });
-  }
-  if (_image3 == null) return;
-  //Import dart:core
-  String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-
-  /*Step 2: Upload to Firebase storage*/
-  //Install firebase_storage
-  //Import the library
-
-  //Get a reference to storage root
-  Reference referenceRoot = FirebaseStorage.instance.ref();
-  Reference referenceDirImages = referenceRoot.child('images');
-
-  //Create a reference for the image to be stored
-  Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
-
-  //Handle errors/success
-  try {
-    //Store the file
-    await referenceImageToUpload.putFile(
-      File(
-        _image3!.path,
-      ),
-    );
-    //Success: get the download URL
-    image3Url = await referenceImageToUpload.getDownloadURL();
-    print(image3Url);
-  } catch (error) {
-    //Some error occurred
-  }
-}
-
-@override
-Widget build(BuildContext context) {
-
-  return Scaffold(
-    body: SafeArea(
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-                'assets/splash_screen_animation/hotelSignUpDetail.json',
-                height: 160),
-            const SizedBox(
-              height: 30,
-            ),
-            const Text(
-              'Hotel Details',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
-            ),
-
-            const SizedBox(
-              height: 30,
-            ),
-            const Text(
-              "Select Images",
-              style: TextStyle(fontSize: 22),
-              textAlign: TextAlign.start,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 100,
-              width: 310,
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(
-                    10,
-                  ),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 10,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      // color: Colors.black,
-                      border: Border.all(width: 1.0, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5.0),
-                      // dashPattern: [6, 3], // [dash length, space length]
-                    ),
-                    child: Center(
-                      child: _image1 == null
-                          ? IconButton(
-                        onPressed: () {
-                          _getImage1(
-                            source: ImageSource.gallery,
-                            // fileName: _image1!,
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.add,
-                        ),
-                      )
-                          : Image.file(
-                        _image1!,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      // color: Colors.black,
-                      border: Border.all(width: 1.0, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5.0),
-                      // dashPattern: [6, 3], // [dash length, space length]
-                    ),
-                    child: Center(
-                      child: _image2 == null
-                          ? IconButton(
-                        onPressed: () {
-                          _getImage2(
-                            source: ImageSource.gallery,
-                            // fileName: _image1!,
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.add,
-                        ),
-                      )
-                          : Image.file(
-                        _image2!,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      _getImage3(
-                        source: ImageSource.gallery,
-                      );
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        // color: Colors.black,
-                        border: Border.all(width: 1.0, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5.0),
-                        // dashPattern: [6, 3], // [dash length, space length]
-                      ),
-                      child: _image3 == null
-                          ? IconButton(
-                        onPressed: () {
-                          _getImage3(
-                            source: ImageSource.gallery,
-                            // fileName: _image1!,
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.add,
-                        ),
-                      )
-                          : Image.file(
-                        _image3!,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(
-              height: 20,
-            ),
-            InkWell(
-              onTap: () {
-                Get.to(
-                  MySample(),
-                );
-              },
-              child: Container(
-                height: 50,
-                width: 200,
-                decoration: const BoxDecoration(
-                  color: Colors.orangeAccent,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(
-                      10,
-                    ),
-                  ),
-                ),
-                child: const Center(
-                  child: Text(
-                    "Enter Card Details",
-                    style: TextStyle(
-                      fontSize: 19,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            InkWell(
-              onTap: () {
-                // Get.to(
-                //   MySample(),
-                // );
-                AddPlacesToFirebaseDb().hotelOwnerSignup(
-                  // uid,
-                  emailNameController,
-                  hotelNameController,
-                  "hotel owner",
-                  image1Url!,
-                  image2Url!,
-                  image3Url!,
-                );
-                Utils.showSnackBar("Account is created Sucessfully!", true);
-
-                Get.offAll(HotelOwnerPage());
-              },
-              child: Container(
-                height: 50,
-                width: 200,
-                decoration: const BoxDecoration(
-                  color: Colors.orangeAccent,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(
-                      10,
-                    ),
-                  ),
-                ),
-                child: const Center(
-                  child: Text(
-                    "Confirm",
-                    style: TextStyle(
-                      fontSize: 19,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // TextFormField(
-            //   controller: hotelNameController,
-            //   cursorColor: Colors.black,
-            //   textInputAction: TextInputAction.next,
-            //   decoration: InputDecoration(
-            //     labelText: 'Hotel Name',
-            //     errorText: _emailError,
-            //     prefixIcon: const Icon(Icons.person_pin_circle_rounded,size: 30,),
-            //   ),
-            //   onChanged: (value) {
-            //     validateInputs();
-            //   },
-            //   autofillHints: const [AutofillHints.email],
-            // ),
-            const SizedBox(
-              height: 12,
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}}
+// class _HotelOwnerSignUpDetailState extends State<HotelOwnerSignUpDetail> {
+//   final String hotelNameController;
+//   final String emailNameController;
+//   final String passwordController;
+//   final FirebaseFirestore fireStore;
+//   File? _image1;
+//   File? _image2;
+//   File? _image3;
+//   String? image1Url;
+//   String? image2Url;
+//   String? image3Url;
+//   final picker = ImagePicker();
+//
+//   _HotelOwnerSignUpDetailState(this.hotelNameController,
+//       this.emailNameController, this.passwordController, this.fireStore);
+//
+//   Future<void> _getImage1({required ImageSource source}) async {
+//     PickedFile? pickedFile = await ImagePicker().getImage(
+//       source: ImageSource.gallery,
+//       maxWidth: 1800,
+//       maxHeight: 1800,
+//     );
+//     if (pickedFile != null) {
+//       setState(() {
+//         _image1 = File(pickedFile.path);
+//       });
+//     }
+//     if (_image1 == null) return;
+//     //Import dart:core
+//     String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+//
+//     /*Step 2: Upload to Firebase storage*/
+//     //Install firebase_storage
+//     //Import the library
+//
+//     //Get a reference to storage root
+//     Reference referenceRoot = FirebaseStorage.instance.ref();
+//     Reference referenceDirImages = referenceRoot.child('images');
+//
+//     //Create a reference for the image to be stored
+//     Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+//
+//     //Handle errors/success
+//     try {
+//       //Store the file
+//       await referenceImageToUpload.putFile(
+//         File(
+//           _image1!.path,
+//         ),
+//       );
+//       //Success: get the download URL
+//       image1Url = await referenceImageToUpload.getDownloadURL();
+//       print(image1Url);
+//     } catch (error) {
+//       //Some error occurred
+//     }
+// }
+//
+// Future<void> _getImage2({required ImageSource source}) async {
+//   PickedFile? pickedFile = await ImagePicker().getImage(
+//     source: ImageSource.gallery,
+//     maxWidth: 1800,
+//     maxHeight: 1800,
+//   );
+//   if (pickedFile != null) {
+//     setState(() {
+//       _image2 = File(pickedFile.path);
+//     });
+//   }
+//   if (_image2 == null) return;
+//   //Import dart:core
+//   String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+//
+//   /*Step 2: Upload to Firebase storage*/
+//   //Install firebase_storage
+//   //Import the library
+//
+//   //Get a reference to storage root
+//   Reference referenceRoot = FirebaseStorage.instance.ref();
+//   Reference referenceDirImages = referenceRoot.child('images');
+//
+//   //Create a reference for the image to be stored
+//   Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+//
+//   //Handle errors/success
+//   try {
+//     //Store the file
+//     await referenceImageToUpload.putFile(
+//       File(
+//         _image2!.path,
+//       ),
+//     );
+//     //Success: get the download URL
+//     image2Url = await referenceImageToUpload.getDownloadURL();
+//     print(image2Url);
+//   } catch (error) {
+//     //Some error occurred
+//   }
+// }
+//
+// Future<void> _getImage3({required ImageSource source}) async {
+//   PickedFile? pickedFile = await ImagePicker().getImage(
+//     source: ImageSource.gallery,
+//     maxWidth: 1800,
+//     maxHeight: 1800,
+//   );
+//   if (pickedFile != null) {
+//     setState(() {
+//       _image3 = File(pickedFile.path);
+//     });
+//   }
+//   if (_image3 == null) return;
+//   //Import dart:core
+//   String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+//
+//   /*Step 2: Upload to Firebase storage*/
+//   //Install firebase_storage
+//   //Import the library
+//
+//   //Get a reference to storage root
+//   Reference referenceRoot = FirebaseStorage.instance.ref();
+//   Reference referenceDirImages = referenceRoot.child('images');
+//
+//   //Create a reference for the image to be stored
+//   Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+//
+//   //Handle errors/success
+//   try {
+//     //Store the file
+//     await referenceImageToUpload.putFile(
+//       File(
+//         _image3!.path,
+//       ),
+//     );
+//     //Success: get the download URL
+//     image3Url = await referenceImageToUpload.getDownloadURL();
+//     print(image3Url);
+//   } catch (error) {
+//     //Some error occurred
+//   }
+// }
+//
+// @override
+// Widget build(BuildContext context) {
+//
+//   return Scaffold(
+//     body: SafeArea(
+//       child: Center(
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             Lottie.asset(
+//                 'assets/splash_screen_animation/hotelSignUpDetail.json',
+//                 height: 160),
+//             const SizedBox(
+//               height: 30,
+//             ),
+//             const Text(
+//               'Hotel Details',
+//               style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+//             ),
+//
+//             const SizedBox(
+//               height: 30,
+//             ),
+//             const Text(
+//               "Select Images",
+//               style: TextStyle(fontSize: 22),
+//               textAlign: TextAlign.start,
+//             ),
+//             const SizedBox(
+//               height: 20,
+//             ),
+//             Container(
+//               height: 100,
+//               width: 310,
+//               padding: const EdgeInsets.symmetric(horizontal: 50),
+//               decoration: BoxDecoration(
+//                 color: Colors.white,
+//                 borderRadius: const BorderRadius.all(
+//                   Radius.circular(
+//                     10,
+//                   ),
+//                 ),
+//                 boxShadow: [
+//                   BoxShadow(
+//                     color: Colors.grey.withOpacity(0.5),
+//                     spreadRadius: 5,
+//                     blurRadius: 10,
+//                     offset: const Offset(0, 3), // changes position of shadow
+//                   ),
+//                 ],
+//               ),
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   Container(
+//                     height: 40,
+//                     width: 40,
+//                     decoration: BoxDecoration(
+//                       // color: Colors.black,
+//                       border: Border.all(width: 1.0, color: Colors.grey),
+//                       borderRadius: BorderRadius.circular(5.0),
+//                       // dashPattern: [6, 3], // [dash length, space length]
+//                     ),
+//                     child: Center(
+//                       child: _image1 == null
+//                           ? IconButton(
+//                         onPressed: () {
+//                           _getImage1(
+//                             source: ImageSource.gallery,
+//                             // fileName: _image1!,
+//                           );
+//                         },
+//                         icon: const Icon(
+//                           Icons.add,
+//                         ),
+//                       )
+//                           : Image.file(
+//                         _image1!,
+//                         fit: BoxFit.fill,
+//                       ),
+//                     ),
+//                   ),
+//                   Container(
+//                     height: 40,
+//                     width: 40,
+//                     decoration: BoxDecoration(
+//                       // color: Colors.black,
+//                       border: Border.all(width: 1.0, color: Colors.grey),
+//                       borderRadius: BorderRadius.circular(5.0),
+//                       // dashPattern: [6, 3], // [dash length, space length]
+//                     ),
+//                     child: Center(
+//                       child: _image2 == null
+//                           ? IconButton(
+//                         onPressed: () {
+//                           _getImage2(
+//                             source: ImageSource.gallery,
+//                             // fileName: _image1!,
+//                           );
+//                         },
+//                         icon: const Icon(
+//                           Icons.add,
+//                         ),
+//                       )
+//                           : Image.file(
+//                         _image2!,
+//                         fit: BoxFit.fill,
+//                       ),
+//                     ),
+//                   ),
+//                   InkWell(
+//                     onTap: () {
+//                       _getImage3(
+//                         source: ImageSource.gallery,
+//                       );
+//                     },
+//                     child: Container(
+//                       height: 40,
+//                       width: 40,
+//                       decoration: BoxDecoration(
+//                         // color: Colors.black,
+//                         border: Border.all(width: 1.0, color: Colors.grey),
+//                         borderRadius: BorderRadius.circular(5.0),
+//                         // dashPattern: [6, 3], // [dash length, space length]
+//                       ),
+//                       child: _image3 == null
+//                           ? IconButton(
+//                         onPressed: () {
+//                           _getImage3(
+//                             source: ImageSource.gallery,
+//                             // fileName: _image1!,
+//                           );
+//                         },
+//                         icon: const Icon(
+//                           Icons.add,
+//                         ),
+//                       )
+//                           : Image.file(
+//                         _image3!,
+//                         fit: BoxFit.fill,
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//
+//             const SizedBox(
+//               height: 20,
+//             ),
+//             InkWell(
+//               onTap: () {
+//                 Get.to(
+//                   MySample(),
+//                 );
+//               },
+//               child: Container(
+//                 height: 50,
+//                 width: 200,
+//                 decoration: const BoxDecoration(
+//                   color: Colors.orangeAccent,
+//                   borderRadius: BorderRadius.all(
+//                     Radius.circular(
+//                       10,
+//                     ),
+//                   ),
+//                 ),
+//                 child: const Center(
+//                   child: Text(
+//                     "Enter Card Details",
+//                     style: TextStyle(
+//                       fontSize: 19,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(
+//               height: 30,
+//             ),
+//             InkWell(
+//               onTap: () {
+//                 // Get.to(
+//                 //   MySample(),
+//                 // );
+//
+//                 AddPlacesToFirebaseDb().hotelOwnerSignup(
+//                   // uid,
+//                   emailNameController,
+//                   hotelNameController,
+//                   "hotel owner",
+//                   image1Url!,
+//                   image2Url!,
+//                   image3Url!,
+//                 );
+//                 Utils.showSnackBar("Account is created Sucessfully!", true);
+//
+//                 Get.offAll(HotelOwnerPage());
+//               },
+//               child: Container(
+//                 height: 50,
+//                 width: 200,
+//                 decoration: const BoxDecoration(
+//                   color: Colors.orangeAccent,
+//                   borderRadius: BorderRadius.all(
+//                     Radius.circular(
+//                       10,
+//                     ),
+//                   ),
+//                 ),
+//                 child: const Center(
+//                   child: Text(
+//                     "Confirm",
+//                     style: TextStyle(
+//                       fontSize: 19,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             // TextFormField(
+//             //   controller: hotelNameController,
+//             //   cursorColor: Colors.black,
+//             //   textInputAction: TextInputAction.next,
+//             //   decoration: InputDecoration(
+//             //     labelText: 'Hotel Name',
+//             //     errorText: _emailError,
+//             //     prefixIcon: const Icon(Icons.person_pin_circle_rounded,size: 30,),
+//             //   ),
+//             //   onChanged: (value) {
+//             //     validateInputs();
+//             //   },
+//             //   autofillHints: const [AutofillHints.email],
+//             // ),
+//             const SizedBox(
+//               height: 12,
+//             ),
+//           ],
+//         ),
+//       ),
+//     ),
+//   );
+// }}
 
 class TransportOwnerSignUp extends StatefulWidget {
   final VoidCallback onClickSignIn;

@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart' show DataSnapshot, FirebaseDatabase, DatabaseReference;
-
 import 'package:google_maps_basics/model/vehicle.dart';
 
 class VehicleService {

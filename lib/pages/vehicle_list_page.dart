@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
 import 'package:google_maps_basics/provider/vehicle_provider.dart';
+import 'package:provider/provider.dart';
 
 class VehicleListPage extends StatelessWidget {
   @override

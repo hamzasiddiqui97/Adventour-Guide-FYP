@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_basics/view/screens/views/news_view.dart';
-import 'package:provider/provider.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
+import 'package:google_maps_basics/view/screens/views/news_view.dart';
 import 'package:google_maps_basics/widgets/sevenDayForecast.dart';
+import 'package:provider/provider.dart';
+
 import '../../view/screens/views/nearby_places_list.dart';
 import '../../view/screens/views/search_nearby_restaurant.dart';
 

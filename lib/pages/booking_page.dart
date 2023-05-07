@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:google_maps_basics/provider/booking_provider.dart';
+import 'package:provider/provider.dart';
 
 class BookingPage extends StatefulWidget {
   final String? vehicleId;

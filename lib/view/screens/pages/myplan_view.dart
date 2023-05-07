@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import '../../../core/constant/color_constants.dart';
 import '../../../model/firebase_reference.dart';
 import '../views/myplan_trip_details.dart';

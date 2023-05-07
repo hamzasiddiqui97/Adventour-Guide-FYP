@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/helper/newsdata.dart';
 import 'package:google_maps_basics/model/newsmodel.dart';
+
 import '../../../helper/newsdata_from_rapidApi.dart';
 
 class NewsScreen extends StatefulWidget {

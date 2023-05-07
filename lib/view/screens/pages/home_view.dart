@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/controllers/mainController.dart';
-import 'package:google_maps_basics/view/screens/views/addProperty.dart';
-import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
+import 'package:google_maps_basics/view/screens/views/addProperty.dart';
+import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
+
 import '../../../helper/utils.dart';
 import '../../../models/weather.dart';
 

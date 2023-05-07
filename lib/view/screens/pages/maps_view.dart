@@ -1,16 +1,18 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/search_bar_widget.dart';
 import 'package:google_maps_basics/model/MultipleDestinations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:google_api_headers/google_api_headers.dart';
+
 import '../views/places_list_along_the_route.dart';
 
 class HomePageGoogleMaps extends StatefulWidget {

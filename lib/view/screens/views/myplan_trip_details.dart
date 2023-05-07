@@ -7,6 +7,7 @@ import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/view/screens/pages/viewmapfortrip.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+
 import '../../../core/constant/color_constants.dart';
 import '../../../distanceWrapper.dart';
 import '../../../model/firebase_reference.dart';

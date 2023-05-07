@@ -5,9 +5,9 @@ import 'package:google_maps_basics/view/screens/pages/my_account.dart';
 
 
 class HotelOwnerPage extends StatefulWidget {
-  final String? uid;
+  final String uid;
 
-  const HotelOwnerPage({Key? key, this.uid}) : super(key: key);
+  const HotelOwnerPage({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<HotelOwnerPage> createState() => _HotelOwnerPageState();

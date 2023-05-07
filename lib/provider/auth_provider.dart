@@ -1,11 +1,11 @@
 // lib/providers/auth_provider.dart
-import 'package:google_maps_basics/services/auth_service.dart';
-import 'package:flutter/foundation.dart';
-import 'package:google_maps_basics/model/user.dart' as AppUser;
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_maps_basics/model/transport_owner.dart';
+import 'package:google_maps_basics/model/user.dart' as AppUser;
+import 'package:google_maps_basics/services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService authService;

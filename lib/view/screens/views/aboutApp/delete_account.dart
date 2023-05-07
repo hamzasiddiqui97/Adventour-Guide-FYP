@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/auth_page.dart';
+
 import '../../../../core/constant/color_constants.dart';
 import '../../../../snackbar_utils.dart';
 

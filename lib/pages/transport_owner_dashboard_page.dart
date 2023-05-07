@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
-import 'package:google_maps_basics/pages/vehicle_details_page.dart';
 import 'package:google_maps_basics/pages/add_new_vehicle_page.dart';
+import 'package:google_maps_basics/pages/vehicle_details_page.dart';
 
 class TransportOwnerDashboardPage extends StatefulWidget {
   final String uid;

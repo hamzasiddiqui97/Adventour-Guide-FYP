@@ -1,10 +1,10 @@
 // lib/pages/profile_page.dart
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:google_maps_basics/model/transport_owner.dart';
 import 'package:google_maps_basics/model/user.dart' as AppUser;
 import 'package:google_maps_basics/provider/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
   @override

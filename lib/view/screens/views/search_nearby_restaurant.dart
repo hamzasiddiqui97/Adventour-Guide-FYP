@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_basics/.env.dart';
@@ -6,6 +7,7 @@ import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/NearbyResponse.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
+
 import 'nearby_on_maps.dart';
 
 class NearbyRestaurantSource extends StatefulWidget {

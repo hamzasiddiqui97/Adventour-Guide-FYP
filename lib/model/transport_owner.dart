@@ -1,6 +1,5 @@
 // lib/models/transport_owner.dart
 
-import 'package:flutter/foundation.dart';
 import 'package:google_maps_basics/model/user.dart';
 
 class TransportOwner extends User {

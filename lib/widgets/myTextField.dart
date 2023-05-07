@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MyTextField extends StatelessWidget {
   Color color; Color? hintColor; Color? fontColor; Color borderColor; Color? suffixIconColor;

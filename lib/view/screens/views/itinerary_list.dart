@@ -184,13 +184,15 @@
 // }
 
 import 'dart:math' show atan2, cos, pi, sin, sqrt;
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timeline_tile/timeline_tile.dart';
+
 import '../../../core/constant/color_constants.dart';
 import '../../../model/firebase_reference.dart';
-import 'package:firebase_database/firebase_database.dart';
 import '../pages/main_page.dart';
 
 

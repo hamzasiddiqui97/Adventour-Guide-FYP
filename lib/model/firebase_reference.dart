@@ -1,7 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
-import 'package:google_maps_basics/models/PropertyModel.dart';
 
 class AddPlacesToFirebaseDb {
   static final database = FirebaseDatabase.instance;
@@ -36,27 +35,27 @@ class AddPlacesToFirebaseDb {
     }
   }
 
-  Future<void> hotelOwnerSignup(String email, String hotelName,
-      String role, String image1, String image2, String image3) async {
-    try {
-      await database
-          .ref()
-          .child('users')
-          .child(role.toLowerCase())
-          // .child()
-          .child('credential')
-          .set({
-        'email': email,
-        'hotelName': hotelName,
-        'role': role,
-        'image1': image1,
-        'image2': image2,
-        'image3': image3,
-      });
-    } catch (e) {
-      print('Error saving user credentials: $e');
-    }
-  }
+  // Future<void> hotelOwnerSignup(String email, String hotelName,
+  //     String role, String image1, String image2, String image3) async {
+  //   try {
+  //     await database
+  //         .ref()
+  //         .child('users')
+  //         .child(role.toLowerCase())
+  //         // .child()
+  //         .child('credential')
+  //         .set({
+  //       'email': email,
+  //       'hotelName': hotelName,
+  //       'role': role,
+  //       'image1': image1,
+  //       'image2': image2,
+  //       'image3': image3,
+  //     });
+  //   } catch (e) {
+  //     print('Error saving user credentials: $e');
+  //   }
+  // }
 
   Future<void> saveHotelOwnerPost(
     String role,

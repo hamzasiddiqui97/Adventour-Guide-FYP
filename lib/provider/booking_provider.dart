@@ -1,6 +1,7 @@
 // lib/providers/booking_provider.dart
 
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_basics/model/booking.dart';
 

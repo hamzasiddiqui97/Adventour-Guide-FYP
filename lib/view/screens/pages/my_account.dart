@@ -5,9 +5,9 @@ import 'package:google_maps_basics/controllers/mainController.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/bottom_underlined_custom_button.dart';
 import 'package:google_maps_basics/core/widgets/rounded_button.dart';
-import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/view/screens/views/hotelOwnerPosting.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
 import '../views/aboutApp/contact_us.dart';
 import '../views/aboutApp/delete_account.dart';
 import '../views/aboutApp/privacy.dart';

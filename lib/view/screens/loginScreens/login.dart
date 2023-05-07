@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
@@ -8,12 +8,11 @@ import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/forgot_password.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
-import 'package:lottie/lottie.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../controllers/mainController.dart';
 import '../../../hotel_owner_dummy_screen.dart';
-import '../../../pages/add_new_vehicle_page.dart';
 import '../../../pages/transport_owner_dashboard_page.dart';
 import '../../../transport_owner_dummy_screen.dart';
 
