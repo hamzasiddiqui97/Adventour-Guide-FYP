@@ -21,7 +21,7 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  
+
   @override
   Widget build(BuildContext context) {
     final MainController mainController = Get.put(MainController());
