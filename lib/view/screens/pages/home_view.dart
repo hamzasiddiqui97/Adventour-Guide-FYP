@@ -9,6 +9,7 @@ import 'package:google_maps_basics/view/screens/views/addProperty.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../../helper/utils.dart';
 import '../../../models/weather.dart';
 
@@ -19,9 +20,7 @@ class HomePageNavBar extends StatefulWidget {
   _HomePageNavBarState createState() => _HomePageNavBarState();
 }
 
-
 class _HomePageNavBarState extends State<HomePageNavBar> {
-
   // weather api
   String apiKey = '97f6f37816c2c554f9f209bd1b7b7afe';
   Weather? _weather;
@@ -66,9 +65,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
       print('weather response: ${response.body}');
       print('city name: ${_weather?.cityName}');
       print('city temperature: ${_weather?.temp}');
-
     }
-    }
+  }
 
   Future<Position?> _determinePosition() async {
     bool serviceEnabled;
@@ -109,92 +107,137 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
     const TextStyle myTextStyle = TextStyle(
       fontSize: 25,
       color: Colors.black,
-      fontWeight: FontWeight.normal,);
+      fontWeight: FontWeight.normal,
+    );
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
       child: WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
-
-          body: mainController.role.value=="Tourist"?
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 25,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    boxShadow:  [
-                      BoxShadow(
-                        color: Colors.grey.shade400,
-                        blurRadius: 3,
-                        spreadRadius: 0,
-                        offset: Offset(0.0, 2.0),
-                      ),
-                    ],
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.grey.shade50,
-
-                  ),
-                  width: MediaQuery.of(context).size.width,
-                  height: 100,
-                  // color: Colors.orange,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+          body: mainController.role.value == "Tourist"
+              ? SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (_isWeatherDataLoading)
-                        const Center(child: CircularProgressIndicator()),
-                      if (!_isWeatherDataLoading && _weather != null)
-                        Text(
-                          _weather!.cityName,
-                          style: myTextStyle,
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade400,
+                              blurRadius: 3,
+                              spreadRadius: 0,
+                              offset: Offset(0.0, 2.0),
+                            ),
+                          ],
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.grey.shade50,
                         ),
-                      const SizedBox(width: 10.0),
-
-                      if (!_isWeatherDataLoading && _weather != null)
-                        MapString.mapStringToIcon(
-                          context,
-                          '${_weather?.currently}',
-                          30,
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        // color: Colors.orange,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (_isWeatherDataLoading)
+                              const Center(child: CircularProgressIndicator()),
+                            if (!_isWeatherDataLoading && _weather != null)
+                              Text(
+                                _weather!.cityName,
+                                style: myTextStyle,
+                              ),
+                            const SizedBox(width: 10.0),
+                            if (!_isWeatherDataLoading && _weather != null)
+                              MapString.mapStringToIcon(
+                                context,
+                                '${_weather?.currently}',
+                                30,
+                              ),
+                            const SizedBox(width: 10.0),
+                            if (_weather != null)
+                              Text(
+                                "${_weather!.temp.round()} °C",
+                                style: const TextStyle(
+                                  color: ColorPalette.secondaryColor,
+                                  fontSize: 25.0,
+                                ),
+                              ),
+                          ],
                         ),
-                      const SizedBox(width: 10.0),
-                      if (_weather != null)
-                        Text(
-                          "${_weather!.temp.round()} °C",
-                          style: const TextStyle(
-                            color: ColorPalette.secondaryColor,
-                            fontSize: 25.0,
-                          ),
-                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      const CustomGrid(),
                     ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                const CustomGrid(),
-              ],
-            ),
-          ): SafeArea(
-            child: Column(
-              children: [
-              Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // await FirebaseAuth.instance.signOut();
-                      // Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-                      Get.to(() => PropertyAdd());
-                    },
-                    child: const Text(
-                      'Post data',
-                    ),
                   ),
                 )
-              ],
-            ),
-          ),
+              : SafeArea(
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade400,
+                              blurRadius: 3,
+                              spreadRadius: 0,
+                              offset: Offset(0.0, 2.0),
+                            ),
+                          ],
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.grey.shade50,
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        // color: Colors.orange,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (_isWeatherDataLoading)
+                              const Center(child: CircularProgressIndicator()),
+                            if (!_isWeatherDataLoading && _weather != null)
+                              Text(
+                                _weather!.cityName,
+                                style: myTextStyle,
+                              ),
+                            const SizedBox(width: 10.0),
+                            if (!_isWeatherDataLoading && _weather != null)
+                              MapString.mapStringToIcon(
+                                context,
+                                '${_weather?.currently}',
+                                30,
+                              ),
+                            const SizedBox(width: 10.0),
+                            if (_weather != null)
+                              Text(
+                                "${_weather!.temp.round()} °C",
+                                style: const TextStyle(
+                                  color: ColorPalette.secondaryColor,
+                                  fontSize: 25.0,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 2.h,),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Get.to(
+                              () => PropertyAdd(),
+                            );
+                          },
+                          child: const Text(
+                            'Post data',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
         ),
       ),
     );

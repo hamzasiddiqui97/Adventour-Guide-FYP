@@ -1,10 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_maps_basics/models/PropertyModel.dart';
 
 class AddPlacesToFirebaseDb {
   static final database = FirebaseDatabase.instance;
-
-
 
   Future<void> saveUserCredentials(
       String uid, String email, String role) async {
@@ -21,6 +20,85 @@ class AddPlacesToFirebaseDb {
     }
   }
 
+  Future<void> saveHotelOwnerPost(
+    String role,
+    String uid,
+    String title,
+    String description,
+    String bedroom,
+    String washroom,
+    String carParking,
+    String kitchen,
+    int floorArea,
+    String tapAvailable,
+    String airConditioner,
+    String quarterAvailable,
+    int price,
+    String coverImage,
+    String file1,
+    String file2,
+    String file3,
+    String file4,
+    String file5,
+    String file6,
+    String streetName,
+    String fullAddress,
+  ) async {
+    try {
+      await database
+          .ref()
+          .child('users')
+          .child("hotel owner")
+          .child(uid)
+          .child('postData')
+          .set({
+        'title': title,
+        'description': description,
+        'bedroom': bedroom,
+        'washroom': washroom,
+        'carParking': carParking,
+        'kitchen': kitchen,
+        'floorArea': floorArea,
+        'tapAvailable': tapAvailable,
+        'airConditioner': airConditioner,
+        'quarterAvailable': quarterAvailable,
+        'price': price,
+        'coverImage': coverImage,
+        'file1': file1,
+        'file2': file2,
+        'file3': file3,
+        'file4': file4,
+        'file5': file5,
+        'file6': file6,
+        'streetName': streetName,
+        'fullAddress': fullAddress,
+      });
+      // Property(
+      // title: title,
+      // description: description,
+      // bedroom: bedroom,
+      // washroom: washroom,
+      // carParking: carParking,
+      // kitchen: kitchen,
+      // floorArea: floorArea,
+      // tapAvailable: tapAvailable,
+      // airConditioner: airConditioner,
+      // quarterAvailable: quarterAvailable,
+      // price: price,
+      // coverImage: coverImage,
+      // file1: file1,
+      // file2: file2,
+      // file3: file3,
+      // file4: file4,
+      // file5: file5,
+      // file6: file6,
+      // streetName: streetName,
+      // fullAddress: fullAddress));
+    } catch (e) {
+      print('Error saving user credentials: $e');
+    }
+  }
+
   Future<String> getUserRole(String uid) async {
     String userRole = "";
     DatabaseReference userRef = database.ref().child('users');
@@ -29,7 +107,8 @@ class AddPlacesToFirebaseDb {
       await userRef.onValue.first.then((DatabaseEvent event) {
         DataSnapshot dataSnapshot = event.snapshot;
         if (dataSnapshot.exists) {
-          Map<dynamic, dynamic>? usersData = dataSnapshot.value as Map<dynamic, dynamic>?;
+          Map<dynamic, dynamic>? usersData =
+              dataSnapshot.value as Map<dynamic, dynamic>?;
           if (usersData != null) {
             for (String role in usersData.keys) {
               if (usersData[role]?[uid] != null) {
@@ -55,7 +134,8 @@ class AddPlacesToFirebaseDb {
     DatabaseReference usersRef = FirebaseDatabase.instance.ref().child('users');
 
     // Query the users node for a child with the given email
-    DatabaseEvent dataSnapshotEvent = await usersRef.orderByChild('email').equalTo(email).once();
+    DatabaseEvent dataSnapshotEvent =
+        await usersRef.orderByChild('email').equalTo(email).once();
 
     // Get the DataSnapshot from the DatabaseEvent
     DataSnapshot dataSnapshot = dataSnapshotEvent.snapshot;
@@ -63,14 +143,13 @@ class AddPlacesToFirebaseDb {
     // Check if a user with the given email exists
     if (dataSnapshot.value != null) {
       // Get the user's role from the snapshot
-      Map<dynamic, dynamic> userMap = dataSnapshot.value as Map<dynamic, dynamic>;
+      Map<dynamic, dynamic> userMap =
+          dataSnapshot.value as Map<dynamic, dynamic>;
       existingRole = userMap.values.first['role'];
     }
 
     return existingRole;
   }
-
-
 
   static Stream<DatabaseEvent> getPlacesStream(String uid, String tripName) {
     return database
@@ -82,6 +161,17 @@ class AddPlacesToFirebaseDb {
         .child(tripName)
         .onValue;
   }
+
+  // static Stream<DatabaseEvent> getHotelPostByUID(String uid) {
+  //   return database
+  //       .ref()
+  //       .child('users')
+  //       .child('hotel owner')
+  //       .child(uid)
+  //       .child('places')
+  //       .child(tripName)
+  //       .onValue;
+  // }
 
   // function to get trip names for MyPlan
   static Stream<DatabaseEvent> getTripsStream(String uid) {
@@ -124,7 +214,6 @@ class AddPlacesToFirebaseDb {
         .child('tourist')
         .child(uid)
         .child('places')
-
         .child(tripName)
         .child(placeKey)
         .remove();
@@ -137,7 +226,6 @@ class AddPlacesToFirebaseDb {
         .child('tourist')
         .child(uid)
         .child('places')
-
         .child(tripName);
 
     await tripRef.remove();

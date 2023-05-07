@@ -15,7 +15,7 @@ class _TransportationOwnerPageState extends State<TransportationOwnerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TransportationOwnerPage'),
+        title: const Text('TransportationOwnerPage'),
       ),
       body: Column(
         children: [

@@ -1,12 +1,18 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
+import 'package:google_maps_basics/controllers/mainController.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/hotel_owner_dummy_screen.dart';
+import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/models/PropertyModel.dart';
+import 'package:google_maps_basics/snackbar_utils.dart';
+import 'package:google_maps_basics/view/screens/pages/home_view.dart';
 import 'package:google_maps_basics/widgets/customButton.dart';
 import 'package:google_maps_basics/widgets/iconButton.dart';
 import 'package:google_maps_basics/widgets/myContainer.dart';
@@ -1048,7 +1054,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
   File? ImageFile4;
   File? ImageFile5;
   File? ImageFile6;
-  String imageUrl = '';
+  String coverImage = '';
+  String imageUrl1 = '';
+  String imageUrl2 = '';
+  String imageUrl3 = '';
+  String imageUrl4 = '';
+  String imageUrl5 = '';
+  String imageUrl6 = '';
 
   VideoPlayerController? _videoPlayerController;
 
@@ -1083,6 +1095,35 @@ class _AddPostScreenState extends State<AddPostScreen> {
       setState(() {
         coverImageFile = File(pickedFile.path);
       });
+    }
+    if (coverImageFile == null) return;
+    //Import dart:core
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    /*Step 2: Upload to Firebase storage*/
+    //Install firebase_storage
+    //Import the library
+
+    //Get a reference to storage root
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    //Create a reference for the image to be stored
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    //Handle errors/success
+    try {
+      //Store the file
+      await referenceImageToUpload.putFile(
+        File(
+          coverImageFile!.path,
+        ),
+      );
+      //Success: get the download URL
+      coverImage = await referenceImageToUpload.getDownloadURL();
+      print(coverImage);
+    } catch (error) {
+      //Some error occurred
     }
   }
 
@@ -1121,7 +1162,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         ),
       );
       //Success: get the download URL
-       imageUrl = await referenceImageToUpload.getDownloadURL();
+      imageUrl1 = await referenceImageToUpload.getDownloadURL();
     } catch (error) {
       //Some error occurred
     }
@@ -1138,6 +1179,34 @@ class _AddPostScreenState extends State<AddPostScreen> {
         ImageFile2 = File(pickedFile.path);
       });
     }
+    if (ImageFile2 == null) return;
+    //Import dart:core
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    /*Step 2: Upload to Firebase storage*/
+    //Install firebase_storage
+    //Import the library
+
+    //Get a reference to storage root
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    //Create a reference for the image to be stored
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    //Handle errors/success
+    try {
+      //Store the file
+      await referenceImageToUpload.putFile(
+        File(
+          ImageFile2!.path,
+        ),
+      );
+      //Success: get the download URL
+      imageUrl2 = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {
+      //Some error occurred
+    }
   }
 
   getImg3FromGallery() async {
@@ -1150,6 +1219,34 @@ class _AddPostScreenState extends State<AddPostScreen> {
       setState(() {
         ImageFile3 = File(pickedFile.path);
       });
+    }
+    if (ImageFile3 == null) return;
+    //Import dart:core
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    /*Step 2: Upload to Firebase storage*/
+    //Install firebase_storage
+    //Import the library
+
+    //Get a reference to storage root
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    //Create a reference for the image to be stored
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    //Handle errors/success
+    try {
+      //Store the file
+      await referenceImageToUpload.putFile(
+        File(
+          ImageFile3!.path,
+        ),
+      );
+      //Success: get the download URL
+      imageUrl3 = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {
+      //Some error occurred
     }
   }
 
@@ -1164,6 +1261,34 @@ class _AddPostScreenState extends State<AddPostScreen> {
         ImageFile4 = File(pickedFile.path);
       });
     }
+    if (ImageFile2 == null) return;
+    //Import dart:core
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    /*Step 2: Upload to Firebase storage*/
+    //Install firebase_storage
+    //Import the library
+
+    //Get a reference to storage root
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    //Create a reference for the image to be stored
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    //Handle errors/success
+    try {
+      //Store the file
+      await referenceImageToUpload.putFile(
+        File(
+          ImageFile4!.path,
+        ),
+      );
+      //Success: get the download URL
+      imageUrl4 = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {
+      //Some error occurred
+    }
   }
 
   getImg5FromGallery() async {
@@ -1176,6 +1301,34 @@ class _AddPostScreenState extends State<AddPostScreen> {
       setState(() {
         ImageFile5 = File(pickedFile.path);
       });
+    }
+    if (ImageFile5 == null) return;
+    //Import dart:core
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    /*Step 2: Upload to Firebase storage*/
+    //Install firebase_storage
+    //Import the library
+
+    //Get a reference to storage root
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    //Create a reference for the image to be stored
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    //Handle errors/success
+    try {
+      //Store the file
+      await referenceImageToUpload.putFile(
+        File(
+          ImageFile5!.path,
+        ),
+      );
+      //Success: get the download URL
+      imageUrl5 = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {
+      //Some error occurred
     }
   }
 
@@ -1190,10 +1343,39 @@ class _AddPostScreenState extends State<AddPostScreen> {
         ImageFile6 = File(pickedFile.path);
       });
     }
+    if (ImageFile6 == null) return;
+    //Import dart:core
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    /*Step 2: Upload to Firebase storage*/
+    //Install firebase_storage
+    //Import the library
+
+    //Get a reference to storage root
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    //Create a reference for the image to be stored
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    //Handle errors/success
+    try {
+      //Store the file
+      await referenceImageToUpload.putFile(
+        File(
+          ImageFile6!.path,
+        ),
+      );
+      //Success: get the download URL
+      imageUrl6 = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {
+      //Some error occurred
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final MainController mainController = Get.put(MainController());
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -1618,7 +1800,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       height: 6.h,
                       width: 320.w,
                       text: "Post",
-                      onTap: () {
+                      onTap: () async {
                         if (houseNo.text.isNotEmpty &&
                                 streetName.text.isNotEmpty &&
                                 fullAddress.text.isNotEmpty
@@ -1628,6 +1810,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           if (value1 == true && value2 == true) {
                             final HotelOwnerController hotelOwnerController =
                                 Get.put(HotelOwnerController());
+                            // final MainController mainController =
+                            //     Get.put(MainController());
                             hotelOwnerController.propertyList.add(Property(
                               title: widget.title!,
                               description: widget.desc!,
@@ -1641,45 +1825,94 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               airConditioner: widget.ac!,
                               quarterAvailable: widget.quarters!,
                               price: widget.price,
-                              coverImage: coverImageFile!.path,
-                              file1: ImageFile1!.path,
-                              file2: ImageFile2!.path,
-                              file3: ImageFile3!.path,
-                              file4: ImageFile4!.path,
-                              file5: ImageFile5!.path,
-                              file6: ImageFile6!.path,
+                              coverImage: coverImage,
+                              file1: imageUrl1,
+                              file2: imageUrl2,
+                              file3: imageUrl3,
+                              file4: imageUrl4,
+                              file5: imageUrl5,
+                              file6: imageUrl6,
                               // video: _video!.path,
                               streetName: streetName.text,
                               fullAddress: fullAddress.text,
                             ));
+                            String uid = FirebaseAuth.instance.currentUser!.uid;
+                            AddPlacesToFirebaseDb addPlacesToFirebaseDb =
+                                AddPlacesToFirebaseDb();
+                            String userRole =
+                                await addPlacesToFirebaseDb.getUserRole(uid);
+                            print(userRole);
+                            print(mainController.role.value);
+                            // if (userRole != mainController.role.value) {
+                            //   Utils.showSnackBar(
+                            //       "You are signed in as a $userRole. Please sign in from the correct page.",
+                            //       false);
+                            //   return;
+                            // }
+                            // print(mainController.role.value);
+                            // else {
+                            AddPlacesToFirebaseDb().saveHotelOwnerPost(
+                              mainController.role.value,
+                              uid,
+                              widget.title!,
+                              widget.desc!,
+                              widget.bedroom!,
+                              widget.washroom!,
+                              widget.parking!,
+                              widget.kitchen!,
+                              widget.floorArea,
+                              widget.tap!,
+                              widget.ac!,
+                              widget.quarters!,
+                              widget.price,
+                              coverImage,
+                              imageUrl1,
+                              imageUrl2,
+                              imageUrl3,
+                              imageUrl4,
+                              imageUrl5,
+                              imageUrl6,
+                              streetName.text,
+                              fullAddress.text,
+                            );
+                            Get.offAll(
+                              HotelOwnerPage(
+                                uid: uid,
+                              ),
+                            );
+                            Utils.showSnackBar("Successfully Posted", true);
+                            //
+                            // .showToaFluttertoastst(
+                            //     msg: 'Post Successfully Posted!');
+                            // }
                             print(hotelOwnerController.propertyList.length);
                             if (widget.property == 'Update') {
-                              final HotelOwnerController hotelOwnerController =
-                                  Get.put(HotelOwnerController());
-                              hotelOwnerController.propertyList.add(Property(
-                                title: widget.title!,
-                                description: widget.desc!,
-                                bedroom: widget.bedroom!,
-                                washroom: widget.washroom!,
-                                carParking: widget.parking!,
-                                kitchen: widget.kitchen!,
-                                // areaUnit: widget.ac!,
-                                floorArea: widget.floorArea,
-                                tapAvailable: widget.tap!,
-                                airConditioner: widget.ac!,
-                                quarterAvailable: widget.quarters!,
-                                price: widget.price,
-                                coverImage: coverImageFile!.path,
-                                file1: ImageFile1!.path,
-                                file2: ImageFile2!.path,
-                                file3: ImageFile3!.path,
-                                file4: ImageFile4!.path,
-                                file5: ImageFile5!.path,
-                                file6: ImageFile6!.path,
-                                // video: _video!.path,
-                                streetName: streetName.text,
-                                fullAddress: fullAddress.text,
-                              ));
+                              // final HotelOwnerController hotelOwnerController =
+                              //     Get.put(HotelOwnerController());
+                              // hotelOwnerController.propertyList.add(Property(
+                              //   title: widget.title!,
+                              //   description: widget.desc!,
+                              //   bedroom: widget.bedroom!,
+                              //   washroom: widget.washroom!,
+                              //   carParking: widget.parking!,
+                              //   kitchen: widget.kitchen!,
+                              //   // areaUnit: widget.ac!,
+                              //   floorArea: widget.floorArea,
+                              //   tapAvailable: widget.tap!,
+                              //   airConditioner: widget.ac!,
+                              //   quarterAvailable: widget.quarters!,
+                              //   price: widget.price,
+                              //   coverImage: coverImageFile!.path,
+                              //   file1: ImageFile1!.path,
+                              //   file2: ImageFile2!.path,
+                              //   file3: ImageFile3!.path,
+                              //   file4: ImageFile4!.path,
+                              //   file5: ImageFile5!.path,
+                              //   file6: ImageFile6!.path,
+                              //   // video: _video!.path,
+                              //   streetName: streetName.text,
+                              //   fullAddress: fullAddress.text,
+                              // ));
                               print(hotelOwnerController.propertyList.length);
                             } else {
                               // addProperty(
