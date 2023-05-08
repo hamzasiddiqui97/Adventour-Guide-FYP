@@ -1,5 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
 
 class AddPlacesToFirebaseDb {
@@ -35,27 +37,6 @@ class AddPlacesToFirebaseDb {
     }
   }
 
-  // Future<void> hotelOwnerSignup(String email, String hotelName,
-  //     String role, String image1, String image2, String image3) async {
-  //   try {
-  //     await database
-  //         .ref()
-  //         .child('users')
-  //         .child(role.toLowerCase())
-  //         // .child()
-  //         .child('credential')
-  //         .set({
-  //       'email': email,
-  //       'hotelName': hotelName,
-  //       'role': role,
-  //       'image1': image1,
-  //       'image2': image2,
-  //       'image3': image3,
-  //     });
-  //   } catch (e) {
-  //     print('Error saving user credentials: $e');
-  //   }
-  // }
 
   Future<void> saveHotelOwnerPost(
     String role,
@@ -110,27 +91,6 @@ class AddPlacesToFirebaseDb {
         'streetName': streetName,
         'fullAddress': fullAddress,
       });
-      // Property(
-      // title: title,
-      // description: description,
-      // bedroom: bedroom,
-      // washroom: washroom,
-      // carParking: carParking,
-      // kitchen: kitchen,
-      // floorArea: floorArea,
-      // tapAvailable: tapAvailable,
-      // airConditioner: airConditioner,
-      // quarterAvailable: quarterAvailable,
-      // price: price,
-      // coverImage: coverImage,
-      // file1: file1,
-      // file2: file2,
-      // file3: file3,
-      // file4: file4,
-      // file5: file5,
-      // file6: file6,
-      // streetName: streetName,
-      // fullAddress: fullAddress));
     } catch (e) {
       print('Error saving user credentials: $e');
     }
@@ -199,18 +159,6 @@ class AddPlacesToFirebaseDb {
         .onValue;
   }
 
-  // static Stream<DatabaseEvent> getHotelPostByUID(String uid) {
-  //   return database
-  //       .ref()
-  //       .child('users')
-  //       .child('hotel owner')
-  //       .child(uid)
-  //       .child('places')
-  //       .child(tripName)
-  //       .onValue;
-  // }
-
-  // function to get trip names for MyPlan
   static Stream<DatabaseEvent> getTripsStream(String uid) {
     return database
         .ref()
@@ -219,6 +167,37 @@ class AddPlacesToFirebaseDb {
         .child(uid)
         .child('places')
         .onValue;
+  }
+
+  static Future<Map<String, dynamic>?> getPersonalHotelPost(String uid) async {
+    // var data = database
+    //     .ref()
+    //     .child('users')
+    //     .child('hotel owner')
+    //     .child(uid)
+    //     .child('postData').onValue.length.toString();
+    // print("data "+data.toString());
+    final HotelOwnerController hotelOwnerController =
+    Get.put(HotelOwnerController());
+
+    var postRef= database
+        .ref()
+        .child('users')
+        .child('hotel owner')
+        .child(uid)
+        .child('postData');
+    DatabaseEvent event = (await postRef.once());
+    DataSnapshot dataSnapshot = event.snapshot;
+
+    if (dataSnapshot.value != null) {
+    Map<String, dynamic> result =
+    Map<String, dynamic>.from(dataSnapshot.value as Map);
+    hotelOwnerController.dataList.value=result;
+    print(result);
+    return result;
+    }
+    // else {
+    // return null;
   }
 
   static Future<Map<String, dynamic>?> getPlaceDetails(

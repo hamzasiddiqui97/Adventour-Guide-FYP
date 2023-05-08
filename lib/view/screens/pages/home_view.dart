@@ -1,14 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/controllers/mainController.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
+import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/view/screens/views/addProperty.dart';
+import 'package:google_maps_basics/widgets/myContainer.dart';
 import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -106,6 +110,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
   @override
   Widget build(BuildContext context) {
     final MainController mainController = Get.put(MainController());
+    final HotelOwnerController hotelOwnerController =
+    Get.put(HotelOwnerController());
     const TextStyle myTextStyle = TextStyle(
       fontSize: 25,
       color: Colors.black,
@@ -224,7 +230,9 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 2.h,),
+                      SizedBox(
+                        height: 2.h,
+                      ),
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
@@ -237,6 +245,29 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                           ),
                         ),
                       ),
+                      GestureDetector(
+                        onTap: (){
+                          String uid = FirebaseAuth.instance.currentUser!.uid;
+                          AddPlacesToFirebaseDb.getPersonalHotelPost(uid);
+                        },
+                        child: Container(
+                          height: 30.h,
+                          width: 90.w,
+                          decoration: const BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(
+                                10,
+                              ),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Image.network(hotelOwnerController.dataList['file2'])
+                            ],
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),

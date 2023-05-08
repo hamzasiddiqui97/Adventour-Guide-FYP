@@ -96,7 +96,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
         .child('tourist')
         .child(userId!)
         .child("places")
-        .child(_tripNameController.text);
+        .child("${DateTime.now().millisecond  }");
 
     await placesRef.set({
       'fromDate': _fromDate!.toIso8601String(),
