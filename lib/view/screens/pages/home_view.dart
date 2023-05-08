@@ -18,6 +18,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../helper/utils.dart';
 import '../../../models/weather.dart';
+import '../../../snackbar_utils.dart';
+import '../views/hotel_post_detail_page.dart';
 
 class HomePageNavBar extends StatefulWidget {
   const HomePageNavBar({Key? key}) : super(key: key);
@@ -112,6 +114,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
     final MainController mainController = Get.put(MainController());
     final HotelOwnerController hotelOwnerController =
     Get.put(HotelOwnerController());
+
     const TextStyle myTextStyle = TextStyle(
       fontSize: 25,
       color: Colors.black,
@@ -137,7 +140,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                               color: Colors.grey.shade400,
                               blurRadius: 3,
                               spreadRadius: 0,
-                              offset: Offset(0.0, 2.0),
+                              offset: const Offset(0.0, 2.0),
                             ),
                           ],
                           borderRadius: BorderRadius.circular(20),
@@ -186,13 +189,14 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                   child: Column(
                     children: [
                       Container(
+
                         decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
                               color: Colors.grey.shade400,
                               blurRadius: 3,
                               spreadRadius: 0,
-                              offset: Offset(0.0, 2.0),
+                              offset: const Offset(0.0, 2.0),
                             ),
                           ],
                           borderRadius: BorderRadius.circular(20),
@@ -201,7 +205,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                         width: MediaQuery.of(context).size.width,
                         height: 100,
                         // color: Colors.orange,
-                        child: Row(
+                        child:
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if (_isWeatherDataLoading)
@@ -241,7 +246,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                             );
                           },
                           child: const Text(
-                            'Post data',
+                            'List Your Property',
                           ),
                         ),
                       ),
@@ -249,6 +254,12 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                         onTap: (){
                           String uid = FirebaseAuth.instance.currentUser!.uid;
                           AddPlacesToFirebaseDb.getPersonalHotelPost(uid);
+
+                          if (kDebugMode) {
+                            print(AddPlacesToFirebaseDb.getPersonalHotelPost(uid));
+                          }
+                          Get.to(const HotelPostDetailsPage());
+
                         },
                         child: Container(
                           height: 30.h,
@@ -261,10 +272,54 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                               ),
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              Image.network(hotelOwnerController.dataList['file2'])
-                            ],
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Stack(
+                                  children: [
+                                    // Display the image
+                                    hotelOwnerController.dataList.value['coverImage'] != null  ?
+
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 65.w,
+                                      child: Image.network(
+                                        hotelOwnerController.dataList.value['coverImage'],
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                        : const SizedBox.shrink(),
+                                    // Display the hotel title at the bottom
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Utils.showSnackBar('Tap', true);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8.0),
+                                          color: Colors.white,
+                                          child: Text(
+
+
+                                            hotelOwnerController.dataList.value['title'] != null ? hotelOwnerController.dataList.value['title'] : '',
+
+                                            style: TextStyle(
+                                              overflow: TextOverflow.fade,
+                                              letterSpacing: 2,
+                                              fontSize: 38,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       )

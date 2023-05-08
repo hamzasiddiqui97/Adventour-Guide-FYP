@@ -324,10 +324,13 @@ class _SignInState extends State<SignIn> {
         // Dismiss the loading widget
         Navigator.of(context).pop();
         Utils.showSnackBar('Sign in failed. Please try again later.', false);
+
       }
+    } else {
+      Utils.showSnackBar('Field should not have leading or trailing spaces', false);
     }
-    Utils.showSnackBar('Field should not have leading or trailing spaces', false);
   }
+
 
   signInWithGoogle() async {
     try {
@@ -350,6 +353,12 @@ class _SignInState extends State<SignIn> {
       // Check if the user role matches the expected role
       if (userRole != mainController.role.value) {
         Utils.showSnackBar("You are signed in as a $userRole. Please sign in from the correct page.", false);
+
+        // Sign out the user from Firebase and GoogleSignIn
+        await FirebaseAuth.instance.signOut();
+        await GoogleSignIn().signOut();
+
+        // Return to prevent navigation
         return;
       }
 

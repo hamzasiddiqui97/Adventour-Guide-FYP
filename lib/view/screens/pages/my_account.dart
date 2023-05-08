@@ -5,6 +5,7 @@ import 'package:google_maps_basics/controllers/mainController.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/bottom_underlined_custom_button.dart';
 import 'package:google_maps_basics/core/widgets/rounded_button.dart';
+import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/view/screens/views/hotelOwnerPosting.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -21,18 +22,18 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-
   final MainController mainController = Get.put(MainController());
 
 
   @override
   Widget build(BuildContext context) {
 
-    String userRole = mainController.role.value;
 
-    print('user role in my account : $userRole');
+
     final user = FirebaseAuth.instance.currentUser;
     final screenWidth = MediaQuery.of(context).size.width;
+    print('user role in my account : ${mainController.role.value}');
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
