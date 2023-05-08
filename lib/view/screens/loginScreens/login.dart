@@ -49,12 +49,18 @@ class _SignInState extends State<SignIn> {
 
   void validateInputs() {
     setState(() {
-      _emailError =
-      emailController.text.isEmpty || !emailController.text.contains('@')
-          ? _emailError != null && emailController.text.isEmpty
+      String email = emailController.text;
+      String trimmedEmail = email.trim();
+      bool hasWhiteSpace = email != trimmedEmail;
+
+      _emailError = trimmedEmail.isEmpty || !trimmedEmail.contains('@') || hasWhiteSpace
+          ? hasWhiteSpace
+          ? 'Email should not have leading or trailing spaces'
+          : _emailError != null && trimmedEmail.isEmpty
           ? _emailError
           : null
           : null;
+
 
       _passwordError = passwordController.text.isEmpty
           ? _passwordError != null && passwordController.text.isEmpty
@@ -215,106 +221,112 @@ class _SignInState extends State<SignIn> {
   }
 
   Future signIn(String expectedRole) async {
-    if (_formKey.currentState == null || _formKey.currentState!.validate()) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      );
-    }
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-
-      // Dismiss the loading widget
-      Navigator.of(context).pop();
-
-      // Check if the sign-in was successful
-      if (FirebaseAuth.instance.currentUser != null) {
-        // Get the user's UID
-        String uid = FirebaseAuth.instance.currentUser!.uid;
-
-        // Get the user role from the database
-        AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
-        String userRole = await addPlacesToFirebaseDb.getUserRole(uid);
-
-        // Check if the user role matches the expected role
-        if (userRole != expectedRole) {
-          Utils.showSnackBar("This email is registered as a $userRole. Please sign in from the correct page.", false);
-          return;
-        }
-
-        // Save user email in the database (Password should not be stored)
-        addPlacesToFirebaseDb.saveUserCredentials(uid, emailController.text.trim(), userRole);
-
-        // Navigate to the appropriate screen based on the user role
-        if (userRole == "Tourist") {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => NavigationPage(uid: uid),
-            ),
-          );
-        } else if (userRole == "Hotel Owner") {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => HotelOwnerPage(uid: uid),
-            ),
-          );
-        } else if (userRole == "Transport Owner") {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => TransportOwnerDashboardPage(uid: uid),
-            ),
-          );
-        } else {
-          Utils.showSnackBar("Invalid role. Please contact support.", false);
-        }
-      } else {
+    if (_emailError == null && _passwordError == null) {
+      if (_formKey.currentState == null || _formKey.currentState!.validate()) {
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Sign In Failed'),
-              content: const Text('The password you entered is incorrect.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
+          builder: (context) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
           },
         );
       }
-    } on FirebaseAuthException catch (e) {
-      String errorMessage;
-      switch (e.code) {
-        case 'user-not-found':
-          errorMessage = 'User not found. Please check your email address.';
-          break;
-        case 'wrong-password':
-          errorMessage = 'The password you entered is incorrect.';
-          break;
-        case 'invalid-email':
-          errorMessage = 'The email address you entered is invalid.';
-          break;
-        default:
-          errorMessage = 'Sign in failed. Please try again later.';
-          break;
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        // Dismiss the loading widget
+        Navigator.of(context).pop();
+
+        // Check if the sign-in was successful
+        if (FirebaseAuth.instance.currentUser != null) {
+          // Get the user's UID
+          String uid = FirebaseAuth.instance.currentUser!.uid;
+
+          // Get the user role from the database
+          AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
+          String userRole = await addPlacesToFirebaseDb.getUserRole(uid);
+
+          // Check if the user role matches the expected role
+          if (userRole != expectedRole) {
+            Utils.showSnackBar(
+                "This email is registered as a $userRole. Please sign in from the correct page.",
+                false);
+            return;
+          }
+
+          // Save user email in the database (Password should not be stored)
+          addPlacesToFirebaseDb.saveUserCredentials(
+              uid, emailController.text.trim(), userRole);
+
+          // Navigate to the appropriate screen based on the user role
+          if (userRole == "Tourist") {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => NavigationPage(uid: uid),
+              ),
+            );
+          } else if (userRole == "Hotel Owner") {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => HotelOwnerPage(uid: uid),
+              ),
+            );
+          } else if (userRole == "Transport Owner") {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => TransportOwnerDashboardPage(uid: uid),
+              ),
+            );
+          } else {
+            Utils.showSnackBar("Invalid role. Please contact support.", false);
+          }
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Sign In Failed'),
+                content: const Text('The password you entered is incorrect.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } on FirebaseAuthException catch (e) {
+        String errorMessage;
+        switch (e.code) {
+          case 'user-not-found':
+            errorMessage = 'User not found. Please check your email address.';
+            break;
+          case 'wrong-password':
+            errorMessage = 'The password you entered is incorrect.';
+            break;
+          case 'invalid-email':
+            errorMessage = 'The email address you entered is invalid.';
+            break;
+          default:
+            errorMessage = 'Sign in failed. Please try again later.';
+            break;
+        }
+        // Dismiss the loading widget
+        Navigator.of(context).pop();
+        Utils.showSnackBar(errorMessage, false);
+      } catch (e) {
+        // Dismiss the loading widget
+        Navigator.of(context).pop();
+        Utils.showSnackBar('Sign in failed. Please try again later.', false);
       }
-      // Dismiss the loading widget
-      Navigator.of(context).pop();
-      Utils.showSnackBar(errorMessage, false);
-    } catch (e) {
-      // Dismiss the loading widget
-      Navigator.of(context).pop();
-      Utils.showSnackBar('Sign in failed. Please try again later.', false);
     }
+    Utils.showSnackBar('Field should not have leading or trailing spaces', false);
   }
 
   signInWithGoogle() async {

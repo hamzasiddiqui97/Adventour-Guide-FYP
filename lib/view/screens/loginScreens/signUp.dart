@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../controllers/mainController.dart';
@@ -171,12 +173,7 @@ class _SignUpState extends State<SignUp> {
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 40),
                   ),
-                  // style: ButtonStyle(
-                  //   backgroundColor: MaterialStateProperty.all<Color>(
-                  //       ColorPalette.secondaryColor),
-                  //   foregroundColor: MaterialStateProperty.all<Color>(
-                  //       ColorPalette.primaryColor),
-                  // ),
+
                   child: const Text('Sign Up'),
                 ),
                 const SizedBox(
@@ -198,6 +195,21 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ],
                   ),
+                ),
+
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: signUpTouristWithGoogle,
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.secondaryColor,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 40),
+                  ),
+
+                  child: const Text('Sign Up with Google'),
                 ),
               ],
             ),
@@ -264,6 +276,60 @@ class _SignUpState extends State<SignUp> {
       Navigator.of(context).pop(); // Dismiss the progress dialog
     }
   }
+
+  signUpTouristWithGoogle() async {
+    try {
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      print('Sign up success\nUsername: ${userCredential.user?.displayName}');
+
+      // Get the user's UID
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+
+      // Create a new user in the Firestore database with the obtained user data
+      AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
+
+      // Save the new user's data in the  database
+      await addPlacesToFirebaseDb.createUserUsingGoogleSignUp(uid, googleUser?.email ?? '', mainController.role.value);
+
+      // Navigate to the appropriate screen based on the user role
+      if (mainController.role.value == "Tourist") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => NavigationPage(uid: uid),
+          ),
+        );
+      } else if (mainController.role.value == "Hotel Owner") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HotelOwnerPage(uid: uid),
+          ),
+        );
+      } else if (mainController.role.value == "Transport Owner") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => TransportationOwnerPage(uid: uid),
+          ),
+        );
+      } else {
+        Utils.showSnackBar("Invalid role. Please contact support.", false);
+      }
+    } catch (e) {
+      if (e is PlatformException) {
+        // Handle the exception here
+        print('Error: ${e.code} - ${e.message}');
+      } else {
+        // Handle other exceptions here
+        print('Error: $e');
+      }
+    }
+  }
+
 }
 
 class HotelOwnerSignUp extends StatefulWidget {
@@ -287,7 +353,6 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
   AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
   final MainController mainController = Get.put(MainController());
 
-  // final hotelNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -465,8 +530,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
                       "Sign Up",
                       style: TextStyle(
                           fontWeight: FontWeight.normal,
-                          color: Colors.white,
-                          fontSize: 20),
+                          color: Colors.white,),
                     ),
                   ),
                 ),
@@ -490,6 +554,38 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
                     ],
                   ),
                 ),
+
+
+            const SizedBox(
+            height: 40,
+          ),
+          SizedBox(
+            width: MediaQuery
+                .of(context)
+                .size
+                .width / 1.2,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                backgroundColor: ColorPalette.secondaryColor,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 40),
+              ),
+              onPressed: signUpHotelOwnerWithGoogle,
+
+              child: const Text(
+                "SignUp with Google",
+                style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
               ],
             ),
           ),
@@ -500,6 +596,7 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
 
 
   Future signUpForHotelOwner() async {
+    validateInputs();
     final isValid = _formKey.currentState!.validate();
     if (!isValid) return;
     showDialog(
@@ -558,417 +655,60 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
     }
   }
 
+  signUpHotelOwnerWithGoogle() async {
+    try {
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      print('Sign up success\nUsername: ${userCredential.user?.displayName}');
+
+      // Get the user's UID
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+
+      // Create a new user in the Firestore database with the obtained user data
+      AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
+
+      // Save the new user's data in the  database
+      await addPlacesToFirebaseDb.createUserUsingGoogleSignUp(uid, googleUser?.email ?? '', mainController.role.value);
+
+      // Navigate to the appropriate screen based on the user role
+      if (mainController.role.value == "Tourist") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => NavigationPage(uid: uid),
+          ),
+        );
+      } else if (mainController.role.value == "Hotel Owner") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HotelOwnerPage(uid: uid),
+          ),
+        );
+      } else if (mainController.role.value == "Transport Owner") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => TransportationOwnerPage(uid: uid),
+          ),
+        );
+      } else {
+        Utils.showSnackBar("Invalid role. Please contact support.", false);
+      }
+    } catch (e) {
+      if (e is PlatformException) {
+        // Handle the exception here
+        print('Error: ${e.code} - ${e.message}');
+      } else {
+        // Handle other exceptions here
+        print('Error: $e');
+      }
+    }
+  }
 }
 
-// class HotelOwnerSignUpDetail extends StatefulWidget {
-//   const HotelOwnerSignUpDetail({
-//     Key? key,
-//     required this.hotelNameController,
-//     required this.emailNameController,
-//     required this.passwordController,
-//     required this.fireStore,
-//   }) : super(key: key);
-//
-//   final String hotelNameController;
-//   final String emailNameController;
-//   final String passwordController;
-//   final FirebaseFirestore fireStore;
-//
-//   @override
-//   State<HotelOwnerSignUpDetail> createState() =>
-//       _HotelOwnerSignUpDetailState(
-//         hotelNameController,
-//         emailNameController,
-//         passwordController,
-//         fireStore,
-//       );
-// }
-
-// class _HotelOwnerSignUpDetailState extends State<HotelOwnerSignUpDetail> {
-//   final String hotelNameController;
-//   final String emailNameController;
-//   final String passwordController;
-//   final FirebaseFirestore fireStore;
-//   File? _image1;
-//   File? _image2;
-//   File? _image3;
-//   String? image1Url;
-//   String? image2Url;
-//   String? image3Url;
-//   final picker = ImagePicker();
-//
-//   _HotelOwnerSignUpDetailState(this.hotelNameController,
-//       this.emailNameController, this.passwordController, this.fireStore);
-//
-//   Future<void> _getImage1({required ImageSource source}) async {
-//     PickedFile? pickedFile = await ImagePicker().getImage(
-//       source: ImageSource.gallery,
-//       maxWidth: 1800,
-//       maxHeight: 1800,
-//     );
-//     if (pickedFile != null) {
-//       setState(() {
-//         _image1 = File(pickedFile.path);
-//       });
-//     }
-//     if (_image1 == null) return;
-//     //Import dart:core
-//     String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-//
-//     /*Step 2: Upload to Firebase storage*/
-//     //Install firebase_storage
-//     //Import the library
-//
-//     //Get a reference to storage root
-//     Reference referenceRoot = FirebaseStorage.instance.ref();
-//     Reference referenceDirImages = referenceRoot.child('images');
-//
-//     //Create a reference for the image to be stored
-//     Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
-//
-//     //Handle errors/success
-//     try {
-//       //Store the file
-//       await referenceImageToUpload.putFile(
-//         File(
-//           _image1!.path,
-//         ),
-//       );
-//       //Success: get the download URL
-//       image1Url = await referenceImageToUpload.getDownloadURL();
-//       print(image1Url);
-//     } catch (error) {
-//       //Some error occurred
-//     }
-// }
-//
-// Future<void> _getImage2({required ImageSource source}) async {
-//   PickedFile? pickedFile = await ImagePicker().getImage(
-//     source: ImageSource.gallery,
-//     maxWidth: 1800,
-//     maxHeight: 1800,
-//   );
-//   if (pickedFile != null) {
-//     setState(() {
-//       _image2 = File(pickedFile.path);
-//     });
-//   }
-//   if (_image2 == null) return;
-//   //Import dart:core
-//   String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-//
-//   /*Step 2: Upload to Firebase storage*/
-//   //Install firebase_storage
-//   //Import the library
-//
-//   //Get a reference to storage root
-//   Reference referenceRoot = FirebaseStorage.instance.ref();
-//   Reference referenceDirImages = referenceRoot.child('images');
-//
-//   //Create a reference for the image to be stored
-//   Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
-//
-//   //Handle errors/success
-//   try {
-//     //Store the file
-//     await referenceImageToUpload.putFile(
-//       File(
-//         _image2!.path,
-//       ),
-//     );
-//     //Success: get the download URL
-//     image2Url = await referenceImageToUpload.getDownloadURL();
-//     print(image2Url);
-//   } catch (error) {
-//     //Some error occurred
-//   }
-// }
-//
-// Future<void> _getImage3({required ImageSource source}) async {
-//   PickedFile? pickedFile = await ImagePicker().getImage(
-//     source: ImageSource.gallery,
-//     maxWidth: 1800,
-//     maxHeight: 1800,
-//   );
-//   if (pickedFile != null) {
-//     setState(() {
-//       _image3 = File(pickedFile.path);
-//     });
-//   }
-//   if (_image3 == null) return;
-//   //Import dart:core
-//   String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-//
-//   /*Step 2: Upload to Firebase storage*/
-//   //Install firebase_storage
-//   //Import the library
-//
-//   //Get a reference to storage root
-//   Reference referenceRoot = FirebaseStorage.instance.ref();
-//   Reference referenceDirImages = referenceRoot.child('images');
-//
-//   //Create a reference for the image to be stored
-//   Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
-//
-//   //Handle errors/success
-//   try {
-//     //Store the file
-//     await referenceImageToUpload.putFile(
-//       File(
-//         _image3!.path,
-//       ),
-//     );
-//     //Success: get the download URL
-//     image3Url = await referenceImageToUpload.getDownloadURL();
-//     print(image3Url);
-//   } catch (error) {
-//     //Some error occurred
-//   }
-// }
-//
-// @override
-// Widget build(BuildContext context) {
-//
-//   return Scaffold(
-//     body: SafeArea(
-//       child: Center(
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.center,
-//           children: [
-//             Lottie.asset(
-//                 'assets/splash_screen_animation/hotelSignUpDetail.json',
-//                 height: 160),
-//             const SizedBox(
-//               height: 30,
-//             ),
-//             const Text(
-//               'Hotel Details',
-//               style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
-//             ),
-//
-//             const SizedBox(
-//               height: 30,
-//             ),
-//             const Text(
-//               "Select Images",
-//               style: TextStyle(fontSize: 22),
-//               textAlign: TextAlign.start,
-//             ),
-//             const SizedBox(
-//               height: 20,
-//             ),
-//             Container(
-//               height: 100,
-//               width: 310,
-//               padding: const EdgeInsets.symmetric(horizontal: 50),
-//               decoration: BoxDecoration(
-//                 color: Colors.white,
-//                 borderRadius: const BorderRadius.all(
-//                   Radius.circular(
-//                     10,
-//                   ),
-//                 ),
-//                 boxShadow: [
-//                   BoxShadow(
-//                     color: Colors.grey.withOpacity(0.5),
-//                     spreadRadius: 5,
-//                     blurRadius: 10,
-//                     offset: const Offset(0, 3), // changes position of shadow
-//                   ),
-//                 ],
-//               ),
-//               child: Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: [
-//                   Container(
-//                     height: 40,
-//                     width: 40,
-//                     decoration: BoxDecoration(
-//                       // color: Colors.black,
-//                       border: Border.all(width: 1.0, color: Colors.grey),
-//                       borderRadius: BorderRadius.circular(5.0),
-//                       // dashPattern: [6, 3], // [dash length, space length]
-//                     ),
-//                     child: Center(
-//                       child: _image1 == null
-//                           ? IconButton(
-//                         onPressed: () {
-//                           _getImage1(
-//                             source: ImageSource.gallery,
-//                             // fileName: _image1!,
-//                           );
-//                         },
-//                         icon: const Icon(
-//                           Icons.add,
-//                         ),
-//                       )
-//                           : Image.file(
-//                         _image1!,
-//                         fit: BoxFit.fill,
-//                       ),
-//                     ),
-//                   ),
-//                   Container(
-//                     height: 40,
-//                     width: 40,
-//                     decoration: BoxDecoration(
-//                       // color: Colors.black,
-//                       border: Border.all(width: 1.0, color: Colors.grey),
-//                       borderRadius: BorderRadius.circular(5.0),
-//                       // dashPattern: [6, 3], // [dash length, space length]
-//                     ),
-//                     child: Center(
-//                       child: _image2 == null
-//                           ? IconButton(
-//                         onPressed: () {
-//                           _getImage2(
-//                             source: ImageSource.gallery,
-//                             // fileName: _image1!,
-//                           );
-//                         },
-//                         icon: const Icon(
-//                           Icons.add,
-//                         ),
-//                       )
-//                           : Image.file(
-//                         _image2!,
-//                         fit: BoxFit.fill,
-//                       ),
-//                     ),
-//                   ),
-//                   InkWell(
-//                     onTap: () {
-//                       _getImage3(
-//                         source: ImageSource.gallery,
-//                       );
-//                     },
-//                     child: Container(
-//                       height: 40,
-//                       width: 40,
-//                       decoration: BoxDecoration(
-//                         // color: Colors.black,
-//                         border: Border.all(width: 1.0, color: Colors.grey),
-//                         borderRadius: BorderRadius.circular(5.0),
-//                         // dashPattern: [6, 3], // [dash length, space length]
-//                       ),
-//                       child: _image3 == null
-//                           ? IconButton(
-//                         onPressed: () {
-//                           _getImage3(
-//                             source: ImageSource.gallery,
-//                             // fileName: _image1!,
-//                           );
-//                         },
-//                         icon: const Icon(
-//                           Icons.add,
-//                         ),
-//                       )
-//                           : Image.file(
-//                         _image3!,
-//                         fit: BoxFit.fill,
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//
-//             const SizedBox(
-//               height: 20,
-//             ),
-//             InkWell(
-//               onTap: () {
-//                 Get.to(
-//                   MySample(),
-//                 );
-//               },
-//               child: Container(
-//                 height: 50,
-//                 width: 200,
-//                 decoration: const BoxDecoration(
-//                   color: Colors.orangeAccent,
-//                   borderRadius: BorderRadius.all(
-//                     Radius.circular(
-//                       10,
-//                     ),
-//                   ),
-//                 ),
-//                 child: const Center(
-//                   child: Text(
-//                     "Enter Card Details",
-//                     style: TextStyle(
-//                       fontSize: 19,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//             const SizedBox(
-//               height: 30,
-//             ),
-//             InkWell(
-//               onTap: () {
-//                 // Get.to(
-//                 //   MySample(),
-//                 // );
-//
-//                 AddPlacesToFirebaseDb().hotelOwnerSignup(
-//                   // uid,
-//                   emailNameController,
-//                   hotelNameController,
-//                   "hotel owner",
-//                   image1Url!,
-//                   image2Url!,
-//                   image3Url!,
-//                 );
-//                 Utils.showSnackBar("Account is created Sucessfully!", true);
-//
-//                 Get.offAll(HotelOwnerPage());
-//               },
-//               child: Container(
-//                 height: 50,
-//                 width: 200,
-//                 decoration: const BoxDecoration(
-//                   color: Colors.orangeAccent,
-//                   borderRadius: BorderRadius.all(
-//                     Radius.circular(
-//                       10,
-//                     ),
-//                   ),
-//                 ),
-//                 child: const Center(
-//                   child: Text(
-//                     "Confirm",
-//                     style: TextStyle(
-//                       fontSize: 19,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//             // TextFormField(
-//             //   controller: hotelNameController,
-//             //   cursorColor: Colors.black,
-//             //   textInputAction: TextInputAction.next,
-//             //   decoration: InputDecoration(
-//             //     labelText: 'Hotel Name',
-//             //     errorText: _emailError,
-//             //     prefixIcon: const Icon(Icons.person_pin_circle_rounded,size: 30,),
-//             //   ),
-//             //   onChanged: (value) {
-//             //     validateInputs();
-//             //   },
-//             //   autofillHints: const [AutofillHints.email],
-//             // ),
-//             const SizedBox(
-//               height: 12,
-//             ),
-//           ],
-//         ),
-//       ),
-//     ),
-//   );
-// }}
 
 class TransportOwnerSignUp extends StatefulWidget {
   final VoidCallback onClickSignIn;
@@ -1157,6 +897,20 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
                     ],
                   ),
                 ),
+
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: signUpTransportOwnerWithGoogle,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.secondaryColor,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 40),
+                  ),
+
+                  child: const Text('Sign Up with Google'),
+                ),
               ],
             ),
           ),
@@ -1239,4 +993,57 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
       Navigator.of(context).pop(); // Dismiss the progress dialog
     }
   }
+  signUpTransportOwnerWithGoogle() async {
+    try {
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      print('Sign up success\nUsername: ${userCredential.user?.displayName}');
+
+      // Get the user's UID
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+
+      // Create a new user in the Firestore database with the obtained user data
+      AddPlacesToFirebaseDb addPlacesToFirebaseDb = AddPlacesToFirebaseDb();
+
+      // Save the new user's data in the  database
+      await addPlacesToFirebaseDb.createUserUsingGoogleSignUp(uid, googleUser?.email ?? '', mainController.role.value);
+
+      // Navigate to the appropriate screen based on the user role
+      if (mainController.role.value == "Tourist") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => NavigationPage(uid: uid),
+          ),
+        );
+      } else if (mainController.role.value == "Hotel Owner") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HotelOwnerPage(uid: uid),
+          ),
+        );
+      } else if (mainController.role.value == "Transport Owner") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => TransportationOwnerPage(uid: uid),
+          ),
+        );
+      } else {
+        Utils.showSnackBar("Invalid role. Please contact support.", false);
+      }
+    } catch (e) {
+      if (e is PlatformException) {
+        // Handle the exception here
+        print('Error: ${e.code} - ${e.message}');
+      } else {
+        // Handle other exceptions here
+        print('Error: $e');
+      }
+    }
+  }
+
 }

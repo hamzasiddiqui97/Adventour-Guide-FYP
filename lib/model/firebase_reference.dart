@@ -37,6 +37,20 @@ class AddPlacesToFirebaseDb {
     }
   }
 
+  Future<void> createUserUsingGoogleSignUp(String uid, String email, String role) async {
+    try {
+      await database
+          .ref()
+          .child('users')
+          .child(role.toLowerCase())
+          .child(uid)
+          .child('credential')
+          .set({'email': email, 'role': role});
+    } catch (e) {
+      print('Error creating user: $e');
+    }
+  }
+
 
   Future<void> saveHotelOwnerPost(
     String role,
