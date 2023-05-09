@@ -16,6 +16,7 @@ import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../helper/utils.dart';
+import '../../../models/PropertyModel.dart';
 import '../../../models/weather.dart';
 import '../../../snackbar_utils.dart';
 import '../views/hotel_post_detail_page.dart';
@@ -29,7 +30,8 @@ class HomePageNavBar extends StatefulWidget {
 
 class _HomePageNavBarState extends State<HomePageNavBar> {
   final MainController mainController = Get.put(MainController());
-  final HotelOwnerController hotelOwnerController = Get.put(HotelOwnerController());
+  final HotelOwnerController hotelOwnerController =
+      Get.put(HotelOwnerController());
   // weather api
   String apiKey = '97f6f37816c2c554f9f209bd1b7b7afe';
   Weather? _weather;
@@ -118,7 +120,6 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
 
   @override
   Widget build(BuildContext context) {
-
     const TextStyle myTextStyle = TextStyle(
       fontSize: 25,
       color: Colors.black,
@@ -190,155 +191,161 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                   ),
                 )
               : SafeArea(
-                  child: Stack(
+                  child: Column(
                     children: [
-                      Column(
-                        children: [
-                          Container(
-
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.shade400,
-                                  blurRadius: 3,
-                                  spreadRadius: 0,
-                                  offset: const Offset(0.0, 2.0),
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.grey.shade50,
+                      // Weather container
+                      Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade400,
+                              blurRadius: 3,
+                              spreadRadius: 0,
+                              offset: const Offset(0.0, 2.0),
                             ),
-                            width: MediaQuery.of(context).size.width,
-                            height: 100,
-                            // color: Colors.orange,
-                            child:
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                if (_isWeatherDataLoading)
-                                  const Center(child: CircularProgressIndicator()),
-                                if (!_isWeatherDataLoading && _weather != null)
-                                  Text(
-                                    _weather!.cityName,
-                                    style: myTextStyle,
-                                  ),
-                                const SizedBox(width: 10.0),
-                                if (!_isWeatherDataLoading && _weather != null)
-                                  MapString.mapStringToIcon(
-                                    context,
-                                    '${_weather?.currently}',
-                                    30,
-                                  ),
-                                const SizedBox(width: 10.0),
-                                if (_weather != null)
-                                  Text(
-                                    "${_weather!.temp.round()} °C",
-                                    style: const TextStyle(
-                                      color: ColorPalette.secondaryColor,
-                                      fontSize: 25.0,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 2.h,
-                          ),
-                          GestureDetector(
-
-                            onTap: (){
-                              // final String? title= hotelOwnerController.dataList.value['title'];
-
-                              Get.to(()=>const HotelPostDetailsPage());
-
-                            },
-                            child: Container(
-                              height: 30.h,
-                              width: 90.w,
-                              decoration: const BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(
-                                    10,
-                                  ),
+                          ],
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.grey.shade50,
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        // color: Colors.orange,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (_isWeatherDataLoading)
+                              const Center(child: CircularProgressIndicator()),
+                            if (!_isWeatherDataLoading && _weather != null)
+                              Text(
+                                _weather!.cityName,
+                                style: myTextStyle,
+                              ),
+                            const SizedBox(width: 10.0),
+                            if (!_isWeatherDataLoading && _weather != null)
+                              MapString.mapStringToIcon(
+                                context,
+                                '${_weather?.currently}',
+                                30,
+                              ),
+                            const SizedBox(width: 10.0),
+                            if (_weather != null)
+                              Text(
+                                "${_weather!.temp.round()} °C",
+                                style: const TextStyle(
+                                  color: ColorPalette.secondaryColor,
+                                  fontSize: 25.0,
                                 ),
                               ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: hotelOwnerController.propertyList.map((property) {
-                                    return Stack(
-                                      children: [
-                                        // Display the image
-                                        property.coverImage != null
-                                            ? SizedBox(
-                                          width: MediaQuery.of(context).size.width,
-                                          height: 65.w,
-                                          child: Image.network(
-                                            property.coverImage!,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        )
-                                            : const SizedBox.shrink(),
-                                        // Display the hotel title at the bottom
-                                        Positioned(
-                                          bottom: 0,
-                                          left: 0,
-                                          child: InkWell(
-                                            onTap: () {
-                                              Utils.showSnackBar('Tap', true);
-                                            },
-                                            child: Container(
-                                              width: MediaQuery.of(context).size.width,
-                                              padding: const EdgeInsets.all(8.0),
-                                              color: Colors.orange.shade50,
-                                              child: Text(
-                                                property.title,
-                                                style: const TextStyle(
-                                                  overflow: TextOverflow.ellipsis,
-                                                  letterSpacing: 2,
-                                                  fontSize: 38,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.black,
-                                                ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      // List of cards
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: hotelOwnerController.propertyList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            var property =
+                                hotelOwnerController.propertyList[index];
+
+
+                            return GestureDetector(
+                              onTap: () {
+                                Get.to(() =>
+                                    HotelPostDetailsPage(property: property));
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 4, horizontal: 8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.15),
+                                      blurRadius: 5.0,
+                                      spreadRadius: 0.0,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Card(
+                                  child: Stack(
+                                    children: [
+                                      // Display the image
+                                      property.coverImage != null
+                                          ? SizedBox(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: 65.w,
+                                              child: Image.network(
+                                                property.coverImage!,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                          : const SizedBox.shrink(),
+                                      // Display the hotel title at the bottom
+                                      Positioned(
+                                        bottom: 0,
+                                        left: 0,
+                                        child: InkWell(
+                                          onTap: () {
+                                            Utils.showSnackBar('Tap', true);
+                                          },
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            padding: const EdgeInsets.all(8.0),
+                                            color: Colors.white,
+                                            child: Text(
+                                              property.title,
+                                              style: const TextStyle(
+                                                overflow: TextOverflow.ellipsis,
+                                                letterSpacing: 2,
+                                                fontSize: 38,
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.black,
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    );
-                                  }).toList(),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-
-                            ),
-                          ),
-                        ],
-
-                      ),
-                      Positioned(
-                        bottom: 20,
-                        right: 10,
-                        child: ElevatedButton(
-
-                          onPressed: () {
-                            Get.to(
-                                  () => PropertyAdd(),
                             );
                           },
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  ColorPalette.secondaryColor),
-                              foregroundColor: MaterialStateProperty.all(
-                                  ColorPalette.primaryColor)
-                          ),
-                          child: const Text(
-                            'List Your Hotel',
+                        ),
+
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Align(
+                          
+                          alignment: Alignment.bottomCenter,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.to(
+                                    () => PropertyAdd(),
+                              );
+                            },
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    ColorPalette.secondaryColor),
+                                foregroundColor: MaterialStateProperty.all(
+                                    ColorPalette.primaryColor)),
+                            child: const Text(
+                              'List Your Hotel',
+                            ),
                           ),
                         ),
-                      )
-
-                    ]
-
+                      ),
+                    ],
                   ),
                 ),
         ),
