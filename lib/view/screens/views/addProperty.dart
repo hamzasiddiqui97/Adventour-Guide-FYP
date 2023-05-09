@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -81,10 +82,17 @@ class _PropertyAddState extends State<PropertyAdd>
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
+        title: const Text('Post Your Hotel'),
+        centerTitle: true,
+      ),
+        // backgroundColor: Colors.white,
         body: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: GestureDetector(
               onTap: () {
                 FocusScope.of(context).unfocus();
@@ -96,24 +104,24 @@ class _PropertyAddState extends State<PropertyAdd>
                   const SizedBox(
                     height: 10,
                   ),
-                  Row(children: [
-                    RoundBackButton(),
-                    SizedBox(width: 10),
-                    Text(
-                      "${widget.title} Your Property",
-                      style: const TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ]),
-                  SizedBox(height: 7),
-                  Text(
-                    "Select Category",
+                  // Row(children: [
+                  //   // RoundBackButton(),
+                  //   SizedBox(width: 10),
+                  //   Text(
+                  //     "${widget.title} Your Property",
+                  //     style: const TextStyle(
+                  //       overflow: TextOverflow.ellipsis,
+                  //       fontWeight: FontWeight.bold,
+                  //       fontSize: 20,
+                  //     ),
+                  //   ),
+                  // ]),
+                  const SizedBox(height: 7),
+                  const Text(
+                    "Hotel Details",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 26,
                     ),
                   ),
                   // SizedBox(height: 5),
@@ -266,22 +274,22 @@ class _PropertyAddState extends State<PropertyAdd>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 1.h),
-                        Text(
-                          "INCLUDE SOME DETAILS",
-                          style: TextStyle(
-                              fontSize: 16.sp, fontWeight: FontWeight.w700),
-                        ),
+                        // Text(
+                        //   "INCLUDE SOME DETAILS",
+                        //   style: TextStyle(
+                        //       fontSize: 16.sp, fontWeight: FontWeight.w700),
+                        // ),
                         SizedBox(height: 2.h),
-                        const Text('Property Ad Title'),
+                        const Text('Hotel Full Name'),
                         SizedBox(height: 2.h),
                         MyTextField(
-                          contentPadding: EdgeInsets.all(12),
+                          contentPadding: const EdgeInsets.all(12),
                           height: 4.h,
                           width: 10.w,
-                          borderColor: Colors.black,
+                          borderColor: ColorPalette.secondaryColor,
                           controller: title,
                           hint: 'Add Title',
-                          color: Colors.black12,
+                          // color: Colors.black12,
                           radius: 5,
                           maxLength: 30,
 
@@ -294,9 +302,9 @@ class _PropertyAddState extends State<PropertyAdd>
                           children: [
                             Expanded(
                               child: Text(
-                                  "Mention the key features of your item (e.g. brand, model, age, type)",
+                                  "Mention full name of your hotel.",
                                   style: TextStyle(
-                                      color: Colors.black12, fontSize: 13.sp)),
+                                      fontSize: 13.sp)),
                             ),
 
                           ],
@@ -306,13 +314,12 @@ class _PropertyAddState extends State<PropertyAdd>
                         SizedBox(height: 2.h),
                         MyTextField(
                           contentPadding: const EdgeInsets.all(12),
-                          // height: 20.h,
-                          borderColor: ColorPalette.textColor,
+                          borderColor: ColorPalette.secondaryColor,
                           controller: desc,
 
 
-                          hint: 'Add Description',
-                          color: Colors.black12,
+                          hint: 'Provide description of your place.',
+                          // color: Colors.black12,
                           radius: 5,
                           maxLines: 5,
                           maxLength: 400,
@@ -332,7 +339,7 @@ class _PropertyAddState extends State<PropertyAdd>
                         //   ],
                         // ),
                         SizedBox(height: 2.5.h),
-                        Text('Specifications'),
+                        const Text('Specifications'),
                         SizedBox(height: 2.h),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -348,7 +355,7 @@ class _PropertyAddState extends State<PropertyAdd>
                                       ),
                                       SizedBox(height: 2.h),
                                       MyContainer(
-                                        borderColor: ColorPalette.textColor,
+                                        borderColor: ColorPalette.secondaryColor,
                                         radius: 5,
                                         child: Center(
                                           child: DropdownButtonHideUnderline(
@@ -420,7 +427,7 @@ class _PropertyAddState extends State<PropertyAdd>
                                     ),
                                     SizedBox(height: 2.h),
                                     MyContainer(
-                                        borderColor: ColorPalette.textColor,
+                                        borderColor: ColorPalette.secondaryColor,
                                         radius: 5,
                                         child: Center(
                                           child: DropdownButtonHideUnderline(
@@ -708,7 +715,7 @@ class _PropertyAddState extends State<PropertyAdd>
                         const Text("Floor Area"),
                         SizedBox(height: 2.5.h),
                         MyContainer(
-                            borderColor: ColorPalette.textColor,
+                            borderColor: ColorPalette.secondaryColor,
                             radius: 5,
                             child: Row(
                               children: [
@@ -899,7 +906,7 @@ class _PropertyAddState extends State<PropertyAdd>
                           height: 137.h,
                           radius: 10,
                           color: Colors.white12,
-                          horizontalPadding: 5,
+                          // horizontalPadding: 5,
                           verticalPadding: 1,
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -907,17 +914,18 @@ class _PropertyAddState extends State<PropertyAdd>
                                 Text(
                                   "Set a Price",
                                   style: TextStyle(
+
                                     fontSize: 15.sp,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black,
                                   ),
                                 ),
                                 SizedBox(height: 1.h),
-                                Text(
-                                  "Price",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 14.sp),
-                                ),
+
+                                // Text(
+                                //   "Price",
+                                //   style: TextStyle(
+                                //       color: Colors.black, fontSize: 14.sp),
+                                // ),
                                 SizedBox(height: 1.h),
                                 MyTextField(
                                   onEditingComplete: () {
@@ -929,61 +937,77 @@ class _PropertyAddState extends State<PropertyAdd>
                                   // height: 50.h,
                                   radius: 5,
                                   controller: priceController,
-                                  color: Colors.black12,
+                                  borderColor: ColorPalette.secondaryColor,
+                                  // color: Colors.black12,
                                   hint: 'Enter Amount',
                                   icon: const Text('    PKR |'),
                                 )
                               ]),
                         ),
-                        SizedBox(height: 5.h),
-                        Button(
-                          height: 6.h,
-                          text: "Next",
-                          onTap: () {
-                            if (title.text.isNotEmpty &&
-                                desc.text.isNotEmpty &&
-                                priceController.text.isNotEmpty &&
-                                floorArea != null && bedrooms != null && washrooms != null
-                            ) {
-                              if (bedrooms == null &&
-                                  kitchen == null &&
-                                  washrooms == null &&
-                                  parking == null &&
-                                  realEstate == null &&
-                                  ac == null &&
-                                  tap == null &&
-                                  quarters == null &&
-                                  floorArea == null &&
-                                  type == null) {
-                                Utils.showSnackBar('Please fill all fields.', false);
-
-                              } else {
-                                Get.to(() => AddPostScreen(
-                                      title: title.text,
-                                      desc: desc.text,
-                                      price: price,
-                                      bedroom: bedrooms,
-                                      washroom: washrooms,
-                                      parking: parking,
-                                      kitchen: kitchen,
-                                      tap: tap,
-                                      ac: ac,
-                                      quarters: quarters,
-                                      floorArea: floorArea,
-                                      type: type,
-                                      realEstateType: realEstate,
-                                      property: widget.title,
-                                    ));
-
-                              }
-                            } else {
-                              Utils.showSnackBar('Please fill all fields.', false);
-
-                            }
-                          },
-                        ),
                         SizedBox(
-                          height: 20,
+                          width: MediaQuery.of(context).size.width,
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    ColorPalette.secondaryColor),
+                                foregroundColor: MaterialStateProperty.all(
+                                    ColorPalette.primaryColor)),
+
+                            child: Text(
+                              "Next",
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                            onPressed: () {
+                              if (title.text.isNotEmpty &&
+                                  desc.text.isNotEmpty &&
+                                  priceController.text.isNotEmpty &&
+                                  floorArea != null && bedrooms != null && washrooms != null
+                              ) {
+                                if (bedrooms == null &&
+                                    kitchen == null &&
+                                    washrooms == null &&
+                                    parking == null &&
+                                    realEstate == null &&
+                                    ac == null &&
+                                    tap == null &&
+                                    quarters == null &&
+                                    floorArea == null &&
+                                    type == null) {
+                                  Utils.showSnackBar('Please fill all fields.', false);
+                                } else if (priceController.text.startsWith("0") || int.parse(priceController.text) == 0) {
+                                  Utils.showSnackBar('Price cannot start with 0 or be 0.', false);
+                                } else {
+                                  Get.to(() => AddPostScreen(
+                                    title: title.text,
+                                    desc: desc.text,
+                                    price: price,
+                                    bedroom: bedrooms,
+                                    washroom: washrooms,
+                                    parking: parking,
+                                    kitchen: kitchen,
+                                    tap: tap,
+                                    ac: ac,
+                                    quarters: quarters,
+                                    floorArea: floorArea,
+                                    type: type,
+                                    realEstateType: realEstate,
+                                    property: widget.title,
+                                  ));
+                                }
+                              } else {
+                                Utils.showSnackBar('Please fill all fields.', false);
+                              }
+                            },
+                          ),
+                        ),
+
+                         SizedBox(
+                          height: 5.h,
                         ),
                       ],
                     ),
@@ -1217,7 +1241,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
       });
     }
     if (ImageFile3 == null) return;
-    //Import dart:core
     String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
 
     /*Step 2: Upload to Firebase storage*/
@@ -1374,29 +1397,40 @@ class _AddPostScreenState extends State<AddPostScreen> {
     final MainController mainController = Get.put(MainController());
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
+        title: const Text('Post Your Hotel'),
+        centerTitle: true,
+      ),
+      // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 2.h),
-            TopWithBackButton(text: 'Ad Post'),
-            SizedBox(height: 4.h),
+            // SizedBox(height: 2.h),
+            // TopWithBackButton(text: 'Ad Post'),
+            // SizedBox(height: 4.h),
             Padding(
-              padding: EdgeInsets.only(left: 5.w),
+              padding: EdgeInsets.symmetric(vertical: 2.w,horizontal: 2.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Text(
+                    "Hotel Details",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26,
+                    ),
+                  ),
+
                   Text(
                     "Upload Cover Image",
                     style: TextStyle(fontSize: 15.sp),
                   ),
+
                   SizedBox(height: 1.h),
-                  Text(
-                    'Type: jpg and png. Dimensions 333px x 163px - 999px x 489px',
-                    style:
-                        TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 4.h),
+
                   GestureDetector(
                     onTap: () {
                       getCoverFromGallery();
@@ -1408,15 +1442,23 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       height: 66.h,
                       width: 80.w,
                       radius: 10,
-                      borderColor: ColorPalette.textColor,
+                      borderColor: ColorPalette.secondaryColor,
                       child: coverImageFile == null
-                          ? Icon(Icons.add_a_photo_outlined, size: 30)
+                          ? const Icon(Icons.add_a_photo_outlined, size: 30)
                           : Image.file(
                               coverImageFile!,
                               fit: BoxFit.fill,
                             ),
                     ),
                   ),
+                  SizedBox(height: 1.h),
+                  Text(
+                    'Type: jpg and png. Dimensions 333px x 163px - 999px x 489px',
+                    style:
+                    TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(height: 2.h),
+
                   //   : Container(
                   //       height: 66.h,
                   //       width: 80.w,
@@ -1428,9 +1470,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   // child: Image.file(coverImageFile!),
                   //       ),
 
-                  SizedBox(
-                    height: 1.h,
-                  ),
                   Text(
                     'Maximum size 2mb.',
                     style: TextStyle(color: Colors.red, fontSize: 13.sp),
@@ -1458,17 +1497,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         GestureDetector(
                           onTap: () {
                             getImg1FromGallery();
-                            // captureImage();
-                            // print(image1!.path);
+
                           },
                           child: MyContainer(
                             // onTap: (){},
                             height: 66.h,
                             width: 80.w,
                             radius: 10,
-                            borderColor: ColorPalette.textColor,
+                            borderColor: ColorPalette.secondaryColor,
                             child: ImageFile1 == null
-                                ? Icon(Icons.add_a_photo_outlined, size: 30)
+                                ? const Icon(Icons.add_a_photo_outlined, size: 30)
                                 : Image.file(
                                     ImageFile1!,
                                     fit: BoxFit.fill,
@@ -1486,9 +1524,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             height: 66.h,
                             width: 80.w,
                             radius: 10,
-                            borderColor: ColorPalette.textColor,
+                            borderColor: ColorPalette.secondaryColor,
                             child: ImageFile2 == null
-                                ? Icon(Icons.add_a_photo_outlined, size: 30)
+                                ? const Icon(Icons.add_a_photo_outlined, size: 30)
                                 : Image.file(
                                     ImageFile2!,
                                     fit: BoxFit.fill,
@@ -1506,9 +1544,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             height: 66.h,
                             width: 80.w,
                             radius: 10,
-                            borderColor: ColorPalette.textColor,
+                            borderColor: ColorPalette.secondaryColor,
                             child: ImageFile3 == null
-                                ? Icon(Icons.add_a_photo_outlined, size: 30)
+                                ? const Icon(Icons.add_a_photo_outlined, size: 30)
                                 : Image.file(
                                     ImageFile3!,
                                     fit: BoxFit.fill,
@@ -1536,9 +1574,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             height: 66.h,
                             width: 80.w,
                             radius: 10,
-                            borderColor: ColorPalette.textColor,
+                            borderColor: ColorPalette.secondaryColor,
                             child: ImageFile4 == null
-                                ? Icon(Icons.add_a_photo_outlined, size: 30)
+                                ? const Icon(Icons.add_a_photo_outlined, size: 30)
                                 : Image.file(
                                     ImageFile4!,
                                     fit: BoxFit.fill,
@@ -1556,9 +1594,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             height: 66.h,
                             width: 80.w,
                             radius: 10,
-                            borderColor: ColorPalette.textColor,
+                            borderColor: ColorPalette.secondaryColor,
                             child: ImageFile5 == null
-                                ? Icon(Icons.add_a_photo_outlined, size: 30)
+                                ? const Icon(Icons.add_a_photo_outlined, size: 30)
                                 : Image.file(
                                     ImageFile5!,
                                     fit: BoxFit.fill,
@@ -1576,9 +1614,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             height: 66.h,
                             width: 80.w,
                             radius: 10,
-                            borderColor: ColorPalette.textColor,
+                            borderColor: ColorPalette.secondaryColor,
                             child: ImageFile6 == null
-                                ? Icon(Icons.add_a_photo_outlined, size: 30)
+                                ? const Icon(Icons.add_a_photo_outlined, size: 30)
                                 : Image.file(
                                     ImageFile6!,
                                     fit: BoxFit.fill,
@@ -1622,7 +1660,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   //   'Maximum size 2mb.',
                   //   style: TextStyle(color: Colors.red, fontSize: 13.sp),
                   // ),
-                  SizedBox(height: 3.h),
+                  SizedBox(height: 2.h),
                   // Text(
                   //   'Upload Upto One Video',
                   //   style: TextStyle(fontSize: 15.sp),
@@ -1655,95 +1693,57 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Text(
                     'PROPERTY DETAILS FORM',
                     style: TextStyle(
-                        fontSize: 16.sp,
+
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w500,
-                        color: ColorPalette.secondaryColor),
+                        color: Colors.black),
                   ),
                   SizedBox(
                     height: 2.h,
                   ),
-                  const Text('Plot Number'),
+                  const Text('Plot Number',),
                   SizedBox(
                     height: 2.h,
                   ),
                   MyTextField(
-                    contentPadding: EdgeInsets.all(12),
+                    contentPadding: const EdgeInsets.all(12),
                     height: 50,
-                    borderColor: ColorPalette.textColor,
-                    hint: '',
-                    color: Colors.black12,
+                    borderColor: ColorPalette.secondaryColor,
+                    hint: 'Enter Plot Number',
+                    // color: Colors.black12,
                     radius: 5,
                     controller: houseNo,
                   ),
                   SizedBox(height: 3.h),
-                  Text('Street Name'),
+                  const Text('Street Name'),
                   SizedBox(
                     height: 2.h,
                   ),
                   MyTextField(
-                    contentPadding: EdgeInsets.all(12),
+                    contentPadding: const EdgeInsets.all(12),
                     height: 50,
-                    borderColor: ColorPalette.textColor,
-                    hint: 'Enter full address',
-                    color: Colors.black12,
+                    borderColor: ColorPalette.secondaryColor,
+                    hint: 'Enter street name and street number',
+                    // color: Colors.black12,
                     radius: 5,
                     controller: streetName,
                   ),
                   SizedBox(height: 3.h),
-                  Text('Full Address'),
+                  const Text('Full Address'),
                   SizedBox(
                     height: 2.h,
                   ),
                   MyTextField(
-                    contentPadding: EdgeInsets.all(12),
+                    contentPadding: const EdgeInsets.all(12),
 
                     // height: 50,
                     // width: 120.w,
-                    borderColor: ColorPalette.textColor,
-                    hint: '',
-                    color: Colors.black12,
+                    borderColor: ColorPalette.secondaryColor,
+                    hint: 'Enter Full Address',
+                    // color: Colors.black12,
                     radius: 10,
                     controller: fullAddress,
                   ),
-                  // SizedBox(height: 1.h),
-                  // Text(
-                  //   "Location of property identified through Google Map",
-                  //   style: TextStyle(
-                  //     color: Colors.black12,
-                  //     fontSize: 13.sp,
-                  //   ),
-                  // ),
-                  // SizedBox(height: 2.h),
-                  // Text(
-                  //   " PROPERTY DOCUMENTATION COPY",
-                  //   style: TextStyle(
-                  //     fontWeight: FontWeight.w500,
-                  //   ),
-                  // ),
-                  // SizedBox(
-                  //   height: 2.h,
-                  // ),
-                  // Iconbutton(
-                  //   width: 35.w,
-                  //   height: 40.h,
-                  //   icon: Icons.add_a_photo,
-                  //   text: 'Upload',
-                  //   buttonColor: Color(0xff1492E6),
-                  //   radius: 10,
-                  // ),
-                  // SizedBox(
-                  //   height: 2.h,
-                  // ),
-                  // Text(
-                  //   'Property Documentation Copy Upload Pdf Or Image* E.G. Copy Of Site Plan, Photo Of House Number Label, Bank Statement Or A Utility Bill, That Bears The Name Of Property Owner, Etc.',
-                  //   style: TextStyle(
-                  //     fontSize: 13.sp,
-                  //     color: Colors.black12,
-                  //   ),
-                  // ),
-                  // SizedBox(
-                  //   height: 3.h,
-                  // ),
                   Row(children: [
                     Checkbox(
                       checkColor: Colors.black12,
@@ -1761,8 +1761,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         });
                       },
                     ),
-                    SizedBox(width: 3),
-                    Text(
+                    const SizedBox(width: 3),
+                    const Text(
                       "Letter Of Consent Agreement",
                       style: TextStyle(decoration: TextDecoration.underline),
                     )
@@ -1789,155 +1789,114 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     ),
                     const Expanded(
                         child: Text(
-                            'Must Agree To A 4% Mediation Fees To Twiddle Through Funders.'))
+                            'Must Agree To A 4% Mediation Fees To Twiddle Through Funders.',style: TextStyle(decoration: TextDecoration.underline),))
                   ]),
                   SizedBox(height: 4.h),
-                  Button(
-                      height: 6.h,
-                      width: 320.w,
-                      text: "Post",
-                      onTap: () async {
-                        if (houseNo.text.isNotEmpty &&
-                                streetName.text.isNotEmpty &&
-                                fullAddress.text.isNotEmpty
-                            // occupationName.text.isNotEmpty &&
-                            // occupationContact.text.isNotEmpty
-                            ) {
-                          if (value1 == true && value2 == true) {
-                            final HotelOwnerController hotelOwnerController =
-                                Get.put(HotelOwnerController());
-                            // final MainController mainController =
-                            //     Get.put(MainController());
-                            hotelOwnerController.propertyList.add(Property(
-                              title: widget.title!,
-                              description: widget.desc!,
-                              bedroom: widget.bedroom!,
-                              washroom: widget.washroom!,
-                              carParking: widget.parking!,
-                              kitchen: widget.kitchen!,
-                              // areaUnit: widget.ac!,
-                              floorArea: widget.floorArea,
-                              tapAvailable: widget.tap!,
-                              airConditioner: widget.ac!,
-                              quarterAvailable: widget.quarters!,
-                              price: widget.price,
-                              coverImage: coverImage,
-                              file1: imageUrl1,
-                              file2: imageUrl2,
-                              file3: imageUrl3,
-                              file4: imageUrl4,
-                              file5: imageUrl5,
-                              file6: imageUrl6,
-                              // video: _video!.path,
-                              streetName: streetName.text,
-                              fullAddress: fullAddress.text,
-                            ));
-                            String uid = FirebaseAuth.instance.currentUser!.uid;
-                            AddPlacesToFirebaseDb addPlacesToFirebaseDb =
-                                AddPlacesToFirebaseDb();
-                            String userRole =
-                                await addPlacesToFirebaseDb.getUserRole(uid);
-                            print(userRole);
-                            print(mainController.role.value);
-                            // if (userRole != mainController.role.value) {
-                            //   Utils.showSnackBar(
-                            //       "You are signed in as a $userRole. Please sign in from the correct page.",
-                            //       false);
-                            //   return;
-                            // }
-                            // print(mainController.role.value);
-                            // else {
-                            AddPlacesToFirebaseDb().saveHotelOwnerPost(
-                              mainController.role.value,
-                              uid,
-                              widget.title!,
-                              widget.desc!,
-                              widget.bedroom!,
-                              widget.washroom!,
-                              widget.parking!,
-                              widget.kitchen!,
-                              widget.floorArea,
-                              widget.tap!,
-                              widget.ac!,
-                              widget.quarters!,
-                              widget.price,
-                              coverImage,
-                              imageUrl1,
-                              imageUrl2,
-                              imageUrl3,
-                              imageUrl4,
-                              imageUrl5,
-                              imageUrl6,
-                              streetName.text,
-                              fullAddress.text,
-                            );
-                            Get.offAll(
-                              HotelOwnerPage(
-                                uid: uid,
-                              ),
-                            );
-                            Utils.showSnackBar("Successfully Posted", true);
-                            //
-                            // .showToaFluttertoastst(
-                            //     msg: 'Post Successfully Posted!');
-                            // }
-                            print(hotelOwnerController.propertyList.length);
-                            if (widget.property == 'Update') {
-                              // final HotelOwnerController hotelOwnerController =
-                              //     Get.put(HotelOwnerController());
-                              // hotelOwnerController.propertyList.add(Property(
-                              //   title: widget.title!,
-                              //   description: widget.desc!,
-                              //   bedroom: widget.bedroom!,
-                              //   washroom: widget.washroom!,
-                              //   carParking: widget.parking!,
-                              //   kitchen: widget.kitchen!,
-                              //   // areaUnit: widget.ac!,
-                              //   floorArea: widget.floorArea,
-                              //   tapAvailable: widget.tap!,
-                              //   airConditioner: widget.ac!,
-                              //   quarterAvailable: widget.quarters!,
-                              //   price: widget.price,
-                              //   coverImage: coverImageFile!.path,
-                              //   file1: ImageFile1!.path,
-                              //   file2: ImageFile2!.path,
-                              //   file3: ImageFile3!.path,
-                              //   file4: ImageFile4!.path,
-                              //   file5: ImageFile5!.path,
-                              //   file6: ImageFile6!.path,
-                              //   // video: _video!.path,
-                              //   streetName: streetName.text,
-                              //   fullAddress: fullAddress.text,
-                              // ));
-                              print(hotelOwnerController.propertyList.length);
+                  SizedBox(
+                    height: 50,
+                    width: width,
+                    child: ElevatedButton(
+
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                ColorPalette.secondaryColor),
+                            foregroundColor: MaterialStateProperty.all(
+                                ColorPalette.primaryColor)),
+
+                        child: const Text( "Post"),
+
+                        onPressed: () async {
+                          if (houseNo.text.isNotEmpty &&
+                                  streetName.text.isNotEmpty &&
+                                  fullAddress.text.isNotEmpty
+                              ) {
+                            if (value1 == true && value2 == true) {
+                              final HotelOwnerController hotelOwnerController =
+                                  Get.put(HotelOwnerController());
+
+                              hotelOwnerController.propertyList.add(Property(
+                                title: widget.title!,
+                                description: widget.desc!,
+                                bedroom: widget.bedroom!,
+                                washroom: widget.washroom!,
+                                carParking: widget.parking!,
+                                kitchen: widget.kitchen!,
+                                floorArea: widget.floorArea,
+                                tapAvailable: widget.tap!,
+                                airConditioner: widget.ac!,
+                                quarterAvailable: widget.quarters!,
+                                price: widget.price,
+                                coverImage: coverImage,
+                                file1: imageUrl1,
+                                file2: imageUrl2,
+                                file3: imageUrl3,
+                                file4: imageUrl4,
+                                file5: imageUrl5,
+                                file6: imageUrl6,
+                                streetName: streetName.text,
+                                fullAddress: fullAddress.text,
+                              ));
+                              String uid = FirebaseAuth.instance.currentUser!.uid;
+                              AddPlacesToFirebaseDb addPlacesToFirebaseDb =
+                                  AddPlacesToFirebaseDb();
+                              String userRole =
+                                  await addPlacesToFirebaseDb.getUserRole(uid);
+                              if (kDebugMode) {
+                                print(userRole);
+                                print(mainController.role.value);
+
+                              }
+
+                              AddPlacesToFirebaseDb().saveHotelOwnerPost(
+                                mainController.role.value,
+                                uid,
+                                widget.title!,
+                                widget.desc!,
+                                widget.bedroom!,
+                                widget.washroom!,
+                                widget.parking!,
+                                widget.kitchen!,
+                                widget.floorArea,
+                                widget.tap!,
+                                widget.ac!,
+                                widget.quarters!,
+                                widget.price,
+                                coverImage,
+                                imageUrl1,
+                                imageUrl2,
+                                imageUrl3,
+                                imageUrl4,
+                                imageUrl5,
+                                imageUrl6,
+                                streetName.text,
+                                fullAddress.text,
+                              );
+                              Get.offAll(
+                                HotelOwnerPage(
+                                  uid: uid,
+                                ),
+                              );
+                              Utils.showSnackBar("Data Successfully Posted", true);
+
+                              if (kDebugMode) {
+                                print(hotelOwnerController.propertyList.length);
+                              }
+                              if (widget.property == 'Update') {
+
+                                if (kDebugMode) {
+                                  print(hotelOwnerController.propertyList.length);
+                                }
+                              }
                             } else {
-                              // addProperty(
-                              //     '${widget.title}',
-                              //     widget.desc,
-                              //     widget.bedroom,
-                              //     widget.washroom,
-                              //     widget.parking,
-                              //     widget.kitchen,
-                              //     widget.tap,
-                              //     widget.ac,
-                              //     widget.quarters,
-                              //     widget.type,
-                              //     houseNo.text,
-                              //     occupationName.text,
-                              //     occupationContact.text.trim(),
-                              //     streetName.text,
-                              //     gpsAddress.text,
-                              //     widget.price,
-                              //     widget.floorArea);
+
+                              Utils.showSnackBar('Accept terms & policies', false);
                             }
                           } else {
-                            Fluttertoast.showToast(
-                                msg: 'Accept terms & policies');
+                            Utils.showSnackBar('Enter all fields', false);
                           }
-                        } else {
-                          Fluttertoast.showToast(msg: 'Enter all fields');
-                        }
-                      }),
+                        }),
+                  ),
+
                   SizedBox(height: 4.h)
                 ],
               ),
@@ -1948,73 +1907,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
     );
   }
 
-//   captureImage() async {
-//     final _picked = ImagePicker();
-//     PickedFile? image;
-//
-//     /// Check Permissions
-//     await Permission.phone.request();
-//
-//     var permissionStatus = await Permission.photos.status;
-//
-//     if (permissionStatus.isGranted) {
-//       /// Select Image
-//       image = await _picked.getImage(source: ImageSource.camera);
-//
-//       var file = File(image.path);
-//       //String fileName = Uuid().v1();
-//
-//       if (file != null) {
-//         setState(() {
-//           image1 = file;
-//         });
-//         print(image1);
-//         return image1;
-//       } else {
-//         Fluttertoast.showToast(msg: 'No image received');
-//       }
-//     } else {
-//       Fluttertoast.showToast(msg: 'Grant Permissions and try again');
-//     }
-//   }
-//
-//   getImage(File image) async {
-//     final _picked = ImagePicker();
-//     PickedFile? _image;
-//
-//     /// Check Permissions
-//     await Permission.phone.request();
-//
-//     var permissionStatus = await Permission.photos.status;
-//
-//     if (permissionStatus.isGranted) {
-//       /// Select Image
-//       _image = await _picked.getImage(source: ImageSource.gallery);
-//
-//       var file = File(_image!.path);
-//       //String fileName = Uuid().v1();
-//
-//       if (file != null) {
-//         setState(() {
-//           image = file;
-//         });
-//         print(image);
-//         return image;
-//       } else {
-//         Fluttertoast.showToast(msg: 'No image received');
-//       }
-//     } else {
-//       Fluttertoast.showToast(msg: 'Grant Permissions and try again');
-//     }
-//   }
-// }
+
 
   Widget MyIconContainer(IconData icon, double size) {
     return Container(
       height: 100,
       width: 100,
       decoration: BoxDecoration(
-          border: Border.all(color: Color(0xff707070), width: 1),
+          border: Border.all(color: const Color(0xff707070), width: 1),
           borderRadius: BorderRadius.circular(13)),
       child: Icon(icon, size: size),
     );
