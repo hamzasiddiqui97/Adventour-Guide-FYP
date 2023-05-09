@@ -9,6 +9,7 @@ import 'package:google_maps_basics/main.dart';
 import 'package:google_maps_basics/view/screens/views/hotelOwnerPosting.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../controllers/hotelOwnerController.dart';
 import '../views/aboutApp/contact_us.dart';
 import '../views/aboutApp/delete_account.dart';
 import '../views/aboutApp/privacy.dart';
@@ -23,12 +24,12 @@ class MyAccount extends StatefulWidget {
 
 class _MyAccountState extends State<MyAccount> {
   final MainController mainController = Get.put(MainController());
+  final HotelOwnerController hotelOwnerController =
+  Get.put(HotelOwnerController());
 
 
   @override
   Widget build(BuildContext context) {
-
-
 
     final user = FirebaseAuth.instance.currentUser;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -81,6 +82,9 @@ class _MyAccountState extends State<MyAccount> {
                   onPressed: () async {
                     await GoogleSignIn().signOut();
                     await FirebaseAuth.instance.signOut();
+
+                    hotelOwnerController.propertyList.clear();
+
                     Navigator.pushNamedAndRemoveUntil(
                         context, '/home', (route) => false);
                   },
@@ -169,21 +173,21 @@ class _MyAccountState extends State<MyAccount> {
               ),
             ),
 
-            Visibility(
-              visible: mainController.role.value == "Hotel Owner",
-              child: InkWell(
-                onTap: () {
-                  Get.to(() => const HotelOwnerPosting());
-                },
-                enableFeedback: true,
-                child: UnderlineButton(
-                  name: 'View My Postings',
-                  color: Colors.transparent,
-                  textColor: Colors.black,
-                  width: screenWidth,
-                ),
-              ),
-            ),
+            // Visibility(
+            //   visible: mainController.role.value == "Hotel Owner",
+            //   child: InkWell(
+            //     onTap: () {
+            //       Get.to(() => const HotelOwnerPosting());
+            //     },
+            //     enableFeedback: true,
+            //     child: UnderlineButton(
+            //       name: 'View My Postings',
+            //       color: Colors.transparent,
+            //       textColor: Colors.black,
+            //       width: screenWidth,
+            //     ),
+            //   ),
+            // ),
 
           ],
         ),

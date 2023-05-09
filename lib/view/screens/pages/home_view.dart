@@ -268,8 +268,11 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                             if (kDebugMode) {
                               print('hotelOwnerController propertyList length: ${hotelOwnerController.propertyList.length}');
                             }
+
                             var property =
                                 hotelOwnerController.propertyList[index];
+
+
 
 
                             return GestureDetector(

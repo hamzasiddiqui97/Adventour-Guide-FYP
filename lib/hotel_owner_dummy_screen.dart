@@ -20,8 +20,8 @@ class _HotelOwnerPageState extends State<HotelOwnerPage> {
   void initState() {
     super.initState();
     pages = [
-      HomePageNavBar(),
-      MyAccount(),
+      const HomePageNavBar(),
+      const MyAccount(),
     ];
   }
 
