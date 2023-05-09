@@ -60,10 +60,10 @@ class _PropertyAddState extends State<PropertyAdd>
   ];
 
   String type = 'Rent';
-  String? bedrooms;
+  String? bedrooms ;
   var bedroomQuan = ['2', '3', '4', '5', '6', '7'];
 
-  String? washrooms;
+  String? washrooms ;
   var washroomsQuan = ['1', '2', '3', '4', '5', '6', '7'];
 
   // bool? parking;
@@ -102,6 +102,7 @@ class _PropertyAddState extends State<PropertyAdd>
                     Text(
                       "${widget.title} Your Property",
                       style: const TextStyle(
+                        overflow: TextOverflow.ellipsis,
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
@@ -282,6 +283,8 @@ class _PropertyAddState extends State<PropertyAdd>
                           hint: 'Add Title',
                           color: Colors.black12,
                           radius: 5,
+                          maxLength: 30,
+
                         ),
                         SizedBox(
                           height: 1.h,
@@ -295,10 +298,7 @@ class _PropertyAddState extends State<PropertyAdd>
                                   style: TextStyle(
                                       color: Colors.black12, fontSize: 13.sp)),
                             ),
-                            SizedBox(
-                              width: 1.5.w,
-                            ),
-                            Text("0/20")
+
                           ],
                         ),
                         SizedBox(height: 2.5.h),
@@ -309,24 +309,28 @@ class _PropertyAddState extends State<PropertyAdd>
                           // height: 20.h,
                           borderColor: ColorPalette.textColor,
                           controller: desc,
+
+
                           hint: 'Add Description',
                           color: Colors.black12,
                           radius: 5,
-                          maxLines: 4,
+                          maxLines: 5,
+                          maxLength: 400,
+
                         ),
                         SizedBox(height: 1.h),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                  "Include condition, features and reason for selling",
-                                  style: TextStyle(
-                                      color: Colors.black12, fontSize: 13.sp)),
-                            ),
-                            Text("0/400")
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Expanded(
+                        //       child: Text(
+                        //           "Include condition, features and reason for selling",
+                        //           style: TextStyle(
+                        //
+                        //               color: Colors.black12, fontSize: 13.sp)),
+                        //     ),
+                        //   ],
+                        // ),
                         SizedBox(height: 2.5.h),
                         Text('Specifications'),
                         SizedBox(height: 2.h),
@@ -590,7 +594,7 @@ class _PropertyAddState extends State<PropertyAdd>
                             Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Kitchens"),
+                                  const Text("Kitchen"),
                                   SizedBox(height: 2.h),
                                   Row(children: [
                                     Button(
@@ -692,14 +696,14 @@ class _PropertyAddState extends State<PropertyAdd>
                           ],
                         ),
                         SizedBox(height: 3.h),
-                        const Text("Area Unit"),
-                        SizedBox(height: 2.h),
-                        Button(
-                          text: 'Square Meter',
-                          width: 110.w,
-                          radius: 5,
-                          height: 6.5.h,
-                        ),
+                        // const Text("Area Unit"),
+                        // SizedBox(height: 2.h),
+                        // Button(
+                        //   text: 'Square Meter',
+                        //   width: 110.w,
+                        //   radius: 5,
+                        //   height: 6.5.h,
+                        // ),
                         SizedBox(height: 3.h),
                         const Text("Floor Area"),
                         SizedBox(height: 2.5.h),
@@ -769,7 +773,7 @@ class _PropertyAddState extends State<PropertyAdd>
                               ],
                             )),
                         SizedBox(height: 3.h),
-                        const Text("Tap Available"),
+                        const Text("Water Available"),
                         SizedBox(height: 2.h),
                         Row(children: [
                           Button(
@@ -938,7 +942,9 @@ class _PropertyAddState extends State<PropertyAdd>
                           onTap: () {
                             if (title.text.isNotEmpty &&
                                 desc.text.isNotEmpty &&
-                                priceController.text.isNotEmpty) {
+                                priceController.text.isNotEmpty &&
+                                floorArea != null && bedrooms != null && washrooms != null
+                            ) {
                               if (bedrooms == null &&
                                   kitchen == null &&
                                   washrooms == null &&
@@ -949,8 +955,8 @@ class _PropertyAddState extends State<PropertyAdd>
                                   quarters == null &&
                                   floorArea == null &&
                                   type == null) {
-                                Fluttertoast.showToast(
-                                    msg: 'Please give all requirements');
+                                Utils.showSnackBar('Please fill all fields.', false);
+
                               } else {
                                 Get.to(() => AddPostScreen(
                                       title: title.text,
@@ -969,16 +975,10 @@ class _PropertyAddState extends State<PropertyAdd>
                                       property: widget.title,
                                     ));
 
-                                // print(
-                                //   '${title.text} ${desc.text} ${price} ${bedrooms}'
-                                //   '${washrooms} ${parking} ${kitchens} ${tap}'
-                                //       '${ac} ${quarters} ${floorArea} ${type}'
-                                //       '${realEstate}'
-                                // );
                               }
                             } else {
-                              Fluttertoast.showToast(
-                                  msg: 'Please give all requirements');
+                              Utils.showSnackBar('Please fill all fields.', false);
+
                             }
                           },
                         ),
@@ -1662,7 +1662,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  const Text('House Number'),
+                  const Text('Plot Number'),
                   SizedBox(
                     height: 2.h,
                   ),
@@ -1684,7 +1684,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     contentPadding: EdgeInsets.all(12),
                     height: 50,
                     borderColor: ColorPalette.textColor,
-                    hint: '',
+                    hint: 'Enter full address',
                     color: Colors.black12,
                     radius: 5,
                     controller: streetName,
@@ -1705,14 +1705,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     radius: 10,
                     controller: fullAddress,
                   ),
-                  SizedBox(height: 1.h),
-                  Text(
-                    "Location of property identified through Google Map",
-                    style: TextStyle(
-                      color: Colors.black12,
-                      fontSize: 13.sp,
-                    ),
-                  ),
+                  // SizedBox(height: 1.h),
+                  // Text(
+                  //   "Location of property identified through Google Map",
+                  //   style: TextStyle(
+                  //     color: Colors.black12,
+                  //     fontSize: 13.sp,
+                  //   ),
+                  // ),
                   // SizedBox(height: 2.h),
                   // Text(
                   //   " PROPERTY DOCUMENTATION COPY",

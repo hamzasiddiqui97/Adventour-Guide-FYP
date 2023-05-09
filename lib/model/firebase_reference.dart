@@ -85,6 +85,7 @@ class AddPlacesToFirebaseDb {
           .child("hotel owner")
           .child(uid)
           .child('postData')
+          .push()
           .set({
         'title': title,
         'description': description,
@@ -185,32 +186,8 @@ class AddPlacesToFirebaseDb {
         .onValue;
   }
 
-  // static Future<Map<String, dynamic>?> getPersonalHotelPost(String uid) async {
-  //
-  //   final HotelOwnerController hotelOwnerController =
-  //   Get.put(HotelOwnerController());
-  //
-  //   var postRef= database
-  //       .ref()
-  //       .child('users')
-  //       .child('hotel owner')
-  //       .child(uid)
-  //       .child('postData');
-  //   DatabaseEvent event = (await postRef.once());
-  //   DataSnapshot dataSnapshot = event.snapshot;
-  //
-  //   if (dataSnapshot.value != null) {
-  //   Map<String, dynamic> result =
-  //   Map<String, dynamic>.from(dataSnapshot.value as Map);
-  //   hotelOwnerController.dataList.value=result;
-  //   print(result);
-  //   return result;
-  //   }
-  //   // else {
-  //   // return null;
-  // }
 
-  static Future<Map<String, dynamic>?> getPersonalHotelPost(String uid) async {
+  static Future<void> getPersonalHotelPost(String uid) async {
     final HotelOwnerController hotelOwnerController = Get.put(HotelOwnerController());
 
     var postRef = database
@@ -219,29 +196,64 @@ class AddPlacesToFirebaseDb {
         .child('hotel owner')
         .child(uid)
         .child('postData');
-    DatabaseEvent event = (await postRef.once());
+
+    DatabaseEvent event = await postRef.once();
     DataSnapshot dataSnapshot = event.snapshot;
 
     if (kDebugMode) {
       print("DataSnapshot getPersonalHotelPost: $dataSnapshot");
     }
 
-
     if (dataSnapshot.value != null) {
-      Map<String, dynamic> result = Map<String, dynamic>.from(dataSnapshot.value as Map);
-      // Update the dataList in the controller
-      hotelOwnerController.dataList.value = result;
+      Map<String, dynamic> map = Map<String, dynamic>.from(dataSnapshot.value as Map);
+
+      map.forEach((key, value) {
+        hotelOwnerController.propertyList.add(Property.fromMap(Map<String, dynamic>.from(value as Map)));
+      });
+
       if (kDebugMode) {
-        print("Result getPersonalHotelPost: $result");
+        print("PropertyList getPersonalHotelPost: ${hotelOwnerController.propertyList}");
       }
-      return result;
     } else {
       if (kDebugMode) {
         print("No data found");
       }
-      return null;
     }
   }
+
+
+  // static Future<Map<String, dynamic>?> getPersonalHotelPost(String uid) async {
+  //   final HotelOwnerController hotelOwnerController = Get.put(HotelOwnerController());
+  //
+  //   var postRef = database
+  //       .ref()
+  //       .child('users')
+  //       .child('hotel owner')
+  //       .child(uid)
+  //       .child('postData');
+  //   DatabaseEvent event = (await postRef.once());
+  //   DataSnapshot dataSnapshot = event.snapshot;
+  //
+  //   if (kDebugMode) {
+  //     print("DataSnapshot getPersonalHotelPost: $dataSnapshot");
+  //   }
+  //
+  //
+  //   if (dataSnapshot.value != null) {
+  //     Map<String, dynamic> result = Map<String, dynamic>.from(dataSnapshot.value as Map);
+  //     // Update the dataList in the controller
+  //     hotelOwnerController.dataList.value = result;
+  //     if (kDebugMode) {
+  //       print("Result getPersonalHotelPost: $result");
+  //     }
+  //     return result;
+  //   } else {
+  //     if (kDebugMode) {
+  //       print("No data found");
+  //     }
+  //     return null;
+  //   }
+  // }
 
 
   static Future<Map<String, dynamic>?> getPlaceDetails(

@@ -6,7 +6,10 @@ class MyTextField extends StatelessWidget {
   String hint; IconData? suffixIcon; TextEditingController? controller; Widget? icon; bool obscureText;
   FontWeight? fontWeight; double? radius; double size; double height; double? width; final onChanged;
   int maxLines; VoidCallback? onSuffixIconTap; bool enabled; double? suffixIconSize;
-  final keyboardType; final onEditingComplete; Widget? mySuffixIcon;final validator; EdgeInsetsGeometry? contentPadding;
+  final keyboardType; final onEditingComplete; Widget? mySuffixIcon;final validator;
+  EdgeInsetsGeometry? contentPadding; final maxLength;
+
+
   MyTextField({
     Key? key, this.onChanged,
     this.hint = 'Type something..',
@@ -24,16 +27,14 @@ class MyTextField extends StatelessWidget {
     this.color = Colors.transparent,
     this.width, this.borderColor = Colors.transparent,
     this.validator,
-    this.contentPadding
-
+    this.contentPadding,
+    this.maxLength
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return
       Container(
-        // padding: EdgeInsets.symmetric(horizontal: 15.w),
-        // width: width == null? Get.width : Get.width/(375/width!), height: Get.height/(812/height),
         decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(5),
@@ -46,6 +47,7 @@ class MyTextField extends StatelessWidget {
           child:
           TextFormField(
             cursorColor: ColorPalette.secondaryColor,
+            maxLength: maxLength,
             validator: validator,
             onEditingComplete: onEditingComplete,
             keyboardType: keyboardType,

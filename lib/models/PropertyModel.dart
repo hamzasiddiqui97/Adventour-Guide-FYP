@@ -43,4 +43,29 @@ class Property {
     required this.streetName,
     required this.fullAddress,
   });
+
+  factory Property.fromMap(Map<String, dynamic> map) {
+    return Property(
+      title: map['title'] as String,
+      description: map['description'] as String,
+      bedroom: map['bedroom'] as String,
+      washroom: map['washroom'] as String,
+      carParking: map['carParking'] as String,
+      kitchen: map['kitchen'] as String,
+      floorArea: map['floorArea'] as int,
+      tapAvailable: map['tapAvailable'] as String,
+      airConditioner: map['airConditioner'] as String,
+      quarterAvailable: map['quarterAvailable'] as String,
+      price: map['price'] as int,
+      coverImage: map['coverImage'] as String?,
+      file1: map['file1'] as String,
+      file2: map['file2'] as String,
+      file3: map['file3'] as String,
+      file4: map['file4'] as String,
+      file5: map['file5'] as String,
+      file6: map['file6'] as String,
+      streetName: map['streetName'] as String,
+      fullAddress: map['fullAddress'] as String,
+    );
+  }
 }
