@@ -16,7 +16,6 @@ import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../helper/utils.dart';
-import '../../../models/PropertyModel.dart';
 import '../../../models/weather.dart';
 import '../../../snackbar_utils.dart';
 import '../views/hotel_post_detail_page.dart';
@@ -186,6 +185,20 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                       const SizedBox(
                         height: 30,
                       ),
+                      const Center(
+                        child: Text(
+                          'Explore',
+                          style: TextStyle(
+                            fontSize: 26,
+
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
                       const CustomGrid(),
                     ],
                   ),
@@ -242,11 +255,19 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                       SizedBox(
                         height: 2.h,
                       ),
+                      const Text('Your Posts',style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),),
                       // List of cards
                       Expanded(
                         child: ListView.builder(
                           itemCount: hotelOwnerController.propertyList.length,
                           itemBuilder: (BuildContext context, int index) {
+                            if (kDebugMode) {
+                              print('hotelOwnerController propertyList length: ${hotelOwnerController.propertyList.length}');
+                            }
                             var property =
                                 hotelOwnerController.propertyList[index];
 
@@ -304,8 +325,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                               property.title,
                                               style: const TextStyle(
                                                 overflow: TextOverflow.ellipsis,
-                                                letterSpacing: 2,
-                                                fontSize: 38,
+                                                fontSize: 30,
                                                 fontWeight: FontWeight.normal,
                                                 color: Colors.black,
                                               ),
@@ -326,7 +346,6 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                       Padding(
                         padding: const EdgeInsets.all(14),
                         child: Align(
-                          
                           alignment: Alignment.bottomCenter,
                           child: ElevatedButton(
                             onPressed: () {
