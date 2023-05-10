@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,6 @@ import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/view/screens/views/addProperty.dart';
 import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
-
 import '../../../helper/utils.dart';
 import '../../../models/weather.dart';
 import '../../../snackbar_utils.dart';
@@ -38,23 +36,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
   bool _isWeatherDataLoading = true;
   bool _isRequestError = false;
   bool _isLocationError = false;
+  late bool roleLoading;
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchWeather();
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-
-    if (mainController.role.value == 'Tourist') {
-      AddPlacesToFirebaseDb.getAllHotelPosts();
-    } else if (mainController.role.value == 'Hotel Owner') {
-      AddPlacesToFirebaseDb.getPersonalHotelPost(uid);
-    }
-
-    if (kDebugMode) {
-      print("Uid of hotel owner: ${AddPlacesToFirebaseDb.getPersonalHotelPost(uid)}");
-    }
-  }
 
   Future<void> _fetchWeather() async {
     final position = await _determinePosition();
@@ -123,6 +106,43 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
     }
   }
 
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchWeather();
+    _initializeRole();
+
+  }
+
+  void _initializeRole() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    setState(() {
+      roleLoading = true; // set _isLoading to true before fetching data
+    });
+    try {
+      final userRole = await AddPlacesToFirebaseDb().getUserRole(uid);
+      mainController.role.value = userRole;
+      print('main controooolllllll: ${mainController.role.value}');
+      print('shared prrrrrr: $userRole');
+      if (userRole == 'Tourist') {
+        await AddPlacesToFirebaseDb.getAllHotelPosts();
+      } else if (userRole == 'Hotel Owner') {
+        await AddPlacesToFirebaseDb.getPersonalHotelPost(uid);
+      }
+      setState(() {
+        roleLoading = false; // set _isLoading to false after fetching data
+      });
+    } catch (e) {
+      print('Error getting user role: $e');
+      setState(() {
+        roleLoading = false; // set _isLoading to false even if there is an error
+      });
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     const TextStyle myTextStyle = TextStyle(
@@ -135,8 +155,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
       child: WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
-          body: mainController.role.value == "Tourist"
-              ? SingleChildScrollView(
+          body: roleLoading ? const Center(child: CircularProgressIndicator(),)
+              : mainController.role.value == "Tourist" ? SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -208,8 +228,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                     const SizedBox(
                       height: 30,
                     ),
-                    Center(
-                      child: const Text(
+                    const Center(
+                      child: Text(
                         'Hotels',
                         style: TextStyle(
                           fontSize: 26,
@@ -310,55 +330,9 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                   ],
                 ),
               )
-              : SafeArea(
+              : mainController.role.value == "Hotel Owner" ?  SafeArea(
                   child: Column(
                     children: [
-                      // Weather container
-                      // Container(
-                      //   decoration: BoxDecoration(
-                      //     boxShadow: [
-                      //       BoxShadow(
-                      //         color: Colors.grey.shade400,
-                      //         blurRadius: 3,
-                      //         spreadRadius: 0,
-                      //         offset: const Offset(0.0, 2.0),
-                      //       ),
-                      //     ],
-                      //     borderRadius: BorderRadius.circular(20),
-                      //     color: Colors.grey.shade50,
-                      //   ),
-                      //   width: MediaQuery.of(context).size.width,
-                      //   height: 100,
-                      //   // color: Colors.orange,
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       if (_isWeatherDataLoading)
-                      //         const Center(child: CircularProgressIndicator()),
-                      //       if (!_isWeatherDataLoading && _weather != null)
-                      //         Text(
-                      //           _weather!.cityName,
-                      //           style: myTextStyle,
-                      //         ),
-                      //       const SizedBox(width: 10.0),
-                      //       if (!_isWeatherDataLoading && _weather != null)
-                      //         MapString.mapStringToIcon(
-                      //           context,
-                      //           '${_weather?.currently}',
-                      //           30,
-                      //         ),
-                      //       const SizedBox(width: 10.0),
-                      //       if (_weather != null)
-                      //         Text(
-                      //           "${_weather!.temp.round()} °C",
-                      //           style: const TextStyle(
-                      //             color: ColorPalette.secondaryColor,
-                      //             fontSize: 25.0,
-                      //           ),
-                      //         ),
-                      //     ],
-                      //   ),
-                      // ),
                       SizedBox(
                         height: 2.h,
                       ),
@@ -378,8 +352,6 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
 
                             var property =
                                 hotelOwnerController.propertyList[index];
-
-
 
 
                             return GestureDetector(
@@ -476,7 +448,10 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                       ),
                     ],
                   ),
-                ),
+                )
+              : Container(
+            child: const Center(child: Text('An error Occured please try logging in again.')),
+          ),
         ),
       ),
     );

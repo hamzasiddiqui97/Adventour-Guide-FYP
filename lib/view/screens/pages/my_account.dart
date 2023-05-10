@@ -23,9 +23,7 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  final MainController mainController = Get.put(MainController());
-  final HotelOwnerController hotelOwnerController =
-  Get.put(HotelOwnerController());
+  final HotelOwnerController hotelOwnerController = Get.put(HotelOwnerController());
 
 
   @override
@@ -33,7 +31,6 @@ class _MyAccountState extends State<MyAccount> {
 
     final user = FirebaseAuth.instance.currentUser;
     final screenWidth = MediaQuery.of(context).size.width;
-    print('user role in my account : ${mainController.role.value}');
 
     return Scaffold(
       appBar: AppBar(

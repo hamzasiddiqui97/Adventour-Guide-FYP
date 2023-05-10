@@ -255,6 +255,10 @@ class _SignInState extends State<SignIn> {
             Utils.showSnackBar(
                 "This email is registered as a $userRole. Please sign in from the correct page.",
                 false);
+            await FirebaseAuth.instance.signOut();
+            await GoogleSignIn().signOut();
+
+
             return;
           }
 

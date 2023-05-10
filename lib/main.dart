@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/pages/transport_owner_dashboard_page.dart';
@@ -7,7 +8,6 @@ import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:google_maps_basics/transport_owner_dummy_screen.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-
 import 'hotel_owner_dummy_screen.dart';
 import 'model/firebase_reference.dart';
 import 'view/screens/loginScreens/roleSelection.dart';
@@ -48,7 +48,10 @@ class MyApp extends StatelessWidget {
                           return const Center(
                               child: Text('Something went wrong'));
                         } else {
-                          String role = roleSnapshot.data!; //
+                          String role = roleSnapshot.data!;
+                          if (kDebugMode) {
+                            print('role:::::::    $role');
+                          }
                           if (role == 'Tourist') {
                             return NavigationPage(uid: snapshot.data!.uid);
                           } else if (role == 'Hotel Owner') {

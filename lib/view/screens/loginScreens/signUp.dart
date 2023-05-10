@@ -272,6 +272,9 @@ class _SignUpState extends State<SignUp> {
       Utils.showSnackBar(errorMessage, false);
     } catch (e) {
       Utils.showSnackBar("An error occurred while signing up.", false);
+      // Sign out the user from Firebase and GoogleSignIn
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
     } finally {
       Navigator.of(context).pop(); // Dismiss the progress dialog
     }
@@ -318,6 +321,9 @@ class _SignUpState extends State<SignUp> {
         );
       } else {
         Utils.showSnackBar("Invalid role. Please contact support.", false);
+        // Sign out the user from Firebase and GoogleSignIn
+        await FirebaseAuth.instance.signOut();
+        await GoogleSignIn().signOut();
       }
     } catch (e) {
       if (e is PlatformException) {
@@ -650,6 +656,9 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
       Utils.showSnackBar(errorMessage, false);
     } catch (e) {
       Utils.showSnackBar("An error occurred while signing up.", false);
+      // Sign out the user from Firebase and GoogleSignIn
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
     } finally {
       Navigator.of(context).pop(); // Dismiss the progress dialog
     }
@@ -696,6 +705,9 @@ class _HotelOwnerSignUpState extends State<HotelOwnerSignUp> {
         );
       } else {
         Utils.showSnackBar("Invalid role. Please contact support.", false);
+        // Sign out the user from Firebase and GoogleSignIn
+        await FirebaseAuth.instance.signOut();
+        await GoogleSignIn().signOut();
       }
     } catch (e) {
       if (e is PlatformException) {
@@ -989,6 +1001,9 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
       Utils.showSnackBar(errorMessage, false);
     } catch (e) {
       Utils.showSnackBar("An error occurred while signing up.", false);
+      // Sign out the user from Firebase and GoogleSignIn
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
     } finally {
       Navigator.of(context).pop(); // Dismiss the progress dialog
     }
@@ -1034,6 +1049,9 @@ class _TransportOwnerSignUpState extends State<TransportOwnerSignUp> {
         );
       } else {
         Utils.showSnackBar("Invalid role. Please contact support.", false);
+        // Sign out the user from Firebase and GoogleSignIn
+        await FirebaseAuth.instance.signOut();
+        await GoogleSignIn().signOut();
       }
     } catch (e) {
       if (e is PlatformException) {
