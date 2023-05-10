@@ -14,9 +14,8 @@ class PlacesListAlongTheRoute extends StatefulWidget {
   final List<Marker> markers;
   final List<LatLng> polylineCoordinates;
 
-  const PlacesListAlongTheRoute({Key? key,
-    required this.markers,
-    required this.polylineCoordinates})
+  const PlacesListAlongTheRoute(
+      {Key? key, required this.markers, required this.polylineCoordinates})
       : super(key: key);
 
   @override
@@ -29,14 +28,14 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
   late User? currentUser;
   late String? userId;
 
-  List<Map<String, dynamic>> _savedPlaces = []; // add list to store places locally
+  List<Map<String, dynamic>> _savedPlaces =
+      []; // add list to store places locally
 
   bool _isTripNameSaved = false;
 
   // date picker
   DateTime? _fromDate;
   DateTime? _toDate;
-
 
   @override
   void initState() {
@@ -50,11 +49,10 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
   bool _isPlaceAdded(Marker marker) {
     return _savedPlaces.any((place) =>
-    place['name'] == marker.infoWindow.title &&
+        place['name'] == marker.infoWindow.title &&
         place['latitude'] == marker.position.latitude &&
         place['longitude'] == marker.position.longitude);
   }
-
 
   Map<String, dynamic> _addPlaceToTrip(Marker marker) {
     final name = marker.infoWindow.title ?? 'Unknown';
@@ -73,7 +71,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     };
   }
 
-
   Future<void> _saveTrip() async {
     // Check if the trip name is not empty and dates are selected
     if (_tripNameController.text.trim().isEmpty) {
@@ -89,14 +86,13 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
     });
 
     final FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference placesRef =
-    database
+    DatabaseReference placesRef = database
         .ref()
         .child("users")
         .child('tourist')
         .child(userId!)
         .child("places")
-        .child("${DateTime.now().millisecond  }");
+        .child(_tripNameController.text);
 
     await placesRef.set({
       'fromDate': _fromDate!.toIso8601String(),
@@ -125,7 +121,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
   int _indexOfPlace(Marker marker) {
     return _savedPlaces.indexWhere((place) =>
-    place['name'] == marker.infoWindow.title &&
+        place['name'] == marker.infoWindow.title &&
         place['latitude'] == marker.position.latitude &&
         place['longitude'] == marker.position.longitude);
   }
@@ -142,9 +138,7 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
 
   @override
   Widget build(BuildContext context) {
-
     print('Markers in PlacesListAlongTheRoute: ${widget.markers.length}');
-
 
     if (widget.markers.isEmpty) {
       return Scaffold(
@@ -171,7 +165,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 const SizedBox(height: 8),
                 Expanded(
                   child: TextField(
@@ -192,8 +185,10 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
                 const SizedBox(width: 8),
                 ElevatedButton(
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(ColorPalette.primaryColor),
-                    backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor),
+                    foregroundColor:
+                        MaterialStateProperty.all(ColorPalette.primaryColor),
+                    backgroundColor:
+                        MaterialStateProperty.all(ColorPalette.secondaryColor),
                   ),
                   onPressed: () {
                     if (_tripNameController.text.trim().isNotEmpty) {
@@ -209,7 +204,6 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
               ],
             ),
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -259,151 +253,151 @@ class _PlacesListAlongTheRouteState extends State<PlacesListAlongTheRoute> {
               ),
             ],
           ),
-
           if (_isTripNameSaved)
             Expanded(
-            child: ListView.builder(
-              itemCount: widget.markers.length,
-              itemBuilder: (context, index) {
-                final marker = widget.markers.elementAt(index);
+              child: ListView.builder(
+                itemCount: widget.markers.length,
+                itemBuilder: (context, index) {
+                  final marker = widget.markers.elementAt(index);
 
-                return GestureDetector(
-                    child: Card(
-                      margin: const EdgeInsets.all(8),
-                      elevation: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              marker.infoWindow.title ?? 'Unknown',
+                  return GestureDetector(
+                      child: Card(
+                    margin: const EdgeInsets.all(8),
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            marker.infoWindow.title ?? 'Unknown',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const SizedBox(height: 8),
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  ColorPalette.secondaryColor),
+                              foregroundColor: MaterialStateProperty.all<Color>(
+                                  ColorPalette.primaryColor),
+                            ),
+                            onPressed: () {
+                              int placeIndex = _indexOfPlace(marker);
+                              if (placeIndex == -1) {
+                                final placeToAdd = _addPlaceToTrip(marker);
+                                setState(() {
+                                  _savedPlaces.add(placeToAdd);
+                                });
+                                Utils.showSnackBar("Place added to trip", true);
+                              } else {
+                                _removePlaceFromTrip(placeIndex);
+                              }
+                            },
+                            child: Text(
+                              _indexOfPlace(marker) == -1
+                                  ? 'Add place to trip'
+                                  : 'Remove place from trip',
                               style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                  color: ColorPalette.primaryColor),
                             ),
-                            const SizedBox(height: 4),
-
-
-                            const SizedBox(height: 8),
-
-
-
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all<Color>(
-                                    ColorPalette.secondaryColor),
-                                foregroundColor:
-                                MaterialStateProperty.all<Color>(ColorPalette.primaryColor),
-                              ),
-                              onPressed: () {
-                                int placeIndex = _indexOfPlace(marker);
-                                if (placeIndex == -1) {
-                                  final placeToAdd = _addPlaceToTrip(marker);
-                                  setState(() {
-                                    _savedPlaces.add(placeToAdd);
-                                  });
-                                  Utils.showSnackBar("Place added to trip", true);
-                                } else {
-                                  _removePlaceFromTrip(placeIndex);
-                                }
-                              },
-                              child: Text(
-                                _indexOfPlace(marker) == -1
-                                    ? 'Add place to trip'
-                                    : 'Remove place from trip',
-                                style: const TextStyle(color: ColorPalette.primaryColor),
-                              ),
-                            ),
-
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ));
-              },
-            ),
-          ),
-          if (_isTripNameSaved)
-
-            SizedBox(
-            height: MediaQuery.of(context).size.height * 0.12,
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.secondaryColor,
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: () async {
-                    // Show confirmation dialog
-                    bool result = await showDialog<bool>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Save Trip'),
-                          content: Text('Are you sure you want to save this trip?'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('Cancel'),
-                              onPressed: () {
-                                Navigator.of(context).pop(false);
-                              },
-                            ),
-                            TextButton(
-                              child: Text('Yes'),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    ) ?? false;
-
-                    if (result) {
-                      List<Map<String, dynamic>> savedPlacesCopy = List.from(_savedPlaces);
-
-                      if (_savedPlaces.isNotEmpty && _tripNameController.text.trim().isNotEmpty) {
-                        final FirebaseDatabase database = FirebaseDatabase.instance;
-                        DatabaseReference placesRef = database
-                            .ref()
-                            .child("users")
-                            .child('tourist')
-                            .child(userId!)
-                            .child("places")
-                            .child(_tripNameController.text);
-
-                        for (int i = 0; i < _savedPlaces.length; i++) {
-                          try {
-                            await placesRef.push().set(_savedPlaces[i]);
-                          } catch (error) {
-                            print("Failed to add place: $error");
-                            Utils.showSnackBar("Failed to add place", false);
-                          }
-                        }
-
-                        setState(() {
-                          _savedPlaces.clear();
-                        });
-                        Utils.showSnackBar("Places added successfully", true);
-                      } else {
-                        Utils.showSnackBar("No places saved or trip name is empty", false);
-                      }
-                      // Navigate to the next screen
-                      Get.offAll(NavigationPage(uid: userId ?? '',));
-                    }
-                  },
-                  child: const Text(
-                    'Save Trip',
-                  ),
-                ),
-
+                    ),
+                  ));
+                },
               ),
             ),
-          ),
+          if (_isTripNameSaved)
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.12,
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorPalette.secondaryColor,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () async {
+                      // Show confirmation dialog
+                      bool result = await showDialog<bool>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Save Trip'),
+                                content: Text(
+                                    'Are you sure you want to save this trip?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Yes'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ) ??
+                          false;
+
+                      if (result) {
+                        List<Map<String, dynamic>> savedPlacesCopy =
+                            List.from(_savedPlaces);
+
+                        if (_savedPlaces.isNotEmpty &&
+                            _tripNameController.text.trim().isNotEmpty) {
+                          final FirebaseDatabase database =
+                              FirebaseDatabase.instance;
+                          DatabaseReference placesRef = database
+                              .ref()
+                              .child("users")
+                              .child('tourist')
+                              .child(userId!)
+                              .child("places")
+                              .child(_tripNameController.text);
+
+                          for (int i = 0; i < _savedPlaces.length; i++) {
+                            try {
+                              await placesRef.push().set(_savedPlaces[i]);
+                            } catch (error) {
+                              print("Failed to add place: $error");
+                              Utils.showSnackBar("Failed to add place", false);
+                            }
+                          }
+
+                          setState(() {
+                            _savedPlaces.clear();
+                          });
+                          Utils.showSnackBar("Places added successfully", true);
+                        } else {
+                          Utils.showSnackBar(
+                              "No places saved or trip name is empty", false);
+                        }
+                        // Navigate to the next screen
+                        Get.offAll(NavigationPage(
+                          uid: userId ?? '',
+                        ));
+                      }
+                    },
+                    child: const Text(
+                      'Save Trip',
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
