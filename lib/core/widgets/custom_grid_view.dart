@@ -30,8 +30,9 @@ class CustomGrid extends StatelessWidget {
         ),
         ],
           borderRadius: BorderRadius.circular(20),
-          color: Colors.grey.shade100),
+          color: Colors.grey.shade50),
       height: 450,
+      width: MediaQuery.of(context).size.width,
       child: Column(
         children: [
           Padding(

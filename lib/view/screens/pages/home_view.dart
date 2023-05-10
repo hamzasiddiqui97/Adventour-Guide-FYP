@@ -154,196 +154,95 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
       padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
       child: WillPopScope(
         onWillPop: () async => false,
-        child: Scaffold(
-          body: roleLoading ? const Center(child: CircularProgressIndicator(),)
-              : mainController.role.value == "Tourist" ? SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade400,
-                            blurRadius: 3,
-                            spreadRadius: 0,
-                            offset: const Offset(0.0, 2.0),
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.grey.shade50,
+        child: SafeArea(
+          child: Scaffold(
+            body: roleLoading ? const Center(child: CircularProgressIndicator(),)
+                : mainController.role.value == "Tourist" ? SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 25,
                       ),
-                      width: MediaQuery.of(context).size.width,
-                      height: 100,
-                      // color: Colors.orange,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (_isWeatherDataLoading)
-                            const Center(child: CircularProgressIndicator()),
-                          if (!_isWeatherDataLoading && _weather != null)
-                            Text(
-                              _weather!.cityName,
-                              style: myTextStyle,
+                      Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade400,
+                              blurRadius: 3,
+                              spreadRadius: 0,
+                              offset: const Offset(0.0, 2.0),
                             ),
-                          const SizedBox(width: 10.0),
-                          if (!_isWeatherDataLoading && _weather != null)
-                            MapString.mapStringToIcon(
-                              context,
-                              '${_weather?.currently}',
-                              30,
-                            ),
-                          const SizedBox(width: 10.0),
-                          if (_weather != null)
-                            Text(
-                              "${_weather!.temp.round()} °C",
-                              style: const TextStyle(
-                                color: ColorPalette.secondaryColor,
-                                fontSize: 25.0,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    const Center(
-                      child: Text(
-                        'Explore',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          ],
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.grey.shade50,
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    const CustomGrid(),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    const Center(
-                      child: Text(
-                        'Hotels',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: 300,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: hotelOwnerController.propertyList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (kDebugMode) {
-                            print('hotelOwnerController propertyList length: ${hotelOwnerController.propertyList.length}');
-                          }
-
-                          var property =
-                          hotelOwnerController.propertyList[index];
-
-                          return GestureDetector(
-                            onTap: () {
-                              Get.to(() =>
-
-
-                                  HotelPostDetailsTouristPage(property: property));
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.15),
-                                    blurRadius: 5.0,
-                                    spreadRadius: 0.0,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        // color: Colors.orange,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (_isWeatherDataLoading)
+                              const Center(child: CircularProgressIndicator()),
+                            if (!_isWeatherDataLoading && _weather != null)
+                              Text(
+                                _weather!.cityName,
+                                style: myTextStyle,
                               ),
-                              child: Card(
-                                child: Stack(
-                                  children: [
-                                    // Display the image
-                                    property.coverImage != null
-                                        ? SizedBox(
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width,
-                                      height: 65.w,
-                                      child: Image.network(
-                                        property.coverImage!,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                        : const SizedBox.shrink(),
-                                    // Display the hotel title at the bottom
-                                    Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      child: InkWell(
-                                        onTap: () {
-                                          Utils.showSnackBar('Tap', true);
-                                        },
-                                        child: Container(
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width,
-                                          padding: const EdgeInsets.all(8.0),
-                                          color: Colors.white,
-                                          child: Text(
-                                            property.title,
-                                            style: const TextStyle(
-                                              overflow: TextOverflow.ellipsis,
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                            const SizedBox(width: 10.0),
+                            if (!_isWeatherDataLoading && _weather != null)
+                              MapString.mapStringToIcon(
+                                context,
+                                '${_weather?.currently}',
+                                30,
+                              ),
+                            const SizedBox(width: 10.0),
+                            if (_weather != null)
+                              Text(
+                                "${_weather!.temp.round()} °C",
+                                style: const TextStyle(
+                                  color: ColorPalette.secondaryColor,
+                                  fontSize: 25.0,
                                 ),
                               ),
-                            ),
-                          );
-                        },
+                          ],
+                        ),
                       ),
-                    ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      const CustomGrid(),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      const Text(
+                        'Explore More',
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
 
+                      const SizedBox(
+                        height: 30,
+                      ),
 
+                      const Text(
+                        'Hotels',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
 
-                  ],
-                ),
-              )
-              : mainController.role.value == "Hotel Owner" ?  SafeArea(
-                  child: Column(
-                    children: [
                       SizedBox(
-                        height: 2.h,
-                      ),
-                      const Text('Your Posts',style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),),
-                      // List of cards
-                      Expanded(
+                        width: MediaQuery.of(context).size.width,
+                        height: 300,
                         child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
                           itemCount: hotelOwnerController.propertyList.length,
                           itemBuilder: (BuildContext context, int index) {
                             if (kDebugMode) {
@@ -351,13 +250,14 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                             }
 
                             var property =
-                                hotelOwnerController.propertyList[index];
-
+                            hotelOwnerController.propertyList[index];
 
                             return GestureDetector(
                               onTap: () {
                                 Get.to(() =>
-                                    HotelPostDetailsPage(property: property));
+
+
+                                    HotelPostDetailsTouristPage(property: property));
                               },
                               child: Container(
                                 margin: const EdgeInsets.symmetric(
@@ -379,15 +279,15 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                       // Display the image
                                       property.coverImage != null
                                           ? SizedBox(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              height: 65.w,
-                                              child: Image.network(
-                                                property.coverImage!,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )
+                                        width: MediaQuery.of(context)
+                                            .size
+                                            .width,
+                                        height: 65.w,
+                                        child: Image.network(
+                                          property.coverImage!,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
                                           : const SizedBox.shrink(),
                                       // Display the hotel title at the bottom
                                       Positioned(
@@ -422,35 +322,133 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                             );
                           },
                         ),
-
                       ),
 
-                      Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Get.to(
-                                    () => PropertyAdd(),
-                              );
-                            },
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    ColorPalette.secondaryColor),
-                                foregroundColor: MaterialStateProperty.all(
-                                    ColorPalette.primaryColor)),
-                            child: const Text(
-                              'List Your Hotel',
-                            ),
-                          ),
-                        ),
-                      ),
+
+
                     ],
                   ),
                 )
-              : Container(
-            child: const Center(child: Text('An error Occured please try logging in again.')),
+                : mainController.role.value == "Hotel Owner" ?  SafeArea(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 2.h,
+                        ),
+                        const Text('Your Posts',style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),),
+                        // List of cards
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: hotelOwnerController.propertyList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (kDebugMode) {
+                                print('hotelOwnerController propertyList length: ${hotelOwnerController.propertyList.length}');
+                              }
+
+                              var property =
+                                  hotelOwnerController.propertyList[index];
+
+
+                              return GestureDetector(
+                                onTap: () {
+                                  Get.to(() =>
+                                      HotelPostDetailsPage(property: property));
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.15),
+                                        blurRadius: 5.0,
+                                        spreadRadius: 0.0,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Card(
+                                    child: Stack(
+                                      children: [
+                                        // Display the image
+                                        property.coverImage != null
+                                            ? SizedBox(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                height: 65.w,
+                                                child: Image.network(
+                                                  property.coverImage!,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                            : const SizedBox.shrink(),
+                                        // Display the hotel title at the bottom
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          child: InkWell(
+                                            onTap: () {
+                                              Utils.showSnackBar('Tap', true);
+                                            },
+                                            child: Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              padding: const EdgeInsets.all(8.0),
+                                              color: Colors.white,
+                                              child: Text(
+                                                property.title,
+                                                style: const TextStyle(
+                                                  overflow: TextOverflow.ellipsis,
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Get.to(
+                                      () => PropertyAdd(),
+                                );
+                              },
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      ColorPalette.secondaryColor),
+                                  foregroundColor: MaterialStateProperty.all(
+                                      ColorPalette.primaryColor)),
+                              child: const Text(
+                                'List Your Hotel',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : const Center(child: Text('An error Occurred please try logging in again.')),
           ),
         ),
       ),

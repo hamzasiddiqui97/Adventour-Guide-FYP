@@ -29,11 +29,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
-
   final List<String> _selectedPlaceTypes = [];
 
   final List<Marker> _attractionMarkers = [];
-
 
   final List<String> _placeTypes = [
     "All",
@@ -89,7 +87,6 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final List<Marker> _markers = [];
 
-
   // polylines
   final Set<Polyline> _polylines = <Polyline>{};
   List<LatLng> polylineCoordinates = [];
@@ -99,58 +96,59 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   //variables for the source and destinations
   late LatLng destination;
   late LatLng source;
+  bool isLegendOpen = false;
 
   // copy of polylineCoordinates to send to new screen..
   List<LatLng> tempPolylineCoordinates = [];
 
   void setPolylines() async {
-      PolylinePoints polylinePoints = PolylinePoints();
-      List<LatLng> polylineCoordinates = [];
+    PolylinePoints polylinePoints = PolylinePoints();
+    List<LatLng> polylineCoordinates = [];
 
-      List<Marker> markers = _markers.toList();
+    List<Marker> markers = _markers.toList();
 
-      for (int i = 0; i < markers.length - 1; i++) {
-        LatLng originLocation = markers[i].position;
-        LatLng destinationLocation = markers[i + 1].position;
+    for (int i = 0; i < markers.length - 1; i++) {
+      LatLng originLocation = markers[i].position;
+      LatLng destinationLocation = markers[i + 1].position;
 
-        PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-          googleApiKey,
-          PointLatLng(originLocation.latitude, originLocation.longitude),
-          PointLatLng(destinationLocation.latitude, destinationLocation.longitude),
-        );
-
-        if (result.points.isNotEmpty) {
-          result.points.forEach((PointLatLng point) {
-            polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-          });
-        }
-      }
-
-      Polyline polyline = Polyline(
-        polylineId: const PolylineId('poly'),
-        color: ColorPalette.secondaryColor,
-        width: 3,
-        points: polylineCoordinates,
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        googleApiKey,
+        PointLatLng(originLocation.latitude, originLocation.longitude),
+        PointLatLng(
+            destinationLocation.latitude, destinationLocation.longitude),
       );
 
-      // Assign polylineCoordinates to tempPolylineCoordinates (making copy of polyline points).
-      tempPolylineCoordinates = List<LatLng>.from(polylineCoordinates);
-
-      setState(() {
-        _polylines.clear();
-      });
-
-      setState(() {
-        _polylines.add(polyline);
-      });
-
-      print('polylineCoordinates length: ${polylineCoordinates.length}');
-
-      final places = GoogleMapsPlaces(apiKey: googleApiKey);
-      getTouristAttractionsAlongPolyline(
-          polylineCoordinates, places, _selectedPlaceTypes, context);
+      if (result.points.isNotEmpty) {
+        result.points.forEach((PointLatLng point) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        });
+      }
     }
 
+    Polyline polyline = Polyline(
+      polylineId: const PolylineId('poly'),
+      color: ColorPalette.secondaryColor,
+      width: 3,
+      points: polylineCoordinates,
+    );
+
+    // Assign polylineCoordinates to tempPolylineCoordinates (making copy of polyline points).
+    tempPolylineCoordinates = List<LatLng>.from(polylineCoordinates);
+
+    setState(() {
+      _polylines.clear();
+    });
+
+    setState(() {
+      _polylines.add(polyline);
+    });
+
+    print('polylineCoordinates length: ${polylineCoordinates.length}');
+
+    final places = GoogleMapsPlaces(apiKey: googleApiKey);
+    getTouristAttractionsAlongPolyline(
+        polylineCoordinates, places, _selectedPlaceTypes, context);
+  }
 
   void _showFetchingDialog(BuildContext context) {
     showDialog(
@@ -170,8 +168,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       },
     ).then((value) {
       if (value == null || !value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No places found'),backgroundColor: ColorPalette.secondaryColor,));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('No places found'),
+          backgroundColor: ColorPalette.secondaryColor,
+        ));
       }
     });
   }
@@ -192,7 +192,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       } else {
         // Get new results and store them in the cache
         getTouristAttractionsAlongPolyline(
-            polylineCoordinates, places, [placeType],context).then((result) {
+                polylineCoordinates, places, [placeType], context)
+            .then((result) {
           _placesCache[placeType] = result;
         });
       }
@@ -203,26 +204,23 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     setState(() {});
   }
 
-
   Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(
       List<LatLng> polylineCoordinates,
       GoogleMapsPlaces places,
       List<String> _selectedPlaceTypes,
-      BuildContext context
-      ) async {
-
+      BuildContext context) async {
     _showFetchingDialog(context);
 
     final touristAttractions = <PlacesSearchResult>{};
     final uniquePlaceIds = <String>{};
 
     final searchResults = await Future.wait(_selectedPlaceTypes.map(
-            (placeType) => Future.wait(
+        (placeType) => Future.wait(
             polylineCoordinates.map((point) => places.searchNearbyWithRadius(
-              Location(lat: point.latitude, lng: point.longitude),
-              100,
-              type: placeType,
-            )))));
+                  Location(lat: point.latitude, lng: point.longitude),
+                  100,
+                  type: placeType,
+                )))));
 
     for (final nearbySearch in searchResults.expand((x) => x)) {
       for (final result in nearbySearch.results) {
@@ -239,14 +237,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       _markers.add(Marker(
         markerId: MarkerId(place.placeId),
         position:
-        LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+            LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
         icon: BitmapDescriptor.defaultMarkerWithHue(hue),
       ));
       _attractionMarkers.add(Marker(
         markerId: MarkerId(place.placeId),
         position:
-        LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+            LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
         icon: BitmapDescriptor.defaultMarkerWithHue(hue),
       ));
@@ -356,7 +354,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   void onError(PlacesAutocompleteResponse? response) {
     final errorMessage = response?.errorMessage ?? 'Unknown error';
-    homeScaffoldKey.currentState?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    homeScaffoldKey.currentState
+        ?.showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 
   Future<void> displayPredictionSource(
@@ -381,12 +380,13 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             infoWindow: InfoWindow(title: detail.result.name)));
       });
       setPolylines();
-      googleMapController.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
+      googleMapController
+          .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
     } else {
-      currentState?.showSnackBar(const SnackBar(content: Text('Error: Could not get location')));
+      currentState?.showSnackBar(
+          const SnackBar(content: Text('Error: Could not get location')));
     }
   }
-
 
   // destination search autocomplete button
 
@@ -409,15 +409,17 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         components: [Component(Component.country, "pk")]);
 
     if (p != null) {
-      displayPredictionDestination(p, homeScaffoldKey.currentState,index);
+      displayPredictionDestination(p, homeScaffoldKey.currentState, index);
     } else {
-      homeScaffoldKey.currentState?.showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
+      homeScaffoldKey.currentState?.showSnackBar(
+          const SnackBar(content: Text('Error: No prediction selected')));
     }
   }
 
   void onErrorDestination(PlacesAutocompleteResponse? response) {
     final errorMessage = response?.errorMessage ?? 'Unknown error';
-    homeScaffoldKey.currentState?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    homeScaffoldKey.currentState
+        ?.showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 
   List<Destination> destinations = [];
@@ -452,12 +454,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       ));
       setPolylines();
       setState(() {});
-      googleMapController.animateCamera(CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
+      googleMapController.animateCamera(
+          CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
       if (kDebugMode) {
         print('destinations: ${destinations.toString()}');
       }
     } else {
-      currentState?.showSnackBar(const SnackBar(content: Text('Error: Could not get location')));
+      currentState?.showSnackBar(
+          const SnackBar(content: Text('Error: Could not get location')));
     }
   }
 
@@ -475,11 +479,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-      return SafeArea(
-        child: Scaffold(
+    return SafeArea(
+      child: Scaffold(
         key: homeScaffoldKey,
         body: Stack(
           alignment: Alignment.center,
@@ -499,34 +502,31 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
             if (!showSearchField)
               Positioned(
-
-                  bottom: 80,
-                  left: 10,
-
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            ColorPalette.secondaryColor)),
-
-                    onPressed: () async {
-                      // final distancesAndTimes = await calculateDistanceAndTime(_markers);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PlacesListAlongTheRoute(
-                            markers: _markers.toSet().toList(),
-                            // distancesAndTimes: distancesAndTimes,
-                            polylineCoordinates: tempPolylineCoordinates,
-                          ),
+                bottom: 80,
+                left: 10,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          ColorPalette.secondaryColor)),
+                  onPressed: () async {
+                    // final distancesAndTimes = await calculateDistanceAndTime(_markers);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlacesListAlongTheRoute(
+                          markers: _markers.toSet().toList(),
+                          // distancesAndTimes: distancesAndTimes,
+                          polylineCoordinates: tempPolylineCoordinates,
                         ),
-                      );
-                    },
-
-                    child: const Text(
-                      'Places List',
-                      style: TextStyle(color: ColorPalette.primaryColor),
-                    ),
-                  ),),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Places List',
+                    style: TextStyle(color: ColorPalette.primaryColor),
+                  ),
+                ),
+              ),
 
             if (!showSearchField)
               Positioned(
@@ -570,11 +570,12 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                         // search field and add more field button
                         if (showSearchField)
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 SearchBar(
-                                    width: MediaQuery.of(context).size.width * 0.81,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.81,
                                     suffixIcon: IconButton(
                                       onPressed: () {
                                         setState(() {
@@ -584,23 +585,23 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                       icon: const Icon(Icons.arrow_upward),
                                     ),
                                     controller: sourceController,
-
                                     hintText: 'Search Source',
                                     onPress: () {
                                       Timer(const Duration(milliseconds: 500),
-                                              () {
-                                            _handlePressButtonSource();
-                                          });
+                                          () {
+                                        _handlePressButtonSource();
+                                      });
                                     }),
                                 InkWell(
                                   splashColor: ColorPalette.secondaryColor,
                                   onTap: () {
                                     setState(() {
                                       showMultipleSearchBars = true;
-                                      final TextEditingController controller = TextEditingController(text: 'Destination');
+                                      final TextEditingController controller =
+                                          TextEditingController(
+                                              text: 'Destination');
                                       destinationControllers.add(controller);
                                       multipleDestinations.add(controller.text);
-
                                     });
                                   },
                                   child: Container(
@@ -627,23 +628,31 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                 Column(
                                   children: List.generate(
                                     multipleDestinations.length,
-                                        (index) => Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                    (index) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
                                       child: Row(
                                         children: [
                                           Expanded(
                                             child: SearchBar(
-                                              width: MediaQuery.of(context).size.width * 0.8,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.8,
                                               controller: TextEditingController(
-                                                text: multipleDestinations[index],
+                                                text:
+                                                    multipleDestinations[index],
                                               ),
                                               hintText: 'Search Destination',
                                               onPress: () {
-                                                _handlePressButtonDestination(index);
+                                                _handlePressButtonDestination(
+                                                    index);
                                               },
-                                              onPlaceSelected: (String placeName) {
+                                              onPlaceSelected:
+                                                  (String placeName) {
                                                 setState(() {
-                                                  multipleDestinations[index] = placeName;
+                                                  multipleDestinations[index] =
+                                                      placeName;
                                                 });
                                               },
                                             ),
@@ -653,24 +662,30 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                             onTap: () {
                                               setState(() {
                                                 // Remove the corresponding marker from the _markers list
-                                                MarkerId markerIdToRemove = MarkerId("destination ${index + 1}");
-                                                _markers.removeWhere((marker) => marker.markerId == markerIdToRemove);
+                                                MarkerId markerIdToRemove =
+                                                    MarkerId(
+                                                        "destination ${index + 1}");
+                                                _markers.removeWhere((marker) =>
+                                                    marker.markerId ==
+                                                    markerIdToRemove);
 
                                                 // Remove the corresponding destination from the destinations list
-                                                multipleDestinations.removeAt(index);
+                                                multipleDestinations
+                                                    .removeAt(index);
                                                 setPolylines();
-
                                               });
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(20),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                                 color: Colors.white,
                                               ),
                                               child: const Icon(
                                                 Icons.remove,
                                                 size: 38,
-                                                color: ColorPalette.secondaryColor,
+                                                color:
+                                                    ColorPalette.secondaryColor,
                                               ),
                                             ),
                                           ),
@@ -683,8 +698,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                           ),
                         ),
 
-
-                        const SizedBox(height: 30,),
+                        const SizedBox(
+                          height: 30,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -692,32 +708,30 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                             SizedBox(
                               width: 200,
                               child: ElevatedButton(
-
-
                                 style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(
                                         ColorPalette.secondaryColor)),
-
                                 onPressed: () async {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => PlacesListAlongTheRoute(
+                                      builder: (context) =>
+                                          PlacesListAlongTheRoute(
                                         markers: _markers.toSet().toList(),
                                         // distancesAndTimes: distancesAndTimes,
-                                        polylineCoordinates: tempPolylineCoordinates,
+                                        polylineCoordinates:
+                                            tempPolylineCoordinates,
                                       ),
                                     ),
                                   );
                                 },
-
                                 child: const Text(
                                   'Create Trip',
-                                  style: TextStyle(color: ColorPalette.primaryColor),
+                                  style: TextStyle(
+                                      color: ColorPalette.primaryColor),
                                 ),
                               ),
                             )
-
                           ],
                         )
                       ],
@@ -762,7 +776,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                               } else {
                                 _selectedPlaceTypes.add(_placeTypes[index]);
                               }
-                              updateMapWithSelectedPlaceType(_selectedPlaceTypes);
+                              updateMapWithSelectedPlaceType(
+                                  _selectedPlaceTypes);
                             });
                           },
                           child: Row(
@@ -777,7 +792,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                       _selectedPlaceTypes
                                           .remove(_placeTypes[index]);
                                     } else {
-                                      _selectedPlaceTypes.add(_placeTypes[index]);
+                                      _selectedPlaceTypes
+                                          .add(_placeTypes[index]);
                                     }
                                     updateMapWithSelectedPlaceType(
                                         _selectedPlaceTypes);
@@ -810,7 +826,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                         Marker(
                           markerId: const MarkerId('current location'),
                           position: LatLng(value.latitude, value.longitude),
-                          infoWindow: const InfoWindow(title: "Current Location"),
+                          infoWindow:
+                              const InfoWindow(title: "Current Location"),
                         ),
                       );
 
@@ -831,26 +848,111 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                 ),
               ),
 
+
               Positioned(
-                bottom: 30,
-                left: 10,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _clearMap();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette
-                        .secondaryColor, // Change the button color here
-                  ),
-                  child: const Text(
-                    'Clear Markers',
-                    style: TextStyle(color: Colors.white),
+              bottom: 30,
+              left: 10,
+              child: ElevatedButton(
+                onPressed: () {
+                  _clearMap();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorPalette
+                      .secondaryColor, // Change the button color here
+                ),
+                child: const Text(
+                  'Clear Markers',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+
+            if (!showSearchField)
+              Positioned(
+              top: 30,
+              left: 10,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isLegendOpen =
+                        !isLegendOpen; // Toggles the isLegendOpen boolean
+                  });
+                },
+
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const Text('Legend',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.normal)),
+                      if (isLegendOpen) ...[
+                        // Only show these widgets if isLegendOpen is true
+                        const Divider(),
+                        Row(
+                          children: const <Widget>[
+                            Icon(Icons.place, color: Colors.purple),
+                            SizedBox(width: 10),
+                            Text(
+                                'Tourist Attraction\nAirport\nMuseum\nStadium\nCar Rental'),
+                          ],
+                        ),
+                        const Divider(),
+
+                        Row(
+                          children: const <Widget>[
+                            Icon(Icons.place, color: Colors.blue),
+                            SizedBox(width: 10),
+                            Text('Gas Station'),
+                          ],
+                        ),
+                        const Divider(),
+
+                        Row(
+                          children: const <Widget>[
+                            Icon(Icons.place, color: Colors.green),
+                            SizedBox(width: 10),
+                            Text('Restaurant'),
+                          ],
+                        ),
+                        const Divider(),
+
+                        Row(
+                          children: const <Widget>[
+                            Icon(Icons.place, color: Colors.yellow),
+                            SizedBox(width: 10),
+                            Text('Cafe'),
+                          ],
+                        ),
+                        const Divider(),
+
+                        Row(
+                          children: const <Widget>[
+                            Icon(Icons.place, color: Colors.cyan),
+                            SizedBox(width: 10),
+                            Text('Hospital\nPolice\nATM\nBank'),
+                          ],
+                        ),
+                        const Divider(),
+
+                        Row(
+                          children: const <Widget>[
+                            Icon(Icons.place, color: Colors.orange),
+                            SizedBox(width: 10),
+                            Text('Others'),
+                          ],
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ),
+            ),
           ],
         ),
-    ),
-      );
+      ),
+    );
   }
 }

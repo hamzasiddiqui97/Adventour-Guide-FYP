@@ -979,8 +979,8 @@ class _PropertyAddState extends State<PropertyAdd>
                                     floorArea == null &&
                                     type == null) {
                                   Utils.showSnackBar('Please fill all fields.', false);
-                                } else if (priceController.text.startsWith("0") || int.parse(priceController.text) == 0) {
-                                  Utils.showSnackBar('Price cannot start with 0 or be 0.', false);
+                                } else if (priceController.text.startsWith("0") || int.parse(priceController.text) <= 0) {
+                                  Utils.showSnackBar('Price cannot start with 0, be 0 or negative.', false);
                                 } else {
                                   Get.to(() => AddPostScreen(
                                     title: title.text,
