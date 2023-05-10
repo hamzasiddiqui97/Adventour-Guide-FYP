@@ -151,7 +151,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
       fontWeight: FontWeight.normal,
     );
     return Padding(
-      padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10),
       child: WillPopScope(
         onWillPop: () async => false,
         child: SafeArea(

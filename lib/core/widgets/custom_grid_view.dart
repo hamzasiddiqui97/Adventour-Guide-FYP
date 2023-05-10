@@ -24,7 +24,7 @@ class CustomGrid extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade400,
-            blurRadius: 5.0,
+            blurRadius: 3.0,
             spreadRadius: 0.0,
             offset: Offset(0.0, 2.0),
         ),
