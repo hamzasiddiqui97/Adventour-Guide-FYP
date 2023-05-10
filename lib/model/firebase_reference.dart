@@ -314,6 +314,49 @@ class AddPlacesToFirebaseDb {
   }
 
 
+  static Future<void> getAllHotelPosts() async {
+    final HotelOwnerController hotelOwnerController = Get.find();
+
+    if (hotelOwnerController == null) {
+      Get.put(HotelOwnerController());
+    }
+
+    var postRef = database
+        .ref()
+        .child('users')
+        .child('hotel owner')
+        .orderByChild('postData');
+
+    DatabaseEvent event = await postRef.once();
+    DataSnapshot dataSnapshot = event.snapshot;
+
+    if (kDebugMode) {
+      print("DataSnapshot getAllHotelPosts: $dataSnapshot");
+    }
+
+    if (dataSnapshot.value != null) {
+      Map<String, dynamic> map = Map<String, dynamic>.from(dataSnapshot.value as Map);
+
+      hotelOwnerController.propertyList.clear();
+      map.forEach((key, value) {
+        if(value['postData'] != null) {
+          Map<String, dynamic> postData = Map<String, dynamic>.from(value['postData'] as Map);
+          postData.forEach((postKey, postValue) {
+            hotelOwnerController.propertyList.add(Property.fromMap(Map<String, dynamic>.from(postValue as Map)));
+          });
+        }
+      });
+
+      if (kDebugMode) {
+        print("PropertyList getAllHotelPosts: ${hotelOwnerController.propertyList}");
+      }
+    } else {
+      if (kDebugMode) {
+        print("No data found");
+      }
+    }
+  }
+
 
 
   static Future<Map<String, dynamic>?> getPlaceDetails(

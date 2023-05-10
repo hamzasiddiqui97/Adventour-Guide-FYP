@@ -36,30 +36,10 @@ class _HotelOwnerPageState extends State<HotelOwnerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar:
-      // AppBar(
-      //   title: Text('Hotel'),
-      //   automaticallyImplyLeading: false,
-      // ),
       body: IndexedStack(
         index: _currentIndex,
         children: pages,
       ),
-      // Column(children: [
-      //   // Text('Welcome, hotel owner! Your UID: ${widget.uid}'),
-      //   Center(
-      //     child: ElevatedButton(
-      //       onPressed: () {
-      //         // await FirebaseAuth.instance.signOut();
-      //         // Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-      //         Get.to(() => PropertyAdd());
-      //       },
-      //       child: const Text(
-      //         'Post data',
-      //       ),
-      //     ),
-      //   )
-      // ]),
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTap,
         currentIndex: _currentIndex,

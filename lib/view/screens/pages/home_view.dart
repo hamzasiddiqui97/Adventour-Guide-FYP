@@ -19,6 +19,7 @@ import '../../../helper/utils.dart';
 import '../../../models/weather.dart';
 import '../../../snackbar_utils.dart';
 import '../views/hotel_post_detail_page.dart';
+import '../views/hotel_post_details_tourist_view.dart';
 
 class HomePageNavBar extends StatefulWidget {
   const HomePageNavBar({Key? key}) : super(key: key);
@@ -43,10 +44,15 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
     super.initState();
     _fetchWeather();
     String uid = FirebaseAuth.instance.currentUser!.uid;
-    AddPlacesToFirebaseDb.getPersonalHotelPost(uid);
+
+    if (mainController.role.value == 'Tourist') {
+      AddPlacesToFirebaseDb.getAllHotelPosts();
+    } else if (mainController.role.value == 'Hotel Owner') {
+      AddPlacesToFirebaseDb.getPersonalHotelPost(uid);
+    }
 
     if (kDebugMode) {
-      print(AddPlacesToFirebaseDb.getPersonalHotelPost(uid));
+      print("Uid of hotel owner: ${AddPlacesToFirebaseDb.getPersonalHotelPost(uid)}");
     }
   }
 
@@ -131,127 +137,228 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
         child: Scaffold(
           body: mainController.role.value == "Tourist"
               ? SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 25,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 3,
+                            spreadRadius: 0,
+                            offset: const Offset(0.0, 2.0),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey.shade50,
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade400,
-                              blurRadius: 3,
-                              spreadRadius: 0,
-                              offset: const Offset(0.0, 2.0),
+                      width: MediaQuery.of(context).size.width,
+                      height: 100,
+                      // color: Colors.orange,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (_isWeatherDataLoading)
+                            const Center(child: CircularProgressIndicator()),
+                          if (!_isWeatherDataLoading && _weather != null)
+                            Text(
+                              _weather!.cityName,
+                              style: myTextStyle,
                             ),
-                          ],
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.grey.shade50,
+                          const SizedBox(width: 10.0),
+                          if (!_isWeatherDataLoading && _weather != null)
+                            MapString.mapStringToIcon(
+                              context,
+                              '${_weather?.currently}',
+                              30,
+                            ),
+                          const SizedBox(width: 10.0),
+                          if (_weather != null)
+                            Text(
+                              "${_weather!.temp.round()} °C",
+                              style: const TextStyle(
+                                color: ColorPalette.secondaryColor,
+                                fontSize: 25.0,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    const Center(
+                      child: Text(
+                        'Explore',
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                        width: MediaQuery.of(context).size.width,
-                        height: 100,
-                        // color: Colors.orange,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (_isWeatherDataLoading)
-                              const Center(child: CircularProgressIndicator()),
-                            if (!_isWeatherDataLoading && _weather != null)
-                              Text(
-                                _weather!.cityName,
-                                style: myTextStyle,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    const CustomGrid(),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                      child: const Text(
+                        'Hotels',
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: 300,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: hotelOwnerController.propertyList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (kDebugMode) {
+                            print('hotelOwnerController propertyList length: ${hotelOwnerController.propertyList.length}');
+                          }
+
+                          var property =
+                          hotelOwnerController.propertyList[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(() =>
+
+
+                                  HotelPostDetailsTouristPage(property: property));
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.15),
+                                    blurRadius: 5.0,
+                                    spreadRadius: 0.0,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                            const SizedBox(width: 10.0),
-                            if (!_isWeatherDataLoading && _weather != null)
-                              MapString.mapStringToIcon(
-                                context,
-                                '${_weather?.currently}',
-                                30,
-                              ),
-                            const SizedBox(width: 10.0),
-                            if (_weather != null)
-                              Text(
-                                "${_weather!.temp.round()} °C",
-                                style: const TextStyle(
-                                  color: ColorPalette.secondaryColor,
-                                  fontSize: 25.0,
+                              child: Card(
+                                child: Stack(
+                                  children: [
+                                    // Display the image
+                                    property.coverImage != null
+                                        ? SizedBox(
+                                      width: MediaQuery.of(context)
+                                          .size
+                                          .width,
+                                      height: 65.w,
+                                      child: Image.network(
+                                        property.coverImage!,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                        : const SizedBox.shrink(),
+                                    // Display the hotel title at the bottom
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Utils.showSnackBar('Tap', true);
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width,
+                                          padding: const EdgeInsets.all(8.0),
+                                          color: Colors.white,
+                                          child: Text(
+                                            property.title,
+                                            style: const TextStyle(
+                                              overflow: TextOverflow.ellipsis,
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                          ],
-                        ),
+                            ),
+                          );
+                        },
                       ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      const Center(
-                        child: Text(
-                          'Explore',
-                          style: TextStyle(
-                            fontSize: 26,
+                    ),
 
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      const CustomGrid(),
-                    ],
-                  ),
-                )
+
+
+                  ],
+                ),
+              )
               : SafeArea(
                   child: Column(
                     children: [
                       // Weather container
-                      Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade400,
-                              blurRadius: 3,
-                              spreadRadius: 0,
-                              offset: const Offset(0.0, 2.0),
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.grey.shade50,
-                        ),
-                        width: MediaQuery.of(context).size.width,
-                        height: 100,
-                        // color: Colors.orange,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (_isWeatherDataLoading)
-                              const Center(child: CircularProgressIndicator()),
-                            if (!_isWeatherDataLoading && _weather != null)
-                              Text(
-                                _weather!.cityName,
-                                style: myTextStyle,
-                              ),
-                            const SizedBox(width: 10.0),
-                            if (!_isWeatherDataLoading && _weather != null)
-                              MapString.mapStringToIcon(
-                                context,
-                                '${_weather?.currently}',
-                                30,
-                              ),
-                            const SizedBox(width: 10.0),
-                            if (_weather != null)
-                              Text(
-                                "${_weather!.temp.round()} °C",
-                                style: const TextStyle(
-                                  color: ColorPalette.secondaryColor,
-                                  fontSize: 25.0,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Colors.grey.shade400,
+                      //         blurRadius: 3,
+                      //         spreadRadius: 0,
+                      //         offset: const Offset(0.0, 2.0),
+                      //       ),
+                      //     ],
+                      //     borderRadius: BorderRadius.circular(20),
+                      //     color: Colors.grey.shade50,
+                      //   ),
+                      //   width: MediaQuery.of(context).size.width,
+                      //   height: 100,
+                      //   // color: Colors.orange,
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     children: [
+                      //       if (_isWeatherDataLoading)
+                      //         const Center(child: CircularProgressIndicator()),
+                      //       if (!_isWeatherDataLoading && _weather != null)
+                      //         Text(
+                      //           _weather!.cityName,
+                      //           style: myTextStyle,
+                      //         ),
+                      //       const SizedBox(width: 10.0),
+                      //       if (!_isWeatherDataLoading && _weather != null)
+                      //         MapString.mapStringToIcon(
+                      //           context,
+                      //           '${_weather?.currently}',
+                      //           30,
+                      //         ),
+                      //       const SizedBox(width: 10.0),
+                      //       if (_weather != null)
+                      //         Text(
+                      //           "${_weather!.temp.round()} °C",
+                      //           style: const TextStyle(
+                      //             color: ColorPalette.secondaryColor,
+                      //             fontSize: 25.0,
+                      //           ),
+                      //         ),
+                      //     ],
+                      //   ),
+                      // ),
                       SizedBox(
                         height: 2.h,
                       ),
