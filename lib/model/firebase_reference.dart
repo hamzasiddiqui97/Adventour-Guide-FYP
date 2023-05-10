@@ -53,40 +53,97 @@ class AddPlacesToFirebaseDb {
     }
   }
 
+  //
+  // Future<void> saveHotelOwnerPost(
+  //   String role,
+  //   String uid,
+  //   String title,
+  //   String description,
+  //   String bedroom,
+  //   String washroom,
+  //   String carParking,
+  //   String kitchen,
+  //   int floorArea,
+  //   String tapAvailable,
+  //   String airConditioner,
+  //   String quarterAvailable,
+  //   int price,
+  //   String coverImage,
+  //   String file1,
+  //   String file2,
+  //   String file3,
+  //   String file4,
+  //   String file5,
+  //   String file6,
+  //   String streetName,
+  //   String fullAddress,
+  // ) async {
+  //   try {
+  //     await database
+  //         .ref()
+  //         .child('users')
+  //         .child("hotel owner")
+  //         .child(uid)
+  //         .child('postData')
+  //         .push()
+  //         .set({
+  //       'title': title,
+  //       'description': description,
+  //       'bedroom': bedroom,
+  //       'washroom': washroom,
+  //       'carParking': carParking,
+  //       'kitchen': kitchen,
+  //       'floorArea': floorArea,
+  //       'tapAvailable': tapAvailable,
+  //       'airConditioner': airConditioner,
+  //       'quarterAvailable': quarterAvailable,
+  //       'price': price,
+  //       'coverImage': coverImage,
+  //       'file1': file1,
+  //       'file2': file2,
+  //       'file3': file3,
+  //       'file4': file4,
+  //       'file5': file5,
+  //       'file6': file6,
+  //       'streetName': streetName,
+  //       'fullAddress': fullAddress,
+  //     });
+  //   } catch (e) {
+  //     print('Error saving user credentials: $e');
+  //   }
+  // }
 
   Future<void> saveHotelOwnerPost(
-    String role,
-    String uid,
-    String title,
-    String description,
-    String bedroom,
-    String washroom,
-    String carParking,
-    String kitchen,
-    int floorArea,
-    String tapAvailable,
-    String airConditioner,
-    String quarterAvailable,
-    int price,
-    String coverImage,
-    String file1,
-    String file2,
-    String file3,
-    String file4,
-    String file5,
-    String file6,
-    String streetName,
-    String fullAddress,
-  ) async {
+      String role,
+      String uid,
+      String title,
+      String description,
+      String bedroom,
+      String washroom,
+      String carParking,
+      String kitchen,
+      int floorArea,
+      String tapAvailable,
+      String airConditioner,
+      String quarterAvailable,
+      int price,
+      String coverImage,
+      String file1,
+      String file2,
+      String file3,
+      String file4,
+      String file5,
+      String file6,
+      String streetName,
+      String fullAddress,
+      ) async {
     try {
-      await database
-          .ref()
-          .child('users')
-          .child("hotel owner")
-          .child(uid)
-          .child('postData')
-          .push()
-          .set({
+      final postRef =
+      database.ref().child('users').child("hotel owner").child(uid).child('postData').push();
+      final postId = postRef.key;
+
+      // Save the post data under hotel owner node
+      await postRef.set({
         'title': title,
         'description': description,
         'bedroom': bedroom,
@@ -108,10 +165,39 @@ class AddPlacesToFirebaseDb {
         'streetName': streetName,
         'fullAddress': fullAddress,
       });
+
+      // Save the post data under tourist node
+      await database.ref().child('users').child("tourist").child('hotelPosts').child(postId!).set({
+        'uid': uid,
+        'role' : role,
+        'title': title,
+        'description': description,
+        'bedroom': bedroom,
+        'washroom': washroom,
+        'carParking': carParking,
+        'kitchen': kitchen,
+        'floorArea': floorArea,
+        'tapAvailable': tapAvailable,
+        'airConditioner': airConditioner,
+        'quarterAvailable': quarterAvailable,
+        'price': price,
+        'coverImage': coverImage,
+        'file1': file1,
+        'file2': file2,
+        'file3': file3,
+        'file4': file4,
+        'file5': file5,
+        'file6': file6,
+        'streetName': streetName,
+        'fullAddress': fullAddress,
+
+      });
     } catch (e) {
       print('Error saving user credentials: $e');
     }
   }
+
+
 
   Future<String> getUserRole(String uid) async {
     String userRole = "";
@@ -140,6 +226,7 @@ class AddPlacesToFirebaseDb {
     print('user role using getUserRole funtion: $userRole');
     return userRole;
   }
+
 
   Future<String> checkUserExistsWithEmail(String email) async {
     String existingRole = '';
