@@ -4,13 +4,14 @@ import 'package:get/get.dart';
 import 'package:google_directions_api/google_directions_api.dart';
 import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
+import 'package:google_maps_basics/models/resquestModel.dart';
 
 import '../models/PropertyModel.dart';
 
 class AddPlacesToFirebaseDb {
   static final database = FirebaseDatabase.instance;
 
-  Future<void> addVehicleToDatabase(String ownerId, Vehicle newVehicle) async {
+  Future<void> addVehicleToDatabase(String ownerId, VehicleModel newVehicle) async {
     try {
       await database
           .ref()
