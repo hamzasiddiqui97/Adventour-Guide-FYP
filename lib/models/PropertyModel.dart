@@ -1,5 +1,6 @@
 
 class Property {
+  String? uid;
   String title;
   String description;
   String bedroom;
@@ -23,6 +24,7 @@ class Property {
 
   Property({
     required this.title,
+     this.uid,
     required this.description,
     required this.bedroom,
     required this.washroom,
@@ -46,6 +48,7 @@ class Property {
 
   factory Property.fromMap(Map<String, dynamic> map) {
     return Property(
+      uid: map['uid'],
       title: map['title'] as String,
       description: map['description'] as String,
       bedroom: map['bedroom'] as String,

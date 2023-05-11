@@ -9,17 +9,21 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class BookNow extends StatefulWidget {
-  const BookNow({Key? key}) : super(key: key);
+  const BookNow({Key? key, required this.hotelOwnerUID}) : super(key: key);
+  final String hotelOwnerUID;
 
   @override
-  State<BookNow> createState() => _BookNowState();
+  State<BookNow> createState() => _BookNowState(hotelOwnerUID);
 }
 
 class _BookNowState extends State<BookNow> {
+  final String hotelOwnerUID;
   String selectedDate = '';
   String dateCount = '';
   String range = '';
   String rangeCount = '';
+
+  _BookNowState(this.hotelOwnerUID);
 
   /// The method for [DateRangePickerSelectionChanged] callback, which will be
   /// called whenever a selection changed on the date picker widget.
@@ -93,7 +97,7 @@ class _BookNowState extends State<BookNow> {
                       String uid = FirebaseAuth.instance.currentUser!.uid;
 
                       AddPlacesToFirebaseDb().sendBookingRequest(
-                          "4NVSLJqOLRN7UNcjQbpag1kruff2", uid, range);
+                          hotelOwnerUID, uid, range);
                     }
                     if (range == '') {
                       Get.back();

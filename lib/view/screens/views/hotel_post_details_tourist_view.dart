@@ -50,7 +50,6 @@ class HotelPostDetailsTouristPage extends StatelessWidget {
                   property.file5,
                   property.file6,
                 ].where((image) => image != null && image.isNotEmpty).toList();
-
                 Get.to(() => PhotosDetailsPage(images: images));
               },
               child: Container(
@@ -103,7 +102,8 @@ class HotelPostDetailsTouristPage extends StatelessWidget {
                               alignment: Alignment.centerRight,
                               child: InkWell(
                                 onTap: (){
-                                  Prompts.bookNow();
+                                  print(property.uid);
+                                  // Prompts.bookNow(property.uid!);
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(
