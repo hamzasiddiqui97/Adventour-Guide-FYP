@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
 
 class VehicleDetailsPage extends StatelessWidget {
-  final Vehicle? vehicle;
+  final VehicleModel? vehicle;
 
   VehicleDetailsPage({required this.vehicle});
 

@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
                           } else if (role == 'Hotel Owner') {
                             return HotelOwnerPage(uid: snapshot.data!.uid);
                           } else if (role == 'Transport Owner') {
-                            return TransportOwnerDashboardPage(
+                            return TransportationOwnerPage(
                                 uid: snapshot.data!.uid);
                           } else {
                             return RoleSelection();

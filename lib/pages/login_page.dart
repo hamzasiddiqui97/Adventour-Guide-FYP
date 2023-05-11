@@ -5,6 +5,8 @@ import 'package:google_maps_basics/pages/vehicle_list_page.dart';
 import 'package:google_maps_basics/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../transport_owner_dummy_screen.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -66,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => TransportOwnerDashboardPage(uid: uid,),
+                          builder: (context) => TransportationOwnerPage(uid: uid,),
                         ),
                       );
                     }

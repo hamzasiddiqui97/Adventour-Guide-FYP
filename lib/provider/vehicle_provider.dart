@@ -13,15 +13,15 @@ class VehicleProvider extends ChangeNotifier {
 
   VehicleService _vehicleService = VehicleService();
 
-  Future<List<Vehicle>> getVehicles() async {
+  Future<List<VehicleModel>> getVehicles() async {
     return await _vehicleService.getVehicles();
   }
 
-  List<Vehicle> _vehicles = [
+  List<VehicleModel> _vehicles = [
     // Add your vehicles here
   ];
 
-  List<Vehicle> get vehicles {
+  List<VehicleModel> get vehicles {
     return [..._vehicles];
   }
 

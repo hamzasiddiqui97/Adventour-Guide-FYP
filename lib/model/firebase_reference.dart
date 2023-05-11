@@ -3,13 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
-
 import '../models/PropertyModel.dart';
+import '../model/vehicle.dart';
 
 class AddPlacesToFirebaseDb {
   static final database = FirebaseDatabase.instance;
 
-  Future<void> addVehicleToDatabase(String ownerId, Vehicle newVehicle) async {
+  Future<void> addVehicleToDatabase(String ownerId, VehicleModel newVehicle) async {
     try {
       await database
           .ref()
@@ -269,7 +269,6 @@ class AddPlacesToFirebaseDb {
     } catch (e) {
       print('Error getting user role: $e');
     }
-
     print('user role using getUserRole funtion: $userRole');
     return userRole;
   }
@@ -482,4 +481,49 @@ class AddPlacesToFirebaseDb {
       throw Exception('Error updating trip name');
     }
   }
+
+
+  static Future<List<VehicleModel>?> getVehiclesForTransporter(String ownerId) async {
+    final HotelOwnerController hotelOwnerController = Get.find();
+
+    if (hotelOwnerController == null) {
+      Get.put(HotelOwnerController());
+    }
+
+    DatabaseReference postRef = database
+        .ref()
+        .child('users')
+        .child('transport owner')
+        .child(ownerId)
+        .child('vehicle');
+
+    DatabaseEvent event = await postRef.once();
+    DataSnapshot dataSnapshot = event.snapshot;
+
+    if (kDebugMode) {
+      print("DataSnapshot vehicleList: $dataSnapshot");
+    }
+
+    if (dataSnapshot.value != null) {
+      Map<dynamic, dynamic> map = dataSnapshot.value as Map<dynamic, dynamic>;
+
+      hotelOwnerController.vehicleList.clear();
+      map.forEach((key, value) {
+        hotelOwnerController.propertyList
+            .add(Property.fromMap(Map<String, dynamic>.from(value as Map)));
+      });
+
+      if (kDebugMode) {
+        print("vehicleList getPersonalHotelPost: ${hotelOwnerController.vehicleList}");
+      }
+    } else {
+      if (kDebugMode) {
+        print("No data found");
+      }
+    }
+
+    return null;
+  }
+
+
 }

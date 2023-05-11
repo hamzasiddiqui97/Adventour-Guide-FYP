@@ -1,6 +1,6 @@
 // lib/models/vehicle.dart
 
-class Vehicle {
+class VehicleModel {
   final String name;
   final String id;
   final String description;
@@ -12,7 +12,7 @@ class Vehicle {
   final String rent;
   final String imageUrl;
 
-  Vehicle({
+  VehicleModel({
     required this.id,
     required this.name,
     required this.description,
@@ -25,8 +25,8 @@ class Vehicle {
     required this.imageUrl,
   });
 
-  factory Vehicle.fromMap(String id, Map<String, dynamic> data) {
-    return Vehicle(
+  factory VehicleModel.fromMap(String id, Map<String, dynamic> data) {
+    return VehicleModel(
       id: id,
       name: data['name'],
       description: data['description'],

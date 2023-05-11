@@ -93,7 +93,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
       appBar: AppBar(
         backgroundColor: ColorPalette.secondaryColor,
         foregroundColor: ColorPalette.primaryColor,
-        title: Text('Add New Vehicle'),
+        title: const Text('Add New Vehicle'),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -102,7 +102,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Name',
                 ),
                 validator: (value) {
@@ -118,7 +118,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Brand',
                 ),
                 validator: (value) {
@@ -134,7 +134,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Model',
                 ),
                 validator: (value) {
@@ -150,7 +150,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Year',
                 ),
                 validator: (value) {
@@ -166,7 +166,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Type',
                 ),
                 validator: (value) {
@@ -198,7 +198,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Image URL',
                 ),
                 validator: (value) {
@@ -214,7 +214,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Description',
                 ),
                 onChanged: (value) {
@@ -237,20 +237,20 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                   radius: 10,
                   borderColor: ColorPalette.textColor,
                   child: vehicleImageFile == null
-                      ? Icon(Icons.add_a_photo_outlined, size: 30)
+                      ? const Icon(Icons.add_a_photo_outlined, size: 30)
                       : Image.file(
                           vehicleImageFile!,
                           fit: BoxFit.fill,
                         ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
                   onPressed: isUploading ? null: () {
                     if (_formKey.currentState?.validate() ?? false && vehicleImagePath.isNotEmpty) {
                       // Save the new vehicle to the database
-                      Vehicle newVehicle = Vehicle(
+                      VehicleModel newVehicle = VehicleModel(
                         id: '',
                         ownerId:
                         '', // Replace this with the actual ownerId from Firebase Authentication
@@ -271,9 +271,8 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                       // Navigate back to the TransportOwnerDashboardPage
                       Navigator.pop(context);
                     }
-
                   } ,
-                  child: Text('Save'),
+                  child: const Text('Post'),
                 ),
               ),
             ],

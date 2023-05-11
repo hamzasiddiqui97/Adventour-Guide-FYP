@@ -14,7 +14,11 @@ import 'package:google_maps_basics/view/screens/views/addProperty.dart';
 import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../../helper/utils.dart';
+import '../../../model/vehicle.dart';
 import '../../../models/weather.dart';
+import '../../../pages/add_new_vehicle_page.dart';
+import '../../../pages/transport_owner_dashboard_page.dart';
+import '../../../pages/vehicle_details_page.dart';
 import '../../../snackbar_utils.dart';
 import '../views/hotel_post_detail_page.dart';
 import '../views/hotel_post_details_tourist_view.dart';
@@ -38,6 +42,12 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
   bool _isRequestError = false;
   bool _isLocationError = false;
   late bool roleLoading;
+
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+
+  List<VehicleModel> vehicles = [
+    // Add your list of vehicles here
+  ];
 
   Future<void> _fetchWeather() async {
     final position = await _determinePosition();
@@ -115,7 +125,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
   }
 
   void _initializeRole() async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+    // final uid = FirebaseAuth.instance.currentUser!.uid;
     setState(() {
       roleLoading = true; // set _isLoading to true before fetching data
     });
@@ -126,7 +136,10 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
       print('shared prrrrrr: $userRole');
       if (userRole == 'Tourist') {
         await AddPlacesToFirebaseDb.getAllHotelPosts();
-      } else if (userRole == 'Hotel Owner') {
+      } else if (userRole == 'Transport Owner') {
+        await AddPlacesToFirebaseDb.getVehiclesForTransporter(uid);
+      }
+      else if (userRole == 'Hotel Owner') {
         await AddPlacesToFirebaseDb.getPersonalHotelPost(uid);
       }
       setState(() {
@@ -470,9 +483,80 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                               ],
                             ),
                           )
-                        : const Center(
-                            child: Text(
-                                'An error Occurred please try logging in again.')),
+                        : mainController.role.value == "Transport Owner"
+                            ? SafeArea(
+                              child: Scaffold(
+                                  body: Column(
+                                    children: [
+                                      const Text(
+                                        'Your Posts',
+                                        style: TextStyle(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      Expanded(
+
+                                        child: ListView.builder(
+                                          itemCount: vehicles.length,
+                                          itemBuilder: (context, index) {
+                                            return ListTile(
+                                              leading: CircleAvatar(
+                                                backgroundImage: NetworkImage(
+                                                    vehicles[index].imageUrl),
+                                              ),
+                                              title: Text(vehicles[index].name),
+                                              subtitle: Text(
+                                                  'Brand: ${vehicles[index].brand}'),
+                                              onTap: () {
+                                                // Navigate to VehicleDetailsPage
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        VehicleDetailsPage(
+                                                            vehicle:
+                                                                vehicles[index]),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ),
+
+                                      Padding(
+                                        padding: const EdgeInsets.all(14),
+                                        child: Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Get.to(
+                                                    () => AddNewVehiclePage(uid: uid),
+                                              );
+                                            },
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    ColorPalette.secondaryColor),
+                                                foregroundColor:
+                                                MaterialStateProperty.all(
+                                                    ColorPalette.primaryColor)),
+                                            child: const Text(
+                                              'Add Your Vehicle',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                    ],
+                                  ),
+                                ),
+                            )
+                            : const Center(
+                                child: Text(
+                                    'An error Occurred please try logging in again.')),
           ),
         ),
       ),

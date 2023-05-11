@@ -7,7 +7,7 @@ class VehicleListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vehicleData = Provider.of<VehicleProvider>(context);
-    final List<Vehicle> vehicles = vehicleData.vehicles;
+    final List<VehicleModel> vehicles = vehicleData.vehicles;
 
     return Scaffold(
       appBar: AppBar(title: Text('Vehicle List')),
