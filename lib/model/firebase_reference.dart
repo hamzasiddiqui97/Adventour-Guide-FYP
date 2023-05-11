@@ -6,6 +6,7 @@ import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
 import 'package:google_maps_basics/models/resquestModel.dart';
 
+import '../controllers/tranportOwnerController.dart';
 import '../models/PropertyModel.dart';
 
 class AddPlacesToFirebaseDb {
@@ -13,19 +14,52 @@ class AddPlacesToFirebaseDb {
 
   Future<void> addVehicleToDatabase(String ownerId, VehicleModel newVehicle) async {
     try {
-      await database
+      final vehicleRef = database
           .ref()
           .child('users')
           .child('transport owner')
           .child(ownerId)
           .child('vehicle')
-          .push()
+          .push();
+      final vehicleId = vehicleRef.key;
+
+      // Save the vehicle data under transport owner node
+      await vehicleRef.set(newVehicle.toMap());
+
+      // Save the vehicle data under tourist node
+      await database
+          .ref()
+          .child('users')
+          .child('tourist')
+          .child('vehiclePosts')
+          .child(vehicleId!)
           .set(newVehicle.toMap());
+
       getVehiclesForTransporter(ownerId);
     } catch (e) {
       print('Error adding vehicle: $e');
     }
   }
+
+
+
+  // Future<void> addVehicleToDatabase(String ownerId, VehicleModel newVehicle) async {
+  //   try {
+  //     await database
+  //         .ref()
+  //         .child('users')
+  //         .child('transport owner')
+  //         .child(ownerId)
+  //         .child('vehicle')
+  //         .push()
+  //         .set(newVehicle.toMap());
+  //
+  //
+  //     getVehiclesForTransporter(ownerId);
+  //   } catch (e) {
+  //     print('Error adding vehicle: $e');
+  //   }
+  // }
 
   Future<void> saveUserCredentials(
       String uid, String email, String role) async {
@@ -607,6 +641,49 @@ class AddPlacesToFirebaseDb {
       print('Error fetching vehicles: $e');
     }
   }
+
+
+  static Future<void> getAllTouristVehiclePosts() async {
+    final TransportOwnerController transportOwnerController = Get.find();
+
+    if (transportOwnerController == null) {
+      Get.put(TransportOwnerController());
+    }
+
+    var postRef = database
+        .ref()
+        .child('users')
+        .child('tourist')
+        .child('vehiclePosts');
+
+    DatabaseEvent event = await postRef.once();
+    DataSnapshot dataSnapshot = event.snapshot;
+
+    if (kDebugMode) {
+      print("DataSnapshot getAllTouristVehiclePosts: $dataSnapshot");
+    }
+
+    if (dataSnapshot.value != null) {
+      Map<String, dynamic> map = Map<String, dynamic>.from(dataSnapshot.value as Map);
+
+      transportOwnerController.vehiclePostList.clear();
+      map.forEach((key, value) {
+        if (value != null) {
+          VehicleModel vehicleModel = VehicleModel.fromMap(key, Map<String, dynamic>.from(value as Map));
+          transportOwnerController.vehiclePostList.add(vehicleModel);
+        }
+      });
+
+      if (kDebugMode) {
+        print("VehicleList getAllTouristVehiclePosts: ${transportOwnerController.vehiclePostList.length}");
+      }
+    } else {
+      if (kDebugMode) {
+        print("No data found");
+      }
+    }
+  }
+
 
 
 }

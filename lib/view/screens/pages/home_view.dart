@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/controllers/mainController.dart';
+import 'package:google_maps_basics/controllers/tranportOwnerController.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
 import 'package:google_maps_basics/model/firebase_reference.dart';
@@ -19,11 +20,11 @@ import '../../../helper/utils.dart';
 import '../../../model/vehicle.dart';
 import '../../../models/weather.dart';
 import '../../../pages/add_new_vehicle_page.dart';
-import '../../../pages/transport_owner_dashboard_page.dart';
 import '../../../pages/vehicle_details_page.dart';
 import '../../../snackbar_utils.dart';
 import '../views/hotel_post_detail_page.dart';
 import '../views/hotel_post_details_tourist_view.dart';
+import '../views/vehiclePostingDetails.dart';
 
 class HomePageNavBar extends StatefulWidget {
   const HomePageNavBar({Key? key}) : super(key: key);
@@ -36,6 +37,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
   final MainController mainController = Get.put(MainController());
   final HotelOwnerController hotelOwnerController =
       Get.put(HotelOwnerController());
+  TransportOwnerController transportOwnerController = Get.put(TransportOwnerController());
+
 
   // weather api
   String apiKey = '97f6f37816c2c554f9f209bd1b7b7afe';
@@ -124,6 +127,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
 
     _fetchWeather();
     _initializeRole();
+    transportOwnerController = Get.put(TransportOwnerController());
+
   }
 
   void _initializeRole() async {
@@ -138,6 +143,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
       print('shared prrrrrr: $userRole');
       if (userRole == 'Tourist') {
         await AddPlacesToFirebaseDb.getAllHotelPosts();
+        await AddPlacesToFirebaseDb.getAllTouristVehiclePosts();
       } else if (userRole == 'Transport Owner') {
         await AddPlacesToFirebaseDb.getVehiclesForTransporter(uid);
       }
@@ -356,6 +362,95 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                                       fontSize: 30,
                                                       fontWeight:
                                                           FontWeight.normal,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            const Text(
+                              'Transport',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+// Transport posts
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: 300,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: transportOwnerController.vehiclePostList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  if (kDebugMode) {
+                                    print('transportOwnerController vehicleList length: ${transportOwnerController.vehiclePostList.length}');
+                                  }
+
+                                  var vehicle = transportOwnerController.vehiclePostList[index];
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Get.to(() => VehiclePostDetails(vehicle: vehicle));
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(14),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.15),
+                                            blurRadius: 5.0,
+                                            spreadRadius: 0.0,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Card(
+                                        child: Stack(
+                                          children: [
+                                            // Display the image
+                                            vehicle.imageUrl != null
+                                                ? SizedBox(
+                                              width: MediaQuery.of(context).size.width,
+                                              height: 65.w,
+                                              child: Image.network(
+                                                vehicle.imageUrl,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                                : const SizedBox.shrink(),
+                                            // Display the vehicle name at the bottom
+                                            Positioned(
+                                              bottom: 0,
+                                              left: 0,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Utils.showSnackBar('Tap', true);
+                                                },
+                                                child: Container(
+                                                  width: MediaQuery.of(context).size.width,
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  color: Colors.white,
+                                                  child: Text(
+                                                    vehicle.name,
+                                                    style: const TextStyle(
+                                                      overflow: TextOverflow.ellipsis,
+                                                      fontSize: 30,
+                                                      fontWeight: FontWeight.normal,
                                                       color: Colors.black,
                                                     ),
                                                   ),
