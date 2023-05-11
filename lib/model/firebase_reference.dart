@@ -39,7 +39,8 @@ class AddPlacesToFirebaseDb {
     }
   }
 
-  Future<void> createUserUsingGoogleSignUp(String uid, String email, String role) async {
+  Future<void> createUserUsingGoogleSignUp(
+      String uid, String email, String role) async {
     try {
       await database
           .ref()
@@ -114,32 +115,37 @@ class AddPlacesToFirebaseDb {
   // }
 
   Future<void> saveHotelOwnerPost(
-      String role,
-      String uid,
-      String title,
-      String description,
-      String bedroom,
-      String washroom,
-      String carParking,
-      String kitchen,
-      int floorArea,
-      String tapAvailable,
-      String airConditioner,
-      String quarterAvailable,
-      int price,
-      String coverImage,
-      String file1,
-      String file2,
-      String file3,
-      String file4,
-      String file5,
-      String file6,
-      String streetName,
-      String fullAddress,
-      ) async {
+    String role,
+    String uid,
+    String title,
+    String description,
+    String bedroom,
+    String washroom,
+    String carParking,
+    String kitchen,
+    int floorArea,
+    String tapAvailable,
+    String airConditioner,
+    String quarterAvailable,
+    int price,
+    String coverImage,
+    String file1,
+    String file2,
+    String file3,
+    String file4,
+    String file5,
+    String file6,
+    String streetName,
+    String fullAddress,
+  ) async {
     try {
-      final postRef =
-      database.ref().child('users').child("hotel owner").child(uid).child('postData').push();
+      final postRef = database
+          .ref()
+          .child('users')
+          .child("hotel owner")
+          .child(uid)
+          .child('postData')
+          .push();
       final postId = postRef.key;
 
       // Save the post data under hotel owner node
@@ -167,9 +173,15 @@ class AddPlacesToFirebaseDb {
       });
 
       // Save the post data under tourist node
-      await database.ref().child('users').child("tourist").child('hotelPosts').child(postId!).set({
+      await database
+          .ref()
+          .child('users')
+          .child("tourist")
+          .child('hotelPosts')
+          .child(postId!)
+          .set({
         'uid': uid,
-        'role' : role,
+        'role': role,
         'title': title,
         'description': description,
         'bedroom': bedroom,
@@ -190,14 +202,11 @@ class AddPlacesToFirebaseDb {
         'file6': file6,
         'streetName': streetName,
         'fullAddress': fullAddress,
-
       });
     } catch (e) {
       print('Error saving user credentials: $e');
     }
   }
-
-
 
   Future<String> getUserRole(String uid) async {
     String userRole = "";
@@ -226,7 +235,6 @@ class AddPlacesToFirebaseDb {
     print('user role using getUserRole funtion: $userRole');
     return userRole;
   }
-
 
   Future<String> checkUserExistsWithEmail(String email) async {
     String existingRole = '';
@@ -273,7 +281,6 @@ class AddPlacesToFirebaseDb {
         .onValue;
   }
 
-
   static Future<void> getPersonalHotelPost(String uid) async {
     final HotelOwnerController hotelOwnerController = Get.find();
 
@@ -296,15 +303,18 @@ class AddPlacesToFirebaseDb {
     }
 
     if (dataSnapshot.value != null) {
-      Map<String, dynamic> map = Map<String, dynamic>.from(dataSnapshot.value as Map);
+      Map<String, dynamic> map =
+          Map<String, dynamic>.from(dataSnapshot.value as Map);
 
       hotelOwnerController.propertyList.clear();
       map.forEach((key, value) {
-        hotelOwnerController.propertyList.add(Property.fromMap(Map<String, dynamic>.from(value as Map)));
+        hotelOwnerController.propertyList
+            .add(Property.fromMap(Map<String, dynamic>.from(value as Map)));
       });
 
       if (kDebugMode) {
-        print("PropertyList getPersonalHotelPost: ${hotelOwnerController.propertyList}");
+        print(
+            "PropertyList getPersonalHotelPost: ${hotelOwnerController.propertyList}");
       }
     } else {
       if (kDebugMode) {
@@ -312,7 +322,6 @@ class AddPlacesToFirebaseDb {
       }
     }
   }
-
 
   static Future<void> getAllHotelPosts() async {
     final HotelOwnerController hotelOwnerController = Get.find();
@@ -335,20 +344,24 @@ class AddPlacesToFirebaseDb {
     }
 
     if (dataSnapshot.value != null) {
-      Map<String, dynamic> map = Map<String, dynamic>.from(dataSnapshot.value as Map);
+      Map<String, dynamic> map =
+          Map<String, dynamic>.from(dataSnapshot.value as Map);
 
       hotelOwnerController.propertyList.clear();
       map.forEach((key, value) {
-        if(value['postData'] != null) {
-          Map<String, dynamic> postData = Map<String, dynamic>.from(value['postData'] as Map);
+        if (value['postData'] != null) {
+          Map<String, dynamic> postData =
+              Map<String, dynamic>.from(value['postData'] as Map);
           postData.forEach((postKey, postValue) {
-            hotelOwnerController.propertyList.add(Property.fromMap(Map<String, dynamic>.from(postValue as Map)));
+            hotelOwnerController.propertyList.add(
+                Property.fromMap(Map<String, dynamic>.from(postValue as Map)));
           });
         }
       });
 
       if (kDebugMode) {
-        print("PropertyList getAllHotelPosts: ${hotelOwnerController.propertyList}");
+        print(
+            "PropertyList getAllHotelPosts: ${hotelOwnerController.propertyList}");
       }
     } else {
       if (kDebugMode) {
@@ -356,8 +369,6 @@ class AddPlacesToFirebaseDb {
       }
     }
   }
-
-
 
   static Future<Map<String, dynamic>?> getPlaceDetails(
       String uid, String tripName, String placeKey) async {

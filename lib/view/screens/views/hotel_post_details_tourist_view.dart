@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_basics/core/widgets/prompts.dart';
 import '../../../models/PropertyModel.dart';
 import '../../../core/constant/color_constants.dart';
 import 'package:google_maps_basics/view/screens/views/pictures_details.dart';
@@ -88,13 +89,49 @@ class HotelPostDetailsTouristPage extends StatelessWidget {
                           ),
                         ),
 
-                        Text(
-                          'PKR ${property.price}',
-                          style: const TextStyle(
-                            fontSize: 32,
-                            color: ColorPalette.secondaryColor,
-                          ),
-                          textAlign: TextAlign.center,
+                        Column(
+                          children: [
+                            Text(
+                              'PKR ${property.price}',
+                              style: const TextStyle(
+                                fontSize: 32,
+                                color: ColorPalette.secondaryColor,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: InkWell(
+                                onTap: (){
+                                  Prompts.bookNow();
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(
+                                    right: 10,
+                                  ),
+                                  height: 40,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    color: ColorPalette.secondaryColor,
+                                    border: Border.all(color: Colors.black, width: 2),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(
+                                        20,
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      "Book Now",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
