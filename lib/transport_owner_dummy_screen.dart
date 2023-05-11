@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
 
 
 class TransportationOwnerPage extends StatefulWidget {
@@ -15,6 +16,9 @@ class _TransportationOwnerPageState extends State<TransportationOwnerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
         title: const Text('TransportationOwnerPage'),
       ),
       body: Column(

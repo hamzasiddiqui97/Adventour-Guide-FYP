@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,14 +14,14 @@ import '../widgets/myContainer.dart';
 class AddNewVehiclePage extends StatefulWidget {
   final String uid;
 
-  AddNewVehiclePage({Key? key, required this.uid
-
-  }) : super(key: key);
+  AddNewVehiclePage({Key? key, required this.uid}) : super(key: key);
   @override
   _AddNewVehiclePageState createState() => _AddNewVehiclePageState();
 }
 
 class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
+  bool isUploading = false;
+
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   String _brand = '';
@@ -37,7 +36,6 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
 
   final picker = ImagePicker();
 
-
   getVehicleImage() async {
     PickedFile? pickedFile = await ImagePicker().getImage(
       source: ImageSource.gallery,
@@ -47,6 +45,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
     if (pickedFile != null) {
       setState(() {
         vehicleImageFile = File(pickedFile.path);
+        isUploading = true; // Start the upload
       });
     }
     if (vehicleImageFile == null) return;
@@ -73,10 +72,18 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
         ),
       );
       //Success: get the download URL
-      vehicleImagePath = await referenceImageToUpload.getDownloadURL();
-      print(vehicleImagePath);
+      String url = await referenceImageToUpload.getDownloadURL();
+      setState(() {
+        vehicleImagePath = url;
+        isUploading = false; // End the upload
+      });
+      print('Image URL: $vehicleImagePath');
     } catch (error) {
       //Some error occurred
+      print('Error uploading image: $error');
+      setState(() {
+        isUploading = false; // End the upload
+      });
     }
   }
 
@@ -84,189 +91,194 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
         title: Text('Add New Vehicle'),
       ),
       body: SingleChildScrollView(
-      child: Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-      TextFormField(
-      decoration: InputDecoration(
-      labelText: 'Name',
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a name';
-        }
-        return null;
-      },
-      onChanged: (value) {
-        setState(() {
-          _name = value;
-        });
-      },
-    ),
-      TextFormField(
-    decoration: InputDecoration(
-    labelText: 'Brand',
-    ),
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Please enter a brand';
-    }
-    return null;
-    },
-    onChanged: (value) {
-    setState(() {
-    _brand = value;
-    });
-    },
-    ),
-      TextFormField(
-    decoration: InputDecoration(
-    labelText: 'Model',
-    ),
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Please enter a model';
-    }
-    return null;
-    },
-    onChanged: (value) {
-    setState(() {
-    _model = value;
-    });
-    },
-    ),
-      TextFormField(
-    decoration: InputDecoration(
-    labelText: 'Year',
-    ),
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Please enter a year';
-    }
-    return null;
-    },
-    onChanged: (value) {
-    setState(() {
-    _year = value;
-    });
-    },
-    ),
-      TextFormField(
-    decoration: InputDecoration(
-    labelText: 'Type',
-    ),
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Please enter a type';
-    }
-    return null;
-    },
-    onChanged: (value) {
-    setState(() {
-    _type = value;
-    });
-    },
-    ),
-      TextFormField(
-    decoration: const InputDecoration(
-    labelText: 'Rent',
-    ),
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Please enter a rent';
-    }
-    return null;
-    },
-    onChanged: (value) {
-    setState(() {
-    _rent = value;
-    });
-    },
-    ),
-      TextFormField(
-    decoration: InputDecoration(
-    labelText: 'Image URL',
-    ),
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Please enter an image URL';
-    }
-    return null;
-    },
-    onChanged: (value) {
-    setState(() {
-    _imageUrl = value;
-    });
-    },
-    ),
-      TextFormField(
-    decoration: InputDecoration(
-    labelText: 'Description',
-    ),
-    onChanged: (value) {
-    setState(() {
-    _description = value;
-    });
-    },
-    ),
-          SizedBox(height: 4.h),
-          GestureDetector(
-            onTap: () {
-              getVehicleImage();
-              // captureImage();
-              // print(image1!.path);
-            },
-            child: MyContainer(
-              // onTap: (){},
-              height: 66.h,
-              width: 80.w,
-              radius: 10,
-              borderColor: ColorPalette.textColor,
-              child: vehicleImageFile == null
-                  ? Icon(Icons.add_a_photo_outlined, size: 30)
-                  : Image.file(
-                vehicleImageFile!,
-                fit: BoxFit.fill,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a name';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _name = value;
+                  });
+                },
               ),
-            ),
-          ),
-    SizedBox(height: 20),
-    Center(
-    child: ElevatedButton(
-    onPressed: () {
-    if (_formKey.currentState?.validate() ?? false) {
-    // Save the new vehicle to the database
-    Vehicle newVehicle = Vehicle(
-    id: '',
-    ownerId: '', // Replace this with the actual ownerId from Firebase Authentication
-    name: _name,
-    brand: _brand,
-    year: _year,
-    type: _type,
-    model: _model,
-    rent: _rent,
-    imageUrl: vehicleImagePath,
-    description: _description,
-    );
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-    // Add the new vehicle to the database
-    AddPlacesToFirebaseDb().addVehicleToDatabase(uid, newVehicle);
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Brand',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a brand';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _brand = value;
+                  });
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Model',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a model';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _model = value;
+                  });
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Year',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a year';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _year = value;
+                  });
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Type',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a type';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _type = value;
+                  });
+                },
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Rent',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a rent';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _rent = value;
+                  });
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Image URL',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an image URL';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _imageUrl = value;
+                  });
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _description = value;
+                  });
+                },
+              ),
+              SizedBox(height: 4.h),
+              GestureDetector(
+                onTap: () {
+                  getVehicleImage();
+                  // captureImage();
+                  // print(image1!.path);
+                },
+                child: MyContainer(
+                  // onTap: (){},
+                  height: 66.h,
+                  width: 80.w,
+                  radius: 10,
+                  borderColor: ColorPalette.textColor,
+                  child: vehicleImageFile == null
+                      ? Icon(Icons.add_a_photo_outlined, size: 30)
+                      : Image.file(
+                          vehicleImageFile!,
+                          fit: BoxFit.fill,
+                        ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: isUploading ? null: () {
+                    if (_formKey.currentState?.validate() ?? false && vehicleImagePath.isNotEmpty) {
+                      // Save the new vehicle to the database
+                      Vehicle newVehicle = Vehicle(
+                        id: '',
+                        ownerId:
+                        '', // Replace this with the actual ownerId from Firebase Authentication
+                        name: _name,
+                        brand: _brand,
+                        year: _year,
+                        type: _type,
+                        model: _model,
+                        rent: _rent,
+                        imageUrl: vehicleImagePath,
+                        description: _description,
+                      );
+                      String uid = FirebaseAuth.instance.currentUser!.uid;
+                      // Add the new vehicle to the database
+                      AddPlacesToFirebaseDb()
+                          .addVehicleToDatabase(uid, newVehicle);
 
-    // Navigate back to the TransportOwnerDashboardPage
-    Navigator.pop(context);
-    }
-    },
-      child: Text('Save'),
-    ),
-    ),
-        ],
-      ),
-      ),
+                      // Navigate back to the TransportOwnerDashboardPage
+                      Navigator.pop(context);
+                    }
+
+                  } ,
+                  child: Text('Save'),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

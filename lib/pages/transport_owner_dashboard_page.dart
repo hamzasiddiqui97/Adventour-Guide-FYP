@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
 import 'package:google_maps_basics/pages/add_new_vehicle_page.dart';
 import 'package:google_maps_basics/pages/vehicle_details_page.dart';
@@ -26,7 +27,10 @@ class _TransportOwnerDashboardPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Transport Owner Dashboard'),
+
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
+        title: const Text('Transport Owner Dashboard'),
       ),
       body: ListView.builder(
         itemCount: vehicles.length,
@@ -51,6 +55,8 @@ class _TransportOwnerDashboardPageState
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
         onPressed: () {
           // Navigate to the Add New Vehicle page
           Navigator.push(
@@ -58,8 +64,8 @@ class _TransportOwnerDashboardPageState
             MaterialPageRoute(builder: (context) => AddNewVehiclePage(uid: uid)),
           );
         },
-        child: Icon(Icons.add),
         tooltip: 'Add New Vehicle',
+        child: const Icon(Icons.add),
       ),
     );
   }
