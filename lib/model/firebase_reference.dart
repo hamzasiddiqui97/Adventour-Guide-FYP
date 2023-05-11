@@ -150,6 +150,7 @@ class AddPlacesToFirebaseDb {
 
       // Save the post data under hotel owner node
       await postRef.set({
+        'uid':uid,
         'title': title,
         'description': description,
         'bedroom': bedroom,
@@ -393,12 +394,13 @@ class AddPlacesToFirebaseDb {
             hotelOwnerController.propertyList.add(
                 Property.fromMap(Map<String, dynamic>.from(postValue as Map)));
           });
+          print("uid for hotelllllllll :::: "+hotelOwnerController.propertyList.length.toString());
         }
       });
 
       if (kDebugMode) {
         print(
-            "PropertyList getAllHotelPosts: ${hotelOwnerController.propertyList}");
+            "PropertyList getAllHotelPosts: ${hotelOwnerController.propertyList[0].uid}");
       }
     } else {
       if (kDebugMode) {

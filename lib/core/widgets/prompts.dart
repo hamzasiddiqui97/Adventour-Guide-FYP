@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:google_maps_basics/widgets/bookingPopup.dart';
 
 class Prompts {
-  static bookNow() {
+  static bookNow(String hotelOwnerUID) {
     Get.dialog(
-      const BookNow(),
+       BookNow( hotelOwnerUID: hotelOwnerUID,),
       barrierColor: Colors.grey.withOpacity(
         0.8,
       ),

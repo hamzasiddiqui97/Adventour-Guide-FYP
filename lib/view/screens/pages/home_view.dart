@@ -253,6 +253,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                 color: Colors.black,
                               ),
                             ),
+                            Text(hotelOwnerController.propertyList.length.toString()),
                             SizedBox(
                               width: MediaQuery.of(context).size.width,
                               height: 300,
@@ -269,6 +270,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                       hotelOwnerController.propertyList[index];
                                   return GestureDetector(
                                     onTap: () {
+                                      // hotelOwnerController.propertyList[0].uid;
                                       Get.to(
                                         () => HotelPostDetailsTouristPage(
                                           property: property,

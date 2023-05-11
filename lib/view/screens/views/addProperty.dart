@@ -1813,7 +1813,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             if (value1 == true && value2 == true) {
                               final HotelOwnerController hotelOwnerController =
                                   Get.put(HotelOwnerController());
-
+                              String uid = FirebaseAuth.instance.currentUser!.uid;
                               hotelOwnerController.propertyList.add(Property(
                                 title: widget.title!,
                                 description: widget.desc!,
@@ -1835,8 +1835,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                 file6: imageUrl6,
                                 streetName: streetName.text,
                                 fullAddress: fullAddress.text,
+                                // uid: uid,
                               ));
-                              String uid = FirebaseAuth.instance.currentUser!.uid;
                               AddPlacesToFirebaseDb addPlacesToFirebaseDb =
                                   AddPlacesToFirebaseDb();
                               String userRole =
