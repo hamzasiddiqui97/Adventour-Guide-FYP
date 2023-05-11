@@ -31,7 +31,7 @@ class CustomGrid extends StatelessWidget {
         ],
           borderRadius: BorderRadius.circular(20),
           color: Colors.grey.shade50),
-      height: 450,
+      height: 300,
       width: MediaQuery.of(context).size.width,
       child: Column(
         children: [
@@ -89,7 +89,6 @@ class CustomGrid extends StatelessWidget {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
                         boxShadow:  [
@@ -203,40 +202,40 @@ class CustomGrid extends StatelessWidget {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                        boxShadow:  [
-                          BoxShadow(
-                            color: Colors.grey.shade400,
-                            blurRadius: 6,
-                            spreadRadius: 0.0,
-                            offset: Offset(0.0, 2.0),
-                          ),
-                        ],
-                      ),
-
-                      height: 80,
-                      width: 80,
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.emoji_transportation,
-                          color: ColorPalette.secondaryColor, size: iconSize,),),
-                    ),
-                    const Text('Transport', textAlign: TextAlign.center),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(20.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //     children: [
+          //       Column(
+          //         children: [
+          //           Container(
+          //             decoration: BoxDecoration(
+          //               borderRadius: BorderRadius.circular(20),
+          //               color: Colors.white,
+          //               boxShadow:  [
+          //                 BoxShadow(
+          //                   color: Colors.grey.shade400,
+          //                   blurRadius: 6,
+          //                   spreadRadius: 0.0,
+          //                   offset: Offset(0.0, 2.0),
+          //                 ),
+          //               ],
+          //             ),
+          //
+          //             height: 80,
+          //             width: 80,
+          //             child: IconButton(
+          //               onPressed: () {},
+          //               icon: const Icon(Icons.emoji_transportation,
+          //                 color: ColorPalette.secondaryColor, size: iconSize,),),
+          //           ),
+          //           const Text('Transport', textAlign: TextAlign.center),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -20,10 +21,12 @@ class _TouristHistoryState extends State<TouristHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Your History"),
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
+        title: const Text("Your History"),
       ),
       body: ListView.builder(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
           shrinkWrap: true,
           itemCount: 2,
           itemBuilder: (context, index) {
@@ -58,7 +61,7 @@ class _TouristHistoryState extends State<TouristHistory> {
                         SizedBox(
                           width: 5.w,
                         ),
-                        Text(
+                        const Text(
                           "Name",
                           style: TextStyle(
                               fontWeight: FontWeight.w700, fontSize: 22),
@@ -69,11 +72,11 @@ class _TouristHistoryState extends State<TouristHistory> {
                         Container(
                           height: 5.h,
                           width: 10.w,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.green,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.check,
                             color: Colors.white,
                           ),
@@ -84,11 +87,11 @@ class _TouristHistoryState extends State<TouristHistory> {
                         Container(
                           height: 5.h,
                           width: 10.w,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.red,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.cancel,
                             color: Colors.white,
                           ),
