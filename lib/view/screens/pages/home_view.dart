@@ -158,6 +158,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    final HotelOwnerController hotelOwnerController = Get.put(HotelOwnerController());
+
     const TextStyle myTextStyle = TextStyle(
       fontSize: 25,
       color: Colors.black,
@@ -542,33 +544,39 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                         ),
                                       ),
                                       Expanded(
-
-                                        child: ListView.builder(
-                                          itemCount: vehicles.length,
-                                          itemBuilder: (context, index) {
-                                            return ListTile(
-                                              leading: CircleAvatar(
-                                                backgroundImage: NetworkImage(
-                                                    vehicles[index].imageUrl),
-                                              ),
-                                              title: Text(vehicles[index].name),
-                                              subtitle: Text(
-                                                  'Brand: ${vehicles[index].brand}'),
-                                              onTap: () {
-                                                // Navigate to VehicleDetailsPage
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        VehicleDetailsPage(
-                                                            vehicle:
-                                                                vehicles[index]),
+                                        child: Obx(() {
+                                          // final vehicleList = Get.find<HotelOwnerController>().vehicleList;
+                                          if (hotelOwnerController.vehicleList.isEmpty) {
+                                            Future.delayed(const Duration(seconds: 5), () {
+                                              if(hotelOwnerController.vehicleList.isEmpty){
+                                                return Center(child: Text("No data available"));
+                                              }
+                                            });
+                                            return Center(child: CircularProgressIndicator()); // Show loading spinner when data is not yet fetched
+                                          } else {
+                                            return ListView.builder(
+                                              itemCount: hotelOwnerController.vehicleList.length,
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  leading: CircleAvatar(
+                                                    backgroundImage: NetworkImage(hotelOwnerController.vehicleList[index].imageUrl),
                                                   ),
+                                                  title: Text(hotelOwnerController.vehicleList[index].name),
+                                                  subtitle: Text('Brand: ${hotelOwnerController.vehicleList[index].brand}'),
+                                                  onTap: () {
+                                                    // Navigate to VehicleDetailsPage
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => VehicleDetailsPage(vehicle: hotelOwnerController.vehicleList[index]),
+                                                      ),
+                                                    );
+                                                  },
                                                 );
                                               },
                                             );
-                                          },
-                                        ),
+                                          }
+                                        }),
                                       ),
 
                                       Padding(

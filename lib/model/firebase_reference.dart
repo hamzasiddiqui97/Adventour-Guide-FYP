@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:google_directions_api/google_directions_api.dart';
 import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
 
@@ -19,6 +20,7 @@ class AddPlacesToFirebaseDb {
           .child('vehicle')
           .push()
           .set(newVehicle.toMap());
+      getVehiclesForTransporter(ownerId);
     } catch (e) {
       print('Error adding vehicle: $e');
     }
@@ -564,46 +566,45 @@ class AddPlacesToFirebaseDb {
   }
 
 
-  static Future<List<VehicleModel>?> getVehiclesForTransporter(String ownerId) async {
-    final HotelOwnerController hotelOwnerController = Get.find();
+  static Future<void> getVehiclesForTransporter(String ownerId) async {
+    try {
+      final HotelOwnerController hotelOwnerController = Get.find();
 
-    if (hotelOwnerController == null) {
-      Get.put(HotelOwnerController());
-    }
 
-    DatabaseReference postRef = database
-        .ref()
-        .child('users')
-        .child('transport owner')
-        .child(ownerId)
-        .child('vehicle');
+      DatabaseReference postRef = database
+          .ref()
+          .child('users')
+          .child('transport owner')
+          .child(ownerId)
+          .child('vehicle');
 
-    DatabaseEvent event = await postRef.once();
-    DataSnapshot dataSnapshot = event.snapshot;
-
-    if (kDebugMode) {
-      print("DataSnapshot vehicleList: $dataSnapshot");
-    }
-
-    if (dataSnapshot.value != null) {
-      Map<dynamic, dynamic> map = dataSnapshot.value as Map<dynamic, dynamic>;
-
-      hotelOwnerController.vehicleList.clear();
-      map.forEach((key, value) {
-        hotelOwnerController.propertyList
-            .add(Property.fromMap(Map<String, dynamic>.from(value as Map)));
-      });
+      DatabaseEvent event = await postRef.once();
+      DataSnapshot dataSnapshot = event.snapshot;
 
       if (kDebugMode) {
-        print("vehicleList getPersonalHotelPost: ${hotelOwnerController.vehicleList}");
+        print("DataSnapshot vehicleList: $dataSnapshot");
       }
-    } else {
-      if (kDebugMode) {
-        print("No data found");
-      }
-    }
 
-    return null;
+      if (dataSnapshot.value != null) {
+        Map<dynamic, dynamic> map = dataSnapshot.value as Map<dynamic, dynamic>;
+
+        hotelOwnerController.vehicleList.clear();
+        map.forEach((key, value) {
+          final String vehicleKey = key.toString(); // Convert the key to a string
+          hotelOwnerController.vehicleList.add(VehicleModel.fromMap(vehicleKey, Map<String, dynamic>.from(value as Map)));
+        });
+
+        if (kDebugMode) {
+          print("vehicleList getPersonalHotelPost: ${hotelOwnerController.vehicleList}");
+        }
+      } else {
+        if (kDebugMode) {
+          print("No data found");
+        }
+      }
+    } catch (e) {
+      print('Error fetching vehicles: $e');
+    }
   }
 
 

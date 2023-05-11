@@ -35,7 +35,7 @@ class VehicleModel {
       brand: data['brand'],
       model: data['model'],
       year: data['year'],
-      rent: data['rent'].toDouble(),
+      rent: data['rent'].toString(),
       imageUrl: data['imageUrl'],
     );
   }

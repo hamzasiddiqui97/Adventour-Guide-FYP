@@ -29,8 +29,8 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
   String _description = '';
   String _type = '';
   String _model = '';
-  String _year = '';
-  String _rent = '';
+  int _year = 0;
+  double _rent = 0.0;
   File? vehicleImageFile;
   String vehicleImagePath = '';
 
@@ -150,6 +150,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
               ),
               TextFormField(
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'Year',
                 ),
@@ -161,7 +162,7 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
                 onChanged: (value) {
                   setState(() {
-                    _year = value;
+                    _year = int.parse(value);
                   });
                 },
               ),
@@ -182,8 +183,11 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
               ),
               TextFormField(
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
+
                   labelText: 'Rent',
+
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -193,26 +197,26 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
                 },
                 onChanged: (value) {
                   setState(() {
-                    _rent = value;
+                    _rent =  double.parse(value);
                   });
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Image URL',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an image URL';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _imageUrl = value;
-                  });
-                },
-              ),
+              // TextFormField(
+              //   decoration: const InputDecoration(
+              //     labelText: 'Image URL',
+              //   ),
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter an image URL';
+              //     }
+              //     return null;
+              //   },
+              //   onChanged: (value) {
+              //     setState(() {
+              //       _imageUrl = value;
+              //     });
+              //   },
+              // ),
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Description',
@@ -248,22 +252,23 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
               Center(
                 child: ElevatedButton(
                   onPressed: isUploading ? null: () {
+                    String uid = FirebaseAuth.instance.currentUser!.uid;
+
                     if (_formKey.currentState?.validate() ?? false && vehicleImagePath.isNotEmpty) {
                       // Save the new vehicle to the database
                       VehicleModel newVehicle = VehicleModel(
-                        id: '',
+                        id:uid ,
                         ownerId:
-                        '', // Replace this with the actual ownerId from Firebase Authentication
+                        uid, // Replace this with the actual ownerId from Firebase Authentication
                         name: _name,
                         brand: _brand,
-                        year: _year,
+                        year: _year.toString(),
                         type: _type,
                         model: _model,
-                        rent: _rent,
+                        rent: _rent.toString(),
                         imageUrl: vehicleImagePath,
                         description: _description,
                       );
-                      String uid = FirebaseAuth.instance.currentUser!.uid;
                       // Add the new vehicle to the database
                       AddPlacesToFirebaseDb()
                           .addVehicleToDatabase(uid, newVehicle);
