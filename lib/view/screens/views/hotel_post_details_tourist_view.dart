@@ -118,7 +118,7 @@ class HotelPostDetailsTouristPage extends StatelessWidget {
                                   width: 120,
                                   decoration: BoxDecoration(
                                     color: ColorPalette.secondaryColor,
-                                    border: Border.all(color: Colors.black, width: 2),
+                                    border: Border.all(color: ColorPalette.secondaryColor, width: 2),
                                     borderRadius: const BorderRadius.all(
                                       Radius.circular(
                                         20,
@@ -130,6 +130,7 @@ class HotelPostDetailsTouristPage extends StatelessWidget {
                                       "Book Now",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
+                                        color: ColorPalette.primaryColor,
                                       ),
                                     ),
                                   ),
@@ -142,7 +143,6 @@ class HotelPostDetailsTouristPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-
                 ],
               ),
             ),
