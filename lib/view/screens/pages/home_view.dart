@@ -11,6 +11,8 @@ import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
 import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/view/screens/views/addProperty.dart';
+import 'package:google_maps_basics/view/screens/views/hotelOwnerHistory.dart';
+import 'package:google_maps_basics/view/screens/views/touristHistory.dart';
 import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../../helper/utils.dart';
@@ -234,13 +236,31 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                             const SizedBox(
                               height: 30,
                             ),
-                            const Text(
-                              'Explore More',
-                              style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Explore More',
+                                  style: TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: (){
+                                    Get.to(()=>TouristHistory());
+                                  },
+                                  child: Text(
+                                    "View History",
+                                    style: TextStyle(
+                                      color: ColorPalette.secondaryColor,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                             const SizedBox(
                               height: 30,
@@ -253,7 +273,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                 color: Colors.black,
                               ),
                             ),
-                            Text(hotelOwnerController.propertyList.length.toString()),
+                            Text(hotelOwnerController.propertyList.length
+                                .toString()),
                             SizedBox(
                               width: MediaQuery.of(context).size.width,
                               height: 300,
@@ -463,22 +484,44 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                   padding: const EdgeInsets.all(14),
                                   child: Align(
                                     alignment: Alignment.bottomCenter,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Get.to(
-                                          () => PropertyAdd(),
-                                        );
-                                      },
-                                      style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  ColorPalette.secondaryColor),
-                                          foregroundColor:
-                                              MaterialStateProperty.all(
-                                                  ColorPalette.primaryColor)),
-                                      child: const Text(
-                                        'List Your Hotel',
-                                      ),
+                                    child: Row(
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Get.to(
+                                              () => PropertyAdd(),
+                                            );
+                                          },
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      ColorPalette.secondaryColor),
+                                              foregroundColor:
+                                                  MaterialStateProperty.all(
+                                                      ColorPalette.primaryColor)),
+                                          child: const Text(
+                                            'List Your Hotel',
+                                          ),
+                                        ),
+                                        SizedBox(width: 10.w,),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Get.to(
+                                              () => HotelOwnerHistory(),
+                                            );
+                                          },
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      ColorPalette.secondaryColor),
+                                              foregroundColor:
+                                                  MaterialStateProperty.all(
+                                                      ColorPalette.primaryColor)),
+                                          child: const Text(
+                                            'View History',
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),

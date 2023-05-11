@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/core/widgets/prompts.dart';
+import 'package:google_maps_basics/snackbar_utils.dart';
 import '../../../models/PropertyModel.dart';
 import '../../../core/constant/color_constants.dart';
 import 'package:google_maps_basics/view/screens/views/pictures_details.dart';
@@ -102,8 +103,12 @@ class HotelPostDetailsTouristPage extends StatelessWidget {
                               alignment: Alignment.centerRight,
                               child: InkWell(
                                 onTap: (){
-                                  print(property.uid);
-                                  // Prompts.bookNow(property.uid!);
+                                  // print(property.uid);
+                                  if(property.uid==null){
+                                    Utils.showSnackBar("No UID", false);
+                                  }
+                                  else{
+                                  Prompts.bookNow(property.uid!);}
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(

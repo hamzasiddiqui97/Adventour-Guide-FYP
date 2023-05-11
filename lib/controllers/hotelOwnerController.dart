@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:google_maps_basics/model/vehicle.dart';
 import 'package:google_maps_basics/models/PropertyModel.dart';
 
 class HotelOwnerController extends GetxController {

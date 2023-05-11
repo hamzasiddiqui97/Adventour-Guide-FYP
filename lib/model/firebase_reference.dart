@@ -3,13 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
+
 import '../models/PropertyModel.dart';
-import '../model/vehicle.dart';
 
 class AddPlacesToFirebaseDb {
   static final database = FirebaseDatabase.instance;
 
-  Future<void> addVehicleToDatabase(String ownerId, VehicleModel newVehicle) async {
+  Future<void> addVehicleToDatabase(String ownerId, Vehicle newVehicle) async {
     try {
       await database
           .ref()
@@ -270,6 +270,7 @@ class AddPlacesToFirebaseDb {
     } catch (e) {
       print('Error getting user role: $e');
     }
+
     print('user role using getUserRole funtion: $userRole');
     return userRole;
   }
@@ -361,6 +362,52 @@ class AddPlacesToFirebaseDb {
     }
   }
 
+
+  ///working krni hai ispr
+  static Future<Map<String, dynamic>?> getTouristHistory(String uid) async {
+    final HotelOwnerController hotelOwnerController = Get.find();
+
+    if (hotelOwnerController == null) {
+      Get.put(HotelOwnerController());
+    }
+
+    var postRef = database
+        .ref()
+        .child('users')
+        .child('tourist')
+        .child(uid)
+        .child('sentRequests');
+
+    DatabaseEvent event = await postRef.once();
+    DataSnapshot dataSnapshot = event.snapshot;
+
+    if (kDebugMode) {
+      print("DataSnapshot getPersonalHotelPost: $dataSnapshot");
+    }
+
+    if (dataSnapshot.value != null) {
+      var result = Map<String, dynamic>.from(dataSnapshot.value as Map);
+      Map<String, dynamic> map =
+          Map<String, dynamic>.from(dataSnapshot.value as Map);
+      return result;
+
+      // hotelOwnerController.propertyList.clear();
+      // map.forEach((key, value) {
+      //   hotelOwnerController.propertyList
+      //       .add(Property.fromMap(Map<String, dynamic>.from(value as Map)));
+      // });
+
+      // if (kDebugMode) {
+      //   print(
+      //       "PropertyList getPersonalHotelPost: ${hotelOwnerController.propertyList}");
+      // }
+    } else {
+      if (kDebugMode) {
+        print("No data found");
+      }
+    }
+  }
+
   static Future<void> getAllHotelPosts() async {
     final HotelOwnerController hotelOwnerController = Get.find();
 
@@ -429,6 +476,38 @@ class AddPlacesToFirebaseDb {
       return result;
     } else {
       return null;
+    }
+  }
+
+  static Future<Map<String, dynamic>?> getHotelOwnerHistory(
+      String uid) async {
+    DatabaseReference placeRef = database
+        .ref()
+        .child('users')
+        .child('hotel owner')
+        .child('HebRiPDPm2YdB8aWST7fQBEoI6X2')
+        .child('unconfirmedData');
+
+    DatabaseEvent event = (await placeRef.once());
+    DataSnapshot dataSnapshot = event.snapshot;
+    // print(dataSnapshot.value);
+    // print(uid);
+
+    if (dataSnapshot.value != null) {
+      // Map<String, dynamic> result =
+      //     Map<String, dynamic>.from(dataSnapshot.value as Map);
+      // print("res"+result.toString());
+      // return result;
+      Map<String, dynamic> map =
+      Map<String, dynamic>.from(dataSnapshot.value as Map);
+      final HotelOwnerController hotelOwnerController = Get.put(HotelOwnerController());
+
+      hotelOwnerController.hotelOwnerRequestList.clear();
+      map.forEach((key, value) {
+        hotelOwnerController.hotelOwnerRequestList
+            .add(RequestModel.fromMap(Map<String, dynamic>.from(value as Map)));
+      });
+      print(hotelOwnerController.hotelOwnerRequestList[0].date);
     }
   }
 
