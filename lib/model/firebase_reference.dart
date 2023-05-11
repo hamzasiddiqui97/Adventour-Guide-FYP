@@ -208,6 +208,44 @@ class AddPlacesToFirebaseDb {
     }
   }
 
+  Future<void> sendBookingRequest(
+      String ownerUid,
+      String posterUid,
+      String date,
+      ) async {
+    try {
+      final postRef = database
+          .ref()
+          .child('users')
+          .child("hotel owner")
+          .child(ownerUid)
+          .child('unconfirmedData')
+          .push();
+      final postId = postRef.key;
+
+      // Save the post data under hotel owner node
+      await postRef.set({
+        'uid': posterUid,
+        'date': date,
+      });
+
+      // Save the post data under tourist node
+      await database
+          .ref()
+          .child('users')
+          .child("tourist")
+          .child(posterUid)
+          .child('sentRequests')
+          .child(postId!)
+          .set({
+        'uid': ownerUid,
+        'date': date,
+      });
+    } catch (e) {
+      print('Error saving user credentials: $e');
+    }
+  }
+
   Future<String> getUserRole(String uid) async {
     String userRole = "";
     DatabaseReference userRef = database.ref().child('users');

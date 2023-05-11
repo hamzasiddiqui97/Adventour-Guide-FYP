@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -88,6 +90,10 @@ class _BookNowState extends State<BookNow> {
                       Get.back();
                       Utils.showSnackBar(
                           "Request Sent! Wait for the response.", true);
+                      String uid = FirebaseAuth.instance.currentUser!.uid;
+
+                      AddPlacesToFirebaseDb().sendBookingRequest(
+                          "4NVSLJqOLRN7UNcjQbpag1kruff2", uid, range);
                     }
                     if (range == '') {
                       Get.back();
