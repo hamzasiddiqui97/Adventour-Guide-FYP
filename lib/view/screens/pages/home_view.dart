@@ -275,8 +275,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                 color: Colors.black,
                               ),
                             ),
-                            Text(hotelOwnerController.propertyList.length
-                                .toString()),
+                            // Text(hotelOwnerController.propertyList.length
+                            //     .toString()),
                             SizedBox(
                               width: MediaQuery.of(context).size.width,
                               height: 300,
