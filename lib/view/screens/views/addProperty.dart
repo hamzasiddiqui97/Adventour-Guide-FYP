@@ -1790,7 +1790,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     ),
                     const Expanded(
                         child: Text(
-                            'Must Agree To A 4% Mediation Fees To Twiddle Through Funders.',style: TextStyle(decoration: TextDecoration.underline),))
+                            'Must Agree to Adventour & Guide terms and conditions.',style: TextStyle(decoration: TextDecoration.underline),))
                   ]),
                   SizedBox(height: 4.h),
                   SizedBox(
