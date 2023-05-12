@@ -625,86 +625,83 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                               ],
                             ),
                           )
-                        : mainController.role.value == "Transport Owner"
-                            ? SafeArea(
-                              child: Scaffold(
-                                  body: Column(
-                                    children: [
-                                      const Text(
-                                        'Your Posts',
-                                        style: TextStyle(
-                                          fontSize: 26,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Obx(() {
-                                          // final vehicleList = Get.find<HotelOwnerController>().vehicleList;
-                                          if (hotelOwnerController.vehicleList.isEmpty) {
-                                            Future.delayed(const Duration(seconds: 5), () {
-                                              if(hotelOwnerController.vehicleList.isEmpty){
-                                                return Center(child: Text("No data available"));
-                                              }
-                                            });
-                                            return Center(child: CircularProgressIndicator()); // Show loading spinner when data is not yet fetched
-                                          } else {
-                                            return ListView.builder(
-                                              itemCount: hotelOwnerController.vehicleList.length,
-                                              itemBuilder: (context, index) {
-                                                return ListTile(
-                                                  leading: CircleAvatar(
-                                                    backgroundImage: NetworkImage(hotelOwnerController.vehicleList[index].imageUrl),
-                                                  ),
-                                                  title: Text(hotelOwnerController.vehicleList[index].name),
-                                                  subtitle: Text('Brand: ${hotelOwnerController.vehicleList[index].brand}'),
-                                                  onTap: () {
-                                                    // Navigate to VehicleDetailsPage
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) => VehicleDetailsPage(vehicle: hotelOwnerController.vehicleList[index]),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            );
-                                          }
-                                        }),
-                                      ),
-
-                                      Padding(
-                                        padding: const EdgeInsets.all(14),
-                                        child: Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              Get.to(
-                                                    () => AddNewVehiclePage(uid: uid),
-                                              );
-                                            },
-                                            style: ButtonStyle(
-                                                backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    ColorPalette.secondaryColor),
-                                                foregroundColor:
-                                                MaterialStateProperty.all(
-                                                    ColorPalette.primaryColor)),
-                                            child: const Text(
-                                              'Add Your Vehicle',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
+            : mainController.role.value == "Transport Owner"
+                ? SafeArea(
+              child: Scaffold(
+                body: Column(
+                  children: [
+                    const Text(
+                      'Your Posts',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Expanded(
+                      child: Obx(() {
+                        // final vehicleList = Get.find<HotelOwnerController>().vehicleList;
+                        if (hotelOwnerController.vehicleList.isEmpty) {
+                          return Center(child: Text("No posts found")); // Show "No posts found" when the list is empty
+                        } else {
+                          return ListView.builder(
+                            itemCount: hotelOwnerController.vehicleList.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(hotelOwnerController.vehicleList[index].imageUrl),
                                 ),
-                            )
-                            : const Center(
-                                child: Text(
-                                    'An error Occurred please try logging in again.')),
+                                title: Text(hotelOwnerController.vehicleList[index].name),
+                                subtitle: Text('Brand: ${hotelOwnerController.vehicleList[index].brand}'),
+                                onTap: () {
+                                  // Navigate to VehicleDetailsPage
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VehicleDetailsPage(vehicle: hotelOwnerController.vehicleList[index]),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }
+                      }),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Get.to(
+                                  () => AddNewVehiclePage(uid: uid),
+                            );
+                          },
+                          style: ButtonStyle(
+                              backgroundColor:
+                              MaterialStateProperty.all(
+                                  ColorPalette.secondaryColor),
+                              foregroundColor:
+                              MaterialStateProperty.all(
+                                  ColorPalette.primaryColor)),
+                          child: const Text(
+                            'Add Your Vehicle',
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+              ),
+            )
+                : const Center(
+              child: Text(
+                  'An error Occurred please try logging in again.'
+              ),
+            ),
           ),
         ),
       ),

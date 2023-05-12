@@ -1621,6 +1621,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                     ImageFile6!,
                                     fit: BoxFit.fill,
                                   ),
+
                           ),
                         ),
                         SizedBox(

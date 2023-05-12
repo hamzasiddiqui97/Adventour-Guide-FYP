@@ -9,7 +9,9 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../core/constant/color_constants.dart';
 import '../model/firebase_reference.dart';
+import '../snackbar_utils.dart';
 import '../widgets/myContainer.dart';
+import '../widgets/myTextField.dart';
 
 class AddNewVehiclePage extends StatefulWidget {
   final String uid;
@@ -33,6 +35,14 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
   double _rent = 0.0;
   File? vehicleImageFile;
   String vehicleImagePath = '';
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController brandController = TextEditingController();
+  final TextEditingController modelController = TextEditingController();
+  final TextEditingController yearController = TextEditingController();
+  final TextEditingController typeController = TextEditingController();
+  final TextEditingController rentController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   final picker = ImagePicker();
 
@@ -85,204 +95,236 @@ class _AddNewVehiclePageState extends State<AddNewVehiclePage> {
         isUploading = false; // End the upload
       });
     }
+
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isNumeric(String s) {
+      if (s == null) {
+        return false;
+      }
+      return double.tryParse(s) != null;
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorPalette.secondaryColor,
         foregroundColor: ColorPalette.primaryColor,
         title: const Text('Add New Vehicle'),
       ),
-      body: SingleChildScrollView(
+      body:
+      SingleChildScrollView(
+      child: Padding(
+
+        padding: const EdgeInsets.all(12.0),
         child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a name';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _name = value;
-                  });
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Brand',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a brand';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _brand = value;
-                  });
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Model',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a model';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _model = value;
-                  });
-                },
-              ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Year',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a year';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _year = int.parse(value);
-                  });
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Type',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a type';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _type = value;
-                  });
-                },
-              ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MyTextField(
+              borderColor: ColorPalette.secondaryColor,
 
-                  labelText: 'Rent',
+              controller: nameController,
+              hint: 'Enter Name',
+              icon: const Icon(Icons.drive_eta),
+              onEditingComplete: () {
+                setState(() {
+                  _name = nameController.text;
+                });
+              },
+            ),
+            SizedBox(height :2.h),
+            MyTextField(
+              borderColor: ColorPalette.secondaryColor,
+              controller: brandController,
+              hint: 'Enter Brand',
+              icon: const Icon(Icons.branding_watermark),
+              onEditingComplete: () {
+                setState(() {
+                  _brand = brandController.text;
+                });
+              },
+            ),
+            SizedBox(height :2.h),
+            MyTextField(
+              borderColor: ColorPalette.secondaryColor,
+              controller: modelController,
+              hint: 'Enter Model',
+              icon: const Icon(Icons.model_training),
+              onEditingComplete: () {
+                setState(() {
+                  _model = modelController.text;
+                });
+              },
+            ),
+            SizedBox(height :2.h),
 
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a rent';
+            MyTextField(
+              borderColor: ColorPalette.secondaryColor,
+              controller: yearController,
+              keyboardType: TextInputType.number,
+              hint: 'Enter Year',
+              icon: const Icon(Icons.calendar_today),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a year';
+                } else if (!isNumeric(value)) {
+                  return 'Please enter a valid year';
+                } else if (int.parse(value) < 1886 || int.parse(value) > DateTime.now().year) {
+                  return 'Please enter a year between 1886 and ${DateTime.now().year}';
+                }
+                return null;
+              },
+              onEditingComplete: () {
+                if (_formKey.currentState!.validate()) {
+                  setState(() {
+                    _year = int.parse(yearController.text);
+                  });
+                }
+              },
+            ),
+
+            SizedBox(height :2.h),
+            MyTextField(
+              borderColor: ColorPalette.secondaryColor,
+              controller: typeController,
+              hint: 'Enter Type',
+              icon: Icon(Icons.car_rental),
+              onEditingComplete: () {
+                setState(() {
+                  _type = typeController.text;
+                });
+              },
+            ),
+            SizedBox(height :2.h),
+
+            MyTextField(
+              borderColor: ColorPalette.secondaryColor,
+              controller: rentController,
+              keyboardType: TextInputType.number,
+              hint: 'Enter Rent',
+              icon: const Icon(Icons.attach_money),
+              onEditingComplete: () {
+                setState(() {
+                  double enteredRent = double.tryParse(rentController.text) ?? 0.0;
+                  if (enteredRent <= 0) {
+                    // Display an error message or take appropriate action
+                    Utils.showSnackBar('Rent should be greater than 0', false);
+                  } else {
+                    _rent = enteredRent;
                   }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _rent =  double.parse(value);
-                  });
-                },
-              ),
-              // TextFormField(
-              //   decoration: const InputDecoration(
-              //     labelText: 'Image URL',
-              //   ),
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return 'Please enter an image URL';
-              //     }
-              //     return null;
-              //   },
-              //   onChanged: (value) {
-              //     setState(() {
-              //       _imageUrl = value;
-              //     });
-              //   },
-              // ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _description = value;
-                  });
-                },
-              ),
-              SizedBox(height: 4.h),
-              GestureDetector(
-                onTap: () {
-                  getVehicleImage();
-                  // captureImage();
-                  // print(image1!.path);
-                },
-                child: MyContainer(
-                  // onTap: (){},
-                  height: 66.h,
-                  width: 80.w,
-                  radius: 10,
-                  borderColor: ColorPalette.textColor,
-                  child: vehicleImageFile == null
-                      ? const Icon(Icons.add_a_photo_outlined, size: 30)
-                      : Image.file(
-                          vehicleImageFile!,
-                          fit: BoxFit.fill,
-                        ),
+                });
+              },
+            ),
+
+            SizedBox(height :2.h),
+
+            MyTextField(
+              borderColor: ColorPalette.secondaryColor,
+
+              controller: descriptionController,
+              hint: 'Enter Description',
+              icon: const Icon(Icons.description),
+              onEditingComplete: () {
+                setState(() {
+                  _description = descriptionController.text;
+                });
+              },
+            ),
+
+            SizedBox(height: 4.h),
+            GestureDetector(
+              onTap: () {
+                getVehicleImage();
+              },
+              child: MyContainer(
+                height: 66.h,
+                width: 80.w,
+                radius: 10,
+                borderColor: ColorPalette.textColor,
+                child: isUploading
+                    ? CircularProgressIndicator() // Show loading spinner when uploading
+                    : vehicleImageFile == null
+                    ? const Icon(Icons.add_a_photo_outlined, size: 30)
+                    : Image.file(
+                  vehicleImageFile!,
+                  fit: BoxFit.fill,
                 ),
               ),
-              const SizedBox(height: 20),
-              Center(
+            ),
+
+
+            SizedBox(height: 4.h),
+
+            SizedBox(
+
+              width: MediaQuery.of(context).size.width,
+              height: 50,
+              child:
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 50,
                 child: ElevatedButton(
-                  onPressed: isUploading ? null: () {
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(ColorPalette.secondaryColor),
+                    foregroundColor: MaterialStateProperty.all(ColorPalette.primaryColor),
+                  ),
+                  onPressed: isUploading
+                      ? null
+                      : () {
                     String uid = FirebaseAuth.instance.currentUser!.uid;
+                    String name = nameController.text.toString();
+                    String brand = brandController.text.toString();
+                    String year = yearController.text.toString();
+                    String type = typeController.text.toString();
+                    String model = modelController.text.toString();
+                    String rent = rentController.text.toString();
+                    String description = descriptionController.text.toString();
 
-                    if (_formKey.currentState?.validate() ?? false && vehicleImagePath.isNotEmpty) {
+                    if (rent.isEmpty || double.parse(rent) <= 0) {
+                      Utils.showSnackBar('Rent should be greater than 0', false);
+                    } else if (name.isEmpty ||
+                        brand.isEmpty ||
+                        year.isEmpty ||
+                        type.isEmpty ||
+                        model.isEmpty ||
+                        description.isEmpty) {
+                      Utils.showSnackBar('Please fill in all fields', false);
+                    } else {
                       // Save the new vehicle to the database
                       VehicleModel newVehicle = VehicleModel(
-                        id:uid ,
-                        ownerId:
-                        uid, // Replace this with the actual ownerId from Firebase Authentication
-                        name: _name,
-                        brand: _brand,
-                        year: _year.toString(),
-                        type: _type,
-                        model: _model,
-                        rent: _rent.toString(),
+                        id: uid,
+                        ownerId: uid,
+                        name: name,
+                        brand: brand,
+                        year: year,
+                        type: type,
+                        model: model,
+                        rent: rent,
                         imageUrl: vehicleImagePath,
-                        description: _description,
+                        description: description,
                       );
+
                       // Add the new vehicle to the database
-                      AddPlacesToFirebaseDb()
-                          .addVehicleToDatabase(uid, newVehicle);
+                      AddPlacesToFirebaseDb().addVehicleToDatabase(uid, newVehicle);
 
                       // Navigate back to the TransportOwnerDashboardPage
                       Navigator.pop(context);
                     }
-                  } ,
+                  },
                   child: const Text('Post'),
                 ),
               ),
-            ],
+            ),
+
+          ]
+
+            ),
           ),
-        ),
+      ),
       ),
     );
   }
