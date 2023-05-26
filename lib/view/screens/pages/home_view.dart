@@ -139,8 +139,11 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
     try {
       final userRole = await AddPlacesToFirebaseDb().getUserRole(uid);
       mainController.role.value = userRole;
-      print('main controooolllllll: ${mainController.role.value}');
-      print('shared prrrrrr: $userRole');
+      if (kDebugMode) {
+        print('main controooolllllll: ${mainController.role.value}');
+        print('shared prrrrrr: $userRole');
+
+      }
       if (userRole == 'Tourist') {
         await AddPlacesToFirebaseDb.getAllHotelPosts();
         await AddPlacesToFirebaseDb.getAllTouristVehiclePosts();

@@ -48,7 +48,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     "parking",
     "bank",
     // "car_rental",
-    "embassy"
+    // "embassy"
   ];
 
   bool showSearchField = false;
@@ -86,6 +86,22 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   }
 
   final List<Marker> _markers = [];
+
+  Map<String, String> placeTypeToMarkerImage = {
+    'tourist_attraction': 'assets/markers/park.png',
+    'gas_station': 'assets/markers/gas-station.png',
+    'restaurant': 'assets/markers/restaurant.png',
+    'cafe': 'assets/markers/cafe.png',
+    'airport': 'assets/markers/airport.png',
+    'museum': 'assets/markers/museum.png',
+    'stadium': 'assets/markers/stadium.png',
+    'hospital': 'assets/markers/hospital.png',
+    'police': 'assets/markers/police-station.png',
+    'atm': 'assets/markers/atm-card.png',
+    'parking': 'assets/markers/parking-area.png',
+    'bank': 'assets/markers/atm-card.png',
+  };
+
 
   // polylines
   final Set<Polyline> _polylines = <Polyline>{};
@@ -192,7 +208,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       } else {
         // Get new results and store them in the cache
         getTouristAttractionsAlongPolyline(
-                polylineCoordinates, places, [placeType], context)
+            polylineCoordinates, places, [placeType], context)
             .then((result) {
           _placesCache[placeType] = result;
         });
@@ -215,12 +231,12 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     final uniquePlaceIds = <String>{};
 
     final searchResults = await Future.wait(_selectedPlaceTypes.map(
-        (placeType) => Future.wait(
+            (placeType) => Future.wait(
             polylineCoordinates.map((point) => places.searchNearbyWithRadius(
-                  Location(lat: point.latitude, lng: point.longitude),
-                  100,
-                  type: placeType,
-                )))));
+              Location(lat: point.latitude, lng: point.longitude),
+              100,
+              type: placeType,
+            )))));
 
     for (final nearbySearch in searchResults.expand((x) => x)) {
       for (final result in nearbySearch.results) {
@@ -232,22 +248,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
     // Print the names of the tourist attractions
     for (final place in touristAttractions) {
-      double hue = getMarkerHueForPlaceType(
-          place.types[0]); // Get hue based on the first place type
+      // Get icon based on the first place type
+      Future<BitmapDescriptor> icon = getMarkerIconForPlaceType(place.types[0]);
+
       _markers.add(Marker(
         markerId: MarkerId(place.placeId),
-        position:
-            LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+        position: LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-        icon: BitmapDescriptor.defaultMarkerWithHue(hue),
+        icon: await icon,  // Use custom icon here
       ));
-      _attractionMarkers.add(Marker(
-        markerId: MarkerId(place.placeId),
-        position:
-            LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
-        infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-        icon: BitmapDescriptor.defaultMarkerWithHue(hue),
-      ));
+
     }
 
     setState(() {});
@@ -262,36 +272,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     return touristAttractions.toList();
   }
 
-  double getMarkerHueForPlaceType(String placeType) {
-    switch (placeType) {
-      case "tourist_attraction":
-        return BitmapDescriptor.hueMagenta;
-      case "gas_station":
-        return BitmapDescriptor.hueBlue;
-      case "restaurant":
-        return BitmapDescriptor.hueGreen;
-      case "cafe":
-        return BitmapDescriptor.hueYellow;
-      case "airport":
-        return BitmapDescriptor.hueMagenta;
-      case "museum":
-        return BitmapDescriptor.hueMagenta;
-      case "stadium":
-        return BitmapDescriptor.hueMagenta;
-      case "hospital":
-        return BitmapDescriptor.hueAzure;
-      case "police":
-        return BitmapDescriptor.hueAzure;
-      case "atm":
-        return BitmapDescriptor.hueAzure;
-      case "bank":
-        return BitmapDescriptor.hueAzure;
-      case "car_rental":
-        return BitmapDescriptor.hueMagenta;
-      default:
-        return BitmapDescriptor.hueOrange;
+  Future<BitmapDescriptor> getMarkerIconForPlaceType(String placeType) async {
+    if (placeTypeToMarkerImage.containsKey(placeType)) {
+      return await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(size: Size(3, 3)),
+          placeTypeToMarkerImage[placeType]!);
+    } else {
+      return BitmapDescriptor.defaultMarker; // Default marker icon
     }
   }
+
 
   // current location started
   loadData() async {
@@ -588,9 +578,9 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                     hintText: 'Search Source',
                                     onPress: () {
                                       Timer(const Duration(milliseconds: 500),
-                                          () {
-                                        _handlePressButtonSource();
-                                      });
+                                              () {
+                                            _handlePressButtonSource();
+                                          });
                                     }),
                                 InkWell(
                                   splashColor: ColorPalette.secondaryColor,
@@ -598,8 +588,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                     setState(() {
                                       showMultipleSearchBars = true;
                                       final TextEditingController controller =
-                                          TextEditingController(
-                                              text: 'Destination');
+                                      TextEditingController(
+                                          text: 'Destination');
                                       destinationControllers.add(controller);
                                       multipleDestinations.add(controller.text);
                                     });
@@ -628,7 +618,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                 Column(
                                   children: List.generate(
                                     multipleDestinations.length,
-                                    (index) => Padding(
+                                        (index) => Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0),
                                       child: Row(
@@ -636,12 +626,12 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                           Expanded(
                                             child: SearchBar(
                                               width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
+                                                  .size
+                                                  .width *
                                                   0.8,
                                               controller: TextEditingController(
                                                 text:
-                                                    multipleDestinations[index],
+                                                multipleDestinations[index],
                                               ),
                                               hintText: 'Search Destination',
                                               onPress: () {
@@ -663,10 +653,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                               setState(() {
                                                 // Remove the corresponding marker from the _markers list
                                                 MarkerId markerIdToRemove =
-                                                    MarkerId(
-                                                        "destination ${index + 1}");
+                                                MarkerId(
+                                                    "destination ${index + 1}");
                                                 _markers.removeWhere((marker) =>
-                                                    marker.markerId ==
+                                                marker.markerId ==
                                                     markerIdToRemove);
 
                                                 // Remove the corresponding destination from the destinations list
@@ -678,14 +668,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 borderRadius:
-                                                    BorderRadius.circular(20),
+                                                BorderRadius.circular(20),
                                                 color: Colors.white,
                                               ),
                                               child: const Icon(
                                                 Icons.remove,
                                                 size: 38,
                                                 color:
-                                                    ColorPalette.secondaryColor,
+                                                ColorPalette.secondaryColor,
                                               ),
                                             ),
                                           ),
@@ -717,11 +707,11 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           PlacesListAlongTheRoute(
-                                        markers: _markers.toSet().toList(),
-                                        // distancesAndTimes: distancesAndTimes,
-                                        polylineCoordinates:
+                                            markers: _markers.toSet().toList(),
+                                            // distancesAndTimes: distancesAndTimes,
+                                            polylineCoordinates:
                                             tempPolylineCoordinates,
-                                      ),
+                                          ),
                                     ),
                                   );
                                 },
@@ -757,13 +747,13 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             foregroundColor:
-                                _selectedPlaceTypes.contains(_placeTypes[index])
-                                    ? ColorPalette.primaryColor
-                                    : Colors.black,
+                            _selectedPlaceTypes.contains(_placeTypes[index])
+                                ? ColorPalette.primaryColor
+                                : Colors.black,
                             backgroundColor:
-                                _selectedPlaceTypes.contains(_placeTypes[index])
-                                    ? ColorPalette.secondaryColor
-                                    : Colors.white,
+                            _selectedPlaceTypes.contains(_placeTypes[index])
+                                ? ColorPalette.secondaryColor
+                                : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -827,7 +817,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                           markerId: const MarkerId('current location'),
                           position: LatLng(value.latitude, value.longitude),
                           infoWindow:
-                              const InfoWindow(title: "Current Location"),
+                          const InfoWindow(title: "Current Location"),
                         ),
                       );
 
@@ -849,7 +839,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               ),
 
 
-              Positioned(
+            Positioned(
               bottom: 30,
               left: 10,
               child: ElevatedButton(
@@ -869,87 +859,134 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
             if (!showSearchField)
               Positioned(
-              top: 30,
-              left: 10,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isLegendOpen =
-                        !isLegendOpen; // Toggles the isLegendOpen boolean
-                  });
-                },
+                top: 30,
+                left: 10,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isLegendOpen =
+                      !isLegendOpen; // Toggles the isLegendOpen boolean
+                    });
+                  },
 
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Text('Legend',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal)),
-                      if (isLegendOpen) ...[
-                        // Only show these widgets if isLegendOpen is true
-                        const Divider(),
-                        Row(
-                          children: const <Widget>[
-                            Icon(Icons.place, color: Colors.purple),
-                            SizedBox(width: 10),
-                            Text(
-                                'Tourist Attraction\nAirport\nMuseum\nStadium\nCar Rental'),
-                          ],
-                        ),
-                        const Divider(),
+                  child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text('Legend',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.normal)),
+                        if (isLegendOpen) ...[
+                          // Only show these widgets if isLegendOpen is true
+                          const Divider(),
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/park.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text(
+                                  'Tourist Attraction'),
+                            ],
+                          ),
+                          const Divider(),
 
-                        Row(
-                          children: const <Widget>[
-                            Icon(Icons.place, color: Colors.blue),
-                            SizedBox(width: 10),
-                            Text('Gas Station'),
-                          ],
-                        ),
-                        const Divider(),
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/gas-station.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Gas Station'),
+                            ],
+                          ),
+                          const Divider(),
 
-                        Row(
-                          children: const <Widget>[
-                            Icon(Icons.place, color: Colors.green),
-                            SizedBox(width: 10),
-                            Text('Restaurant'),
-                          ],
-                        ),
-                        const Divider(),
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/restaurant.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Restaurant'),
+                            ],
+                          ),
+                          const Divider(),
 
-                        Row(
-                          children: const <Widget>[
-                            Icon(Icons.place, color: Colors.yellow),
-                            SizedBox(width: 10),
-                            Text('Cafe'),
-                          ],
-                        ),
-                        const Divider(),
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/cafe.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Cafe'),
+                            ],
+                          ),
+                          const Divider(),
 
-                        Row(
-                          children: const <Widget>[
-                            Icon(Icons.place, color: Colors.cyan),
-                            SizedBox(width: 10),
-                            Text('Hospital\nPolice\nATM\nBank'),
-                          ],
-                        ),
-                        const Divider(),
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/hospital.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Hospital'),
+                            ],
+                          ),
+                          const Divider(),
 
-                        Row(
-                          children: const <Widget>[
-                            Icon(Icons.place, color: Colors.orange),
-                            SizedBox(width: 10),
-                            Text('Others'),
-                          ],
-                        ),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/airport.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Airport'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/atm-card.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('ATM'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/parking-area.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Parking'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/police-station.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Police station'),
+                            ],
+                          ),
+                          const Divider(),
+
+
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/stadium.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Stadium'),
+                            ],
+                          ),
+                          const Divider(),
+                          // Row(
+                          //   children: <Widget>[
+                          //     Image.asset('assets/markers/atm-card.png', width: 24, height: 24), // Default icon for 'Others'
+                          //     const SizedBox(width: 10),
+                          //     const Text('Others'),
+                          //   ],
+                          // ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
