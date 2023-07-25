@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_basics/view/screens/loginScreens/auth_page.dart';
+
 import '../../../../core/constant/color_constants.dart';
 import '../../../../snackbar_utils.dart';
 
@@ -45,34 +46,32 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar:AppBar(
-          elevation: 0,
-          backgroundColor: ColorPalette.secondaryColor,
-          foregroundColor: ColorPalette.primaryColor,
-          title: const Text('Delete Account'),
-          centerTitle: true,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('Are you sure you want to delete your account?'),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ButtonStyle(
-                  elevation: MaterialStateProperty.all(0),
-                    backgroundColor: MaterialStateProperty.all(
-                        ColorPalette.secondaryColor)
-                ),
-                onPressed: () {
-                  deleteAccount();
-                },
-                child: const Text('Delete My Account',style: TextStyle(color: Colors.white),),
+    return Scaffold(
+      appBar:AppBar(
+        elevation: 0,
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
+        title: const Text('Delete Account'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text('Are you sure you want to delete your account?'),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all(0),
+                  backgroundColor: MaterialStateProperty.all(
+                      ColorPalette.secondaryColor)
               ),
-            ],
-          ),
+              onPressed: () {
+                deleteAccount();
+              },
+              child: const Text('Delete My Account',style: TextStyle(color: Colors.white),),
+            ),
+          ],
         ),
       ),
     );

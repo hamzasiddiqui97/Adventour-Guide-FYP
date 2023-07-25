@@ -22,69 +22,67 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: ColorPalette.secondaryColor,
-          foregroundColor: ColorPalette.primaryColor,
-          centerTitle: true,
-          title: const Text('Reset Password'),
-          elevation: 0,
-          // backgroundColor: Colors.transparent,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40,),
-                const Text('Forgot your password?',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
-                const SizedBox(height: 20,),
-                const Text('Enter an email to reset your password.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: ColorPalette.secondaryColor,
+        foregroundColor: ColorPalette.primaryColor,
+        centerTitle: true,
+        title: const Text('Reset Password'),
+        elevation: 0,
+        // backgroundColor: Colors.transparent,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 40,),
+              const Text('Forgot your password?',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+              const SizedBox(height: 20,),
+              const Text('Enter an email to reset your password.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
                 ),
-                const SizedBox(
-                  height: 16,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              TextFormField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                cursorColor: Colors.black,
+                textInputAction: TextInputAction.done,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.email),
+                  labelText: 'Email',
                 ),
-                TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  cursorColor: Colors.black,
-                  textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.email),
-                    labelText: 'Email',
-                  ),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your email address';
-                    } else if (!value.contains('@')) {
-                      return 'Please enter a valid email address';
-                    }
-                    return null;
-                  },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter your email address';
+                  } else if (!value.contains('@')) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20,),
+              ElevatedButton(
+                onPressed: resetPassword,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorPalette.secondaryColor,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 40),
                 ),
-                const SizedBox(height: 20,),
-                ElevatedButton(
-                  onPressed: resetPassword,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.secondaryColor,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 40),
-                  ),
 
-                  child: const Text(
-                    'Reset Password', style: TextStyle(color: Colors.white,),),
-                ),
-              ],
-            ),
+                child: const Text(
+                  'Reset Password', style: TextStyle(color: Colors.white,),),
+              ),
+            ],
           ),
         ),
       ),

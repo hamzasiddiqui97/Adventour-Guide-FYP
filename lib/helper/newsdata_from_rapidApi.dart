@@ -1,8 +1,9 @@
 
 import 'dart:convert';
 
-import '../model/NewsModelRapidApi.dart';
 import 'package:http/http.dart' as http;
+
+import '../model/NewsModelRapidApi.dart';
 class RapidNews {
   List<RapidNewsModel> rapidNews = [];
 

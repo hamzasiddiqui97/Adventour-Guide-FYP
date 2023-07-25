@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_basics/view/screens/views/news_view.dart';
-import 'package:provider/provider.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
+import 'package:google_maps_basics/view/screens/views/news_view.dart';
 import 'package:google_maps_basics/widgets/sevenDayForecast.dart';
+import 'package:provider/provider.dart';
+
 import '../../view/screens/views/nearby_places_list.dart';
 import '../../view/screens/views/search_nearby_restaurant.dart';
 
@@ -20,9 +21,18 @@ class CustomGrid extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade400,
+            blurRadius: 3.0,
+            spreadRadius: 0.0,
+            offset: Offset(0.0, 2.0),
+        ),
+        ],
           borderRadius: BorderRadius.circular(20),
-          color: Colors.grey.shade100),
-      height: 450,
+          color: Colors.grey.shade50),
+      height: 300,
+      width: MediaQuery.of(context).size.width,
       child: Column(
         children: [
           Padding(
@@ -36,9 +46,15 @@ class CustomGrid extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
-
+                        boxShadow:  [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 6,
+                            spreadRadius: 0.0,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
-
                       height: 80,
                       width: 80,
                       child: IconButton(
@@ -75,7 +91,14 @@ class CustomGrid extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
-
+                        boxShadow:  [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 6,
+                            spreadRadius: 0.0,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
 
 
@@ -107,9 +130,17 @@ class CustomGrid extends StatelessWidget {
                   children: [
                     Container(
                       decoration: BoxDecoration(
+
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
-
+                        boxShadow:  [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 6,
+                            spreadRadius: 0.0,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
 
 
@@ -138,7 +169,14 @@ class CustomGrid extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
-
+                        boxShadow:  [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 6,
+                            spreadRadius: 0.0,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
 
                       height: 80,
@@ -164,33 +202,40 @@ class CustomGrid extends StatelessWidget {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-
-                      ),
-
-                      height: 80,
-                      width: 80,
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.emoji_transportation,
-                          color: ColorPalette.secondaryColor, size: iconSize,),),
-                    ),
-                    const Text('Transport', textAlign: TextAlign.center),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(20.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //     children: [
+          //       Column(
+          //         children: [
+          //           Container(
+          //             decoration: BoxDecoration(
+          //               borderRadius: BorderRadius.circular(20),
+          //               color: Colors.white,
+          //               boxShadow:  [
+          //                 BoxShadow(
+          //                   color: Colors.grey.shade400,
+          //                   blurRadius: 6,
+          //                   spreadRadius: 0.0,
+          //                   offset: Offset(0.0, 2.0),
+          //                 ),
+          //               ],
+          //             ),
+          //
+          //             height: 80,
+          //             width: 80,
+          //             child: IconButton(
+          //               onPressed: () {},
+          //               icon: const Icon(Icons.emoji_transportation,
+          //                 color: ColorPalette.secondaryColor, size: iconSize,),),
+          //           ),
+          //           const Text('Transport', textAlign: TextAlign.center),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

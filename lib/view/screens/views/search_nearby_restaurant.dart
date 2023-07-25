@@ -1,10 +1,13 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/NearbyResponse.dart';
 import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
+
 import 'nearby_on_maps.dart';
 
 class NearbyRestaurantSource extends StatefulWidget {
@@ -27,6 +30,13 @@ class _NearbyRestaurantSourceState extends State<NearbyRestaurantSource> {
     'cafe',
   ];
 
+
+  void shareGoogleMaps({double? latitude, double? longitude}) {
+    final String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    Share.share(googleMapsUrl);
+  }
+
+
   NearbyPlacesResponse nearbyPlacesResponse = NearbyPlacesResponse();
 
   @override
@@ -43,90 +53,88 @@ class _NearbyRestaurantSourceState extends State<NearbyRestaurantSource> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: ColorPalette.primaryColor,
-          backgroundColor: ColorPalette.secondaryColor,
-          title: const Text(
-            'Nearby Restaurants',
-          ),
-          centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        foregroundColor: ColorPalette.primaryColor,
+        backgroundColor: ColorPalette.secondaryColor,
+        title: const Text(
+          'Nearby Restaurants',
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      labelText: "Radius",
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                        BorderSide(color: ColorPalette.secondaryColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      prefixIcon:
-                      Icon(Icons.radar, color: ColorPalette.secondaryColor),
-                      hintText: "Enter radius",
-                      contentPadding: EdgeInsets.all(20),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 1.5,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: "Radius",
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                      BorderSide(color: ColorPalette.secondaryColor),
                     ),
-                    onChanged: (newRadius) => setRadius(newRadius),
-                    keyboardType: TextInputType.number,
-                    maxLength: 4,
-                    expands: false,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    prefixIcon:
+                    Icon(Icons.radar, color: ColorPalette.secondaryColor),
+                    hintText: "Enter radius",
+                    contentPadding: EdgeInsets.all(20),
+                  ),
+                  onChanged: (newRadius) => setRadius(newRadius),
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                  expands: false,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  const Text('Area Type:'),
+                  DropdownButton(
+                    hint: Text(placeType == '' ? 'All' : placeType),
+                    items: placeTypes
+                        .map((placeType) => DropdownMenuItem(
+                      value: placeType == 'All' ? '' : placeType,
+                      child: Text(placeType),
+                    ))
+                        .toList(),
+                    onChanged: (String? newPlaceType) {
+                      setState(() => placeType = newPlaceType!);
+                    },
+                    enableFeedback: true,
+                    menuMaxHeight: 250.0,
+                  ),
+                ],
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        ColorPalette.secondaryColor)),
+                onPressed: () {
+                  updateLocation();
+                  getNearbyPlaces();
+                },
+                child: const Text(
+                  "Nearby Places",
+                  style: TextStyle(
+                    color: ColorPalette.primaryColor,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const Text('Area Type:'),
-                    DropdownButton(
-                      hint: Text(placeType == '' ? 'All' : placeType),
-                      items: placeTypes
-                          .map((placeType) => DropdownMenuItem(
-                        value: placeType == 'All' ? '' : placeType,
-                        child: Text(placeType),
-                      ))
-                          .toList(),
-                      onChanged: (String? newPlaceType) {
-                        setState(() => placeType = newPlaceType!);
-                      },
-                      enableFeedback: true,
-                      menuMaxHeight: 250.0,
-                    ),
-                  ],
-                ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          ColorPalette.secondaryColor)),
-                  onPressed: () {
-                    updateLocation();
-                    getNearbyPlaces();
-                  },
-                  child: const Text(
-                    "Nearby Places",
-                    style: TextStyle(
-                      color: ColorPalette.primaryColor,
-                    ),
-                  ),
-                ),
-                if (nearbyPlacesResponse.results == null ||
-                    nearbyPlacesResponse.results!.isEmpty)
-                  const Center(child: Text("No results found")),
-                if (nearbyPlacesResponse.results != null)
-                  for (int i = 0; i < nearbyPlacesResponse.results!.length; i++)
-                    nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
-              ],
-            ),
+              ),
+              if (nearbyPlacesResponse.results == null ||
+                  nearbyPlacesResponse.results!.isEmpty)
+                const Center(child: Text("No results found")),
+              if (nearbyPlacesResponse.results != null)
+                for (int i = 0; i < nearbyPlacesResponse.results!.length; i++)
+                  nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
+            ],
           ),
         ),
       ),
@@ -275,30 +283,57 @@ class _NearbyRestaurantSourceState extends State<NearbyRestaurantSource> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.secondaryColor,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MapsViewScreen(
-                          latitude: results.geometry!.location!.lat!,
-                          longitude: results.geometry!.location!.lng!,
-                          title: results.name!,
+              Row(
+                children: [
+                  Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorPalette.secondaryColor,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MapsViewScreen(
+                            latitude: results.geometry!.location!.lat!,
+                            longitude: results.geometry!.location!.lng!,
+                            title: results.name!,
+                            rating: results.rating?.toString() ?? "Not Available",
+                            vicinity: results.vicinity ?? "",
+
+
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Navigate',
-                    style: TextStyle(color: Colors.white),
+                      );
+                    },
+                    child: const Text(
+                      'Show On Map',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
+
+                  Padding(
+
+                    padding: const EdgeInsets.all(8),
+
+                    child:
+                    ElevatedButton(
+
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white, backgroundColor: ColorPalette.secondaryColor, // Text Color (Foreground color)
+                        ),
+                        onPressed: (){
+
+                          shareGoogleMaps(latitude: latitude,longitude: longitude);
+                        },
+                        child: const Text("Share Location",style: TextStyle(color: Colors.white),)),
+
+                  ),
+                ]
               ),
+
             ],
           ),
         ),

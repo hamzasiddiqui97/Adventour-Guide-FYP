@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_basics/.env.dart';
@@ -9,7 +10,9 @@ import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet_fiel
 import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'nearby_on_maps.dart';
 
 class NearByPlacesScreen extends StatefulWidget {
@@ -59,124 +62,122 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: ColorPalette.primaryColor,
-          backgroundColor: ColorPalette.secondaryColor,
-          title: const Text(
-            'Nearby Places',
-          ),
-          centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        foregroundColor: ColorPalette.primaryColor,
+        backgroundColor: ColorPalette.secondaryColor,
+        title: const Text(
+          'Nearby Places',
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      labelText: "Radius",
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: ColorPalette.secondaryColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      prefixIcon:
-                          Icon(Icons.radar, color: ColorPalette.secondaryColor),
-                      hintText: "Enter radius",
-                      contentPadding: EdgeInsets.all(20),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 1.5,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: "Radius",
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ColorPalette.secondaryColor),
                     ),
-                    onChanged: (newRadius) => setRadius(newRadius),
-                    keyboardType: TextInputType.number,
-                    maxLength: 4,
-                    expands: false,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    prefixIcon:
+                        Icon(Icons.radar, color: ColorPalette.secondaryColor),
+                    hintText: "Enter radius",
+                    contentPadding: EdgeInsets.all(20),
                   ),
+                  onChanged: (newRadius) => setRadius(newRadius),
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                  expands: false,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const Text('Area Type:'),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: MultiSelectBottomSheetField(
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  const Text('Area Type:'),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: MultiSelectBottomSheetField(
 
-                            initialChildSize: 0.4,
-                            maxChildSize: 0.7,
-                            listType: MultiSelectListType.CHIP,
-                            searchable: true,
-                            buttonText: Text(placeType.isEmpty ? 'All' : placeType.join(', ')),
-                            title: const Text("Area Type"),
-                            selectedColor: ColorPalette.secondaryColor,
-                            selectedItemsTextStyle: const TextStyle(color: Colors.white),
+                          initialChildSize: 0.4,
+                          maxChildSize: 0.7,
+                          listType: MultiSelectListType.CHIP,
+                          searchable: true,
+                          buttonText: Text(placeType.isEmpty ? 'All' : placeType.join(', ')),
+                          title: const Text("Area Type"),
+                          selectedColor: ColorPalette.secondaryColor,
+                          selectedItemsTextStyle: const TextStyle(color: Colors.white),
 
-                            items: placeTypes.map((placeType) => MultiSelectItem<String>(placeType, placeType)).toList(),
-                            onConfirm: (values) {
-                              if (values.isEmpty) {
-                                setState(() {
-                                  placeType = ['All'];
-                                });
-                              } else {
-                                setState(() {
-                                  placeType = List<String>.from(values.cast<String>());
-                                });
-                              }
+                          items: placeTypes.map((placeType) => MultiSelectItem<String>(placeType, placeType)).toList(),
+                          onConfirm: (values) {
+                            if (values.isEmpty) {
+                              setState(() {
+                                placeType = ['All'];
+                              });
+                            } else {
+                              setState(() {
+                                placeType = List<String>.from(values.cast<String>());
+                              });
+                            }
+                          },
+
+                          chipDisplay: MultiSelectChipDisplay(
+                            onTap: (value) {
+                              setState(() {
+                                placeType.remove(value);
+                              });
                             },
-
-                            chipDisplay: MultiSelectChipDisplay(
-                              onTap: (value) {
-                                setState(() {
-                                  placeType.remove(value);
-                                });
-                              },
-                            ),
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
 
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          ColorPalette.secondaryColor)),
-                  onPressed: () async {
-                    setState(() {
-                      loading = true;
-                    });
-                    await updateLocation();
-                    await getNearbyPlaces();
-                    setState(() {
-                      loading = false;
-                    });
-                  },
-                  child: const Text(
-                    "Nearby Places",
-                    style: TextStyle(
-                      color: ColorPalette.primaryColor,
-                    ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        ColorPalette.secondaryColor)),
+                onPressed: () async {
+                  setState(() {
+                    loading = true;
+                  });
+                  await updateLocation();
+                  await getNearbyPlaces();
+                  setState(() {
+                    loading = false;
+                  });
+                },
+                child: const Text(
+                  "Nearby Places",
+                  style: TextStyle(
+                    color: ColorPalette.primaryColor,
                   ),
                 ),
-                if (loading)
-                  const Center(child: CircularProgressIndicator(color: ColorPalette.secondaryColor),),
-                if (!loading && (nearbyPlacesResponse.results == null || nearbyPlacesResponse.results!.isEmpty))
-                  const Center(child: Text("No results found")),
-                if (nearbyPlacesResponse.results != null)
-                  for (int i = 0; i < nearbyPlacesResponse.results!.length; i++)
-                    nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
-              ],
-            ),
+              ),
+              if (loading)
+                const Center(child: CircularProgressIndicator(color: ColorPalette.secondaryColor),),
+              if (!loading && (nearbyPlacesResponse.results == null || nearbyPlacesResponse.results!.isEmpty))
+                const Center(child: Text("No results found")),
+              if (nearbyPlacesResponse.results != null)
+                for (int i = 0; i < nearbyPlacesResponse.results!.length; i++)
+                  nearbyPlacesWidget(nearbyPlacesResponse.results![i]),
+            ],
           ),
         ),
       ),
@@ -290,6 +291,13 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
     });
   }
 
+
+  void shareGoogleMaps({double? latitude, double? longitude}) {
+    final String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    Share.share(googleMapsUrl);
+  }
+
+
   Widget nearbyPlacesWidget(Results results) {
     return SafeArea(
       child: Center(
@@ -373,29 +381,54 @@ class _NearByPlacesScreenState extends State<NearByPlacesScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.secondaryColor,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MapsViewScreen(
-                          latitude: results.geometry!.location!.lat!,
-                          longitude: results.geometry!.location!.lng!,
-                          title: results.name!,
-                        ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorPalette.secondaryColor,
                       ),
-                    );
-                  },
-                  child: const Text(
-                    'Show on Map',
-                    style: TextStyle(color: Colors.white),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapsViewScreen(
+                              latitude: results.geometry!.location!.lat!,
+                              longitude: results.geometry!.location!.lng!,
+                              title: results.name!,
+                              rating: results.rating?.toString() ?? "Not Available",
+                              vicinity: results.vicinity ?? "",
+
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Show on Map',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
-                ),
+                  Padding(
+
+                    padding: const EdgeInsets.all(8),
+
+                    child:
+                    ElevatedButton(
+
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white, backgroundColor: ColorPalette.secondaryColor, // Text Color (Foreground color)
+                        ),
+                        onPressed: (){
+
+                      shareGoogleMaps(latitude: latitude,longitude: longitude);
+                    },
+                        child: const Text("Share Location",style: TextStyle(color: Colors.white),)),
+
+                  ),
+
+                ]
               ),
             ],
           ),

@@ -1,16 +1,18 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_basics/.env.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/core/widgets/search_bar_widget.dart';
 import 'package:google_maps_basics/model/MultipleDestinations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:google_api_headers/google_api_headers.dart';
+
 import '../views/places_list_along_the_route.dart';
 
 class HomePageGoogleMaps extends StatefulWidget {
@@ -27,15 +29,13 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final homeScaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
-
   final List<String> _selectedPlaceTypes = [];
 
   final List<Marker> _attractionMarkers = [];
 
-
   final List<String> _placeTypes = [
     "All",
-    // "tourist_attraction",
+    "tourist_attraction",
     "gas_station",
     "restaurant",
     "cafe",
@@ -48,7 +48,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     "parking",
     "bank",
     // "car_rental",
-    "embassy"
+    // "embassy"
   ];
 
   bool showSearchField = false;
@@ -87,6 +87,21 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   final List<Marker> _markers = [];
 
+  Map<String, String> placeTypeToMarkerImage = {
+    'tourist_attraction': 'assets/markers/park.png',
+    'gas_station': 'assets/markers/gas-station.png',
+    'restaurant': 'assets/markers/restaurant.png',
+    'cafe': 'assets/markers/cafe.png',
+    'airport': 'assets/markers/airport.png',
+    'museum': 'assets/markers/museum.png',
+    'stadium': 'assets/markers/stadium.png',
+    'hospital': 'assets/markers/hospital.png',
+    'police': 'assets/markers/police-station.png',
+    'atm': 'assets/markers/atm-card.png',
+    'parking': 'assets/markers/parking-area.png',
+    'bank': 'assets/markers/atm-card.png',
+  };
+
 
   // polylines
   final Set<Polyline> _polylines = <Polyline>{};
@@ -97,58 +112,59 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   //variables for the source and destinations
   late LatLng destination;
   late LatLng source;
+  bool isLegendOpen = false;
 
   // copy of polylineCoordinates to send to new screen..
   List<LatLng> tempPolylineCoordinates = [];
 
   void setPolylines() async {
-      PolylinePoints polylinePoints = PolylinePoints();
-      List<LatLng> polylineCoordinates = [];
+    PolylinePoints polylinePoints = PolylinePoints();
+    List<LatLng> polylineCoordinates = [];
 
-      List<Marker> markers = _markers.toList();
+    List<Marker> markers = _markers.toList();
 
-      for (int i = 0; i < markers.length - 1; i++) {
-        LatLng originLocation = markers[i].position;
-        LatLng destinationLocation = markers[i + 1].position;
+    for (int i = 0; i < markers.length - 1; i++) {
+      LatLng originLocation = markers[i].position;
+      LatLng destinationLocation = markers[i + 1].position;
 
-        PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-          googleApiKey,
-          PointLatLng(originLocation.latitude, originLocation.longitude),
-          PointLatLng(destinationLocation.latitude, destinationLocation.longitude),
-        );
-
-        if (result.points.isNotEmpty) {
-          result.points.forEach((PointLatLng point) {
-            polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-          });
-        }
-      }
-
-      Polyline polyline = Polyline(
-        polylineId: const PolylineId('poly'),
-        color: ColorPalette.secondaryColor,
-        width: 3,
-        points: polylineCoordinates,
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        googleApiKey,
+        PointLatLng(originLocation.latitude, originLocation.longitude),
+        PointLatLng(
+            destinationLocation.latitude, destinationLocation.longitude),
       );
 
-      // Assign polylineCoordinates to tempPolylineCoordinates (making copy of polyline points).
-      tempPolylineCoordinates = List<LatLng>.from(polylineCoordinates);
-
-      setState(() {
-        _polylines.clear();
-      });
-
-      setState(() {
-        _polylines.add(polyline);
-      });
-
-      print('polylineCoordinates length: ${polylineCoordinates.length}');
-
-      final places = GoogleMapsPlaces(apiKey: googleApiKey);
-      getTouristAttractionsAlongPolyline(
-          polylineCoordinates, places, _selectedPlaceTypes, context);
+      if (result.points.isNotEmpty) {
+        result.points.forEach((PointLatLng point) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        });
+      }
     }
 
+    Polyline polyline = Polyline(
+      polylineId: const PolylineId('poly'),
+      color: ColorPalette.secondaryColor,
+      width: 3,
+      points: polylineCoordinates,
+    );
+
+    // Assign polylineCoordinates to tempPolylineCoordinates (making copy of polyline points).
+    tempPolylineCoordinates = List<LatLng>.from(polylineCoordinates);
+
+    setState(() {
+      _polylines.clear();
+    });
+
+    setState(() {
+      _polylines.add(polyline);
+    });
+
+    print('polylineCoordinates length: ${polylineCoordinates.length}');
+
+    final places = GoogleMapsPlaces(apiKey: googleApiKey);
+    getTouristAttractionsAlongPolyline(
+        polylineCoordinates, places, _selectedPlaceTypes, context);
+  }
 
   void _showFetchingDialog(BuildContext context) {
     showDialog(
@@ -168,8 +184,10 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       },
     ).then((value) {
       if (value == null || !value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No places found'),backgroundColor: ColorPalette.secondaryColor,));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('No places found'),
+          backgroundColor: ColorPalette.secondaryColor,
+        ));
       }
     });
   }
@@ -190,7 +208,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       } else {
         // Get new results and store them in the cache
         getTouristAttractionsAlongPolyline(
-            polylineCoordinates, places, [placeType],context).then((result) {
+            polylineCoordinates, places, [placeType], context)
+            .then((result) {
           _placesCache[placeType] = result;
         });
       }
@@ -201,14 +220,11 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     setState(() {});
   }
 
-
   Future<List<PlacesSearchResult>> getTouristAttractionsAlongPolyline(
       List<LatLng> polylineCoordinates,
       GoogleMapsPlaces places,
       List<String> _selectedPlaceTypes,
-      BuildContext context
-      ) async {
-
+      BuildContext context) async {
     _showFetchingDialog(context);
 
     final touristAttractions = <PlacesSearchResult>{};
@@ -232,22 +248,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
     // Print the names of the tourist attractions
     for (final place in touristAttractions) {
-      double hue = getMarkerHueForPlaceType(
-          place.types[0]); // Get hue based on the first place type
+      // Get icon based on the first place type
+      Future<BitmapDescriptor> icon = getMarkerIconForPlaceType(place.types[0]);
+
       _markers.add(Marker(
         markerId: MarkerId(place.placeId),
-        position:
-        LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
+        position: LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
         infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-        icon: BitmapDescriptor.defaultMarkerWithHue(hue),
+        icon: await icon,  // Use custom icon here
       ));
-      _attractionMarkers.add(Marker(
-        markerId: MarkerId(place.placeId),
-        position:
-        LatLng(place.geometry!.location.lat, place.geometry!.location.lng),
-        infoWindow: InfoWindow(title: place.name, snippet: place.vicinity),
-        icon: BitmapDescriptor.defaultMarkerWithHue(hue),
-      ));
+
     }
 
     setState(() {});
@@ -262,36 +272,16 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     return touristAttractions.toList();
   }
 
-  double getMarkerHueForPlaceType(String placeType) {
-    switch (placeType) {
-      case "tourist_attraction":
-        return BitmapDescriptor.hueMagenta;
-      case "gas_station":
-        return BitmapDescriptor.hueBlue;
-      case "restaurant":
-        return BitmapDescriptor.hueGreen;
-      case "cafe":
-        return BitmapDescriptor.hueYellow;
-      case "airport":
-        return BitmapDescriptor.hueMagenta;
-      case "museum":
-        return BitmapDescriptor.hueMagenta;
-      case "stadium":
-        return BitmapDescriptor.hueMagenta;
-      case "hospital":
-        return BitmapDescriptor.hueAzure;
-      case "police":
-        return BitmapDescriptor.hueAzure;
-      case "atm":
-        return BitmapDescriptor.hueAzure;
-      case "bank":
-        return BitmapDescriptor.hueAzure;
-      case "car_rental":
-        return BitmapDescriptor.hueMagenta;
-      default:
-        return BitmapDescriptor.hueOrange;
+  Future<BitmapDescriptor> getMarkerIconForPlaceType(String placeType) async {
+    if (placeTypeToMarkerImage.containsKey(placeType)) {
+      return await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(size: Size(3, 3)),
+          placeTypeToMarkerImage[placeType]!);
+    } else {
+      return BitmapDescriptor.defaultMarker; // Default marker icon
     }
   }
+
 
   // current location started
   loadData() async {
@@ -354,7 +344,8 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
 
   void onError(PlacesAutocompleteResponse? response) {
     final errorMessage = response?.errorMessage ?? 'Unknown error';
-    homeScaffoldKey.currentState?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    homeScaffoldKey.currentState
+        ?.showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 
   Future<void> displayPredictionSource(
@@ -379,12 +370,13 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
             infoWindow: InfoWindow(title: detail.result.name)));
       });
       setPolylines();
-      googleMapController.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
+      googleMapController
+          .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
     } else {
-      currentState?.showSnackBar(const SnackBar(content: Text('Error: Could not get location')));
+      currentState?.showSnackBar(
+          const SnackBar(content: Text('Error: Could not get location')));
     }
   }
-
 
   // destination search autocomplete button
 
@@ -407,15 +399,17 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         components: [Component(Component.country, "pk")]);
 
     if (p != null) {
-      displayPredictionDestination(p, homeScaffoldKey.currentState,index);
+      displayPredictionDestination(p, homeScaffoldKey.currentState, index);
     } else {
-      homeScaffoldKey.currentState?.showSnackBar(const SnackBar(content: Text('Error: No prediction selected')));
+      homeScaffoldKey.currentState?.showSnackBar(
+          const SnackBar(content: Text('Error: No prediction selected')));
     }
   }
 
   void onErrorDestination(PlacesAutocompleteResponse? response) {
     final errorMessage = response?.errorMessage ?? 'Unknown error';
-    homeScaffoldKey.currentState?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    homeScaffoldKey.currentState
+        ?.showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 
   List<Destination> destinations = [];
@@ -450,12 +444,14 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
       ));
       setPolylines();
       setState(() {});
-      googleMapController.animateCamera(CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
+      googleMapController.animateCamera(
+          CameraUpdate.newLatLngZoom(newDestination.location, 15.0));
       if (kDebugMode) {
         print('destinations: ${destinations.toString()}');
       }
     } else {
-      currentState?.showSnackBar(const SnackBar(content: Text('Error: Could not get location')));
+      currentState?.showSnackBar(
+          const SnackBar(content: Text('Error: Could not get location')));
     }
   }
 
@@ -473,36 +469,35 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-      key: homeScaffoldKey,
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          GoogleMap(
-            zoomControlsEnabled: false,
-            compassEnabled: false,
-            mapType: MapType.normal,
-            initialCameraPosition: _kGooglePlex,
-            onMapCreated: _onMapCreated,
-            polylines: _polylines,
-            // current location
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            markers: {..._markers, ..._attractionMarkers}.toSet(),
-          ),
+    return SafeArea(
+      child: Scaffold(
+        key: homeScaffoldKey,
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            GoogleMap(
+              zoomControlsEnabled: false,
+              compassEnabled: false,
+              mapType: MapType.normal,
+              initialCameraPosition: _kGooglePlex,
+              onMapCreated: _onMapCreated,
+              polylines: _polylines,
+              // current location
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              markers: {..._markers, ..._attractionMarkers}.toSet(),
+            ),
 
-          if (!showSearchField)
-            Positioned(
-                bottom: 30,
+            if (!showSearchField)
+              Positioned(
+                bottom: 80,
                 left: 10,
                 child: ElevatedButton(
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                           ColorPalette.secondaryColor)),
-
                   onPressed: () async {
                     // final distancesAndTimes = await calculateDistanceAndTime(_markers);
                     Navigator.push(
@@ -516,280 +511,336 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                       ),
                     );
                   },
-
                   child: const Text(
                     'Places List',
                     style: TextStyle(color: ColorPalette.primaryColor),
                   ),
-                )),
-
-          if (!showSearchField)
-            Positioned(
-              top: 30,
-              right: 30,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: ColorPalette.secondaryColor,
-                  borderRadius: BorderRadius.circular(40),
                 ),
-                height: 60,
-                width: 60,
-                alignment: Alignment.center,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      showSearchField = !showSearchField;
-                    });
-                  },
-                  child: const Icon(
-                    Icons.search,
-                    color: Colors.white,
+              ),
+
+            if (!showSearchField)
+              Positioned(
+                top: 30,
+                right: 30,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: ColorPalette.secondaryColor,
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  height: 60,
+                  width: 60,
+                  alignment: Alignment.center,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        showSearchField = !showSearchField;
+                      });
+                    },
+                    child: const Icon(
+                      Icons.search,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
-            ),
 
-          if (showSearchField)
-            Positioned(
-              top: 0,
-              child: Container(
-                color: ColorPalette.primaryColor,
-                height: MediaQuery.of(context).size.height * 0.28,
-                width: MediaQuery.of(context).size.width,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      // search field and add more field button
-                      if (showSearchField)
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SearchBar(
-                                  width: MediaQuery.of(context).size.width * 0.81,
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        showSearchField = false;
-                                      });
-                                    },
-                                    icon: const Icon(Icons.arrow_upward),
-                                  ),
-                                  controller: sourceController,
-
-                                  hintText: 'Search Source',
-                                  onPress: () {
-                                    Timer(const Duration(milliseconds: 500),
-                                            () {
-                                          _handlePressButtonSource();
+            if (showSearchField)
+              Positioned(
+                top: 0,
+                child: Container(
+                  color: ColorPalette.primaryColor,
+                  height: MediaQuery.of(context).size.height * 0.28,
+                  width: MediaQuery.of(context).size.width,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        // search field and add more field button
+                        if (showSearchField)
+                          Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SearchBar(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.81,
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          showSearchField = false;
                                         });
-                                  }),
-                              InkWell(
-                                splashColor: ColorPalette.secondaryColor,
-                                onTap: () {
-                                  setState(() {
-                                    showMultipleSearchBars = true;
-                                    final TextEditingController controller = TextEditingController(text: 'Destination');
-                                    destinationControllers.add(controller);
-                                    multipleDestinations.add(controller.text);
-
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Colors.white,
-                                  ),
-                                  child: const Icon(
-                                    Icons.add,
-                                    size: 40,
-                                    color: ColorPalette.secondaryColor,
-                                  ),
-                                ),
-                              ),
-                            ]),
-
-                      ///// MULTIPLE SEARCH BAR FIELD /////
-
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        child: Column(
-                          children: [
-                            if (showMultipleSearchBars)
-                              Column(
-                                children: List.generate(
-                                  multipleDestinations.length,
-                                      (index) => Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: SearchBar(
-                                            width: MediaQuery.of(context).size.width * 0.8,
-                                            controller: TextEditingController(
-                                              text: multipleDestinations[index],
-                                            ),
-                                            hintText: 'Search Destination',
-                                            onPress: () {
-                                              _handlePressButtonDestination(index);
-                                            },
-                                            onPlaceSelected: (String placeName) {
-                                              setState(() {
-                                                multipleDestinations[index] = placeName;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              // Remove the corresponding marker from the _markers list
-                                              MarkerId markerIdToRemove = MarkerId("destination ${index + 1}");
-                                              _markers.removeWhere((marker) => marker.markerId == markerIdToRemove);
-
-                                              // Remove the corresponding destination from the destinations list
-                                              multipleDestinations.removeAt(index);
-                                              setPolylines();
-
-                                            });
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(20),
-                                              color: Colors.white,
-                                            ),
-                                            child: const Icon(
-                                              Icons.remove,
-                                              size: 38,
-                                              color: ColorPalette.secondaryColor,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                      },
+                                      icon: const Icon(Icons.arrow_upward),
+                                    ),
+                                    controller: sourceController,
+                                    hintText: 'Search Source',
+                                    onPress: () {
+                                      Timer(const Duration(milliseconds: 500),
+                                              () {
+                                            _handlePressButtonSource();
+                                          });
+                                    }),
+                                InkWell(
+                                  splashColor: ColorPalette.secondaryColor,
+                                  onTap: () {
+                                    setState(() {
+                                      showMultipleSearchBars = true;
+                                      final TextEditingController controller =
+                                      TextEditingController(
+                                          text: 'Destination');
+                                      destinationControllers.add(controller);
+                                      multipleDestinations.add(controller.text);
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white,
+                                    ),
+                                    child: const Icon(
+                                      Icons.add,
+                                      size: 40,
+                                      color: ColorPalette.secondaryColor,
                                     ),
                                   ),
                                 ),
-                              ),
-                          ],
+                              ]),
+
+                        ///// MULTIPLE SEARCH BAR FIELD /////
+
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          child: Column(
+                            children: [
+                              if (showMultipleSearchBars)
+                                Column(
+                                  children: List.generate(
+                                    multipleDestinations.length,
+                                        (index) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: SearchBar(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  0.8,
+                                              controller: TextEditingController(
+                                                text:
+                                                multipleDestinations[index],
+                                              ),
+                                              hintText: 'Search Destination',
+                                              onPress: () {
+                                                _handlePressButtonDestination(
+                                                    index);
+                                              },
+                                              onPlaceSelected:
+                                                  (String placeName) {
+                                                setState(() {
+                                                  multipleDestinations[index] =
+                                                      placeName;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                // Remove the corresponding marker from the _markers list
+                                                MarkerId markerIdToRemove =
+                                                MarkerId(
+                                                    "destination ${index + 1}");
+                                                _markers.removeWhere((marker) =>
+                                                marker.markerId ==
+                                                    markerIdToRemove);
+
+                                                // Remove the corresponding destination from the destinations list
+                                                multipleDestinations
+                                                    .removeAt(index);
+                                                setPolylines();
+                                              });
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(20),
+                                                color: Colors.white,
+                                              ),
+                                              child: const Icon(
+                                                Icons.remove,
+                                                size: 38,
+                                                color:
+                                                ColorPalette.secondaryColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        ColorPalette.secondaryColor)),
+                                onPressed: () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PlacesListAlongTheRoute(
+                                            markers: _markers.toSet().toList(),
+                                            // distancesAndTimes: distancesAndTimes,
+                                            polylineCoordinates:
+                                            tempPolylineCoordinates,
+                                          ),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'Create Trip',
+                                  style: TextStyle(
+                                      color: ColorPalette.primaryColor),
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          // list of places types
-          if (showSearchField)
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.28,
-              right: 1,
-              left: 1,
-              child: Container(
-                decoration: const BoxDecoration(color: Colors.transparent),
-                height: MediaQuery.of(context).size.height / 13,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _placeTypes.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor:
-                              _selectedPlaceTypes.contains(_placeTypes[index])
-                                  ? ColorPalette.primaryColor
-                                  : Colors.black,
-                          backgroundColor:
-                              _selectedPlaceTypes.contains(_placeTypes[index])
-                                  ? ColorPalette.secondaryColor
-                                  : Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+            // list of places types
+            if (showSearchField)
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.28,
+                right: 1,
+                left: 1,
+                child: Container(
+                  decoration: const BoxDecoration(color: Colors.transparent),
+                  height: MediaQuery.of(context).size.height / 13,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _placeTypes.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor:
+                            _selectedPlaceTypes.contains(_placeTypes[index])
+                                ? ColorPalette.primaryColor
+                                : Colors.black,
+                            backgroundColor:
+                            _selectedPlaceTypes.contains(_placeTypes[index])
+                                ? ColorPalette.secondaryColor
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              if (_selectedPlaceTypes
+                                  .contains(_placeTypes[index])) {
+                                _selectedPlaceTypes.remove(_placeTypes[index]);
+                              } else {
+                                _selectedPlaceTypes.add(_placeTypes[index]);
+                              }
+                              updateMapWithSelectedPlaceType(
+                                  _selectedPlaceTypes);
+                            });
+                          },
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: _selectedPlaceTypes
+                                    .contains(_placeTypes[index]),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (_selectedPlaceTypes
+                                        .contains(_placeTypes[index])) {
+                                      _selectedPlaceTypes
+                                          .remove(_placeTypes[index]);
+                                    } else {
+                                      _selectedPlaceTypes
+                                          .add(_placeTypes[index]);
+                                    }
+                                    updateMapWithSelectedPlaceType(
+                                        _selectedPlaceTypes);
+                                  });
+                                },
+                              ),
+                              Text(_placeTypes[index]),
+                            ],
                           ),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            if (_selectedPlaceTypes
-                                .contains(_placeTypes[index])) {
-                              _selectedPlaceTypes.remove(_placeTypes[index]);
-                            } else {
-                              _selectedPlaceTypes.add(_placeTypes[index]);
-                            }
-                            updateMapWithSelectedPlaceType(_selectedPlaceTypes);
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            Checkbox(
-                              value: _selectedPlaceTypes
-                                  .contains(_placeTypes[index]),
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  if (_selectedPlaceTypes
-                                      .contains(_placeTypes[index])) {
-                                    _selectedPlaceTypes
-                                        .remove(_placeTypes[index]);
-                                  } else {
-                                    _selectedPlaceTypes.add(_placeTypes[index]);
-                                  }
-                                  updateMapWithSelectedPlaceType(
-                                      _selectedPlaceTypes);
-                                });
-                              },
-                            ),
-                            Text(_placeTypes[index]),
-                          ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+            // current location
+            if (!showSearchField)
+              Positioned(
+                right: 30,
+                bottom: 30,
+                child: FloatingActionButton(
+                  backgroundColor: ColorPalette.secondaryColor,
+                  onPressed: () async {
+                    _currentLocation().then((value) async {
+                      setState(() {
+                        // source = LatLng(value.latitude, value.longitude);
+                      });
+                      _markers.add(
+                        Marker(
+                          markerId: const MarkerId('current location'),
+                          position: LatLng(value.latitude, value.longitude),
+                          infoWindow:
+                          const InfoWindow(title: "Current Location"),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+                      );
 
-          // current location
-          if (!showSearchField)
-            Positioned(
-              right: 30,
-              bottom: 30,
-              child: FloatingActionButton(
-                backgroundColor: ColorPalette.secondaryColor,
-                onPressed: () async {
-                  _currentLocation().then((value) async {
-                    setState(() {
-                      // source = LatLng(value.latitude, value.longitude);
+                      CameraPosition cameraPosition = CameraPosition(
+                          zoom: 15,
+                          target: LatLng(value.latitude, value.longitude));
+
+                      // GoogleMapController controller =await _controller.future;
+                      googleMapController.animateCamera(
+                          CameraUpdate.newCameraPosition(cameraPosition));
+                      setState(() {});
                     });
-                    _markers.add(
-                      Marker(
-                        markerId: const MarkerId('current location'),
-                        position: LatLng(value.latitude, value.longitude),
-                        infoWindow: const InfoWindow(title: "Current Location"),
-                      ),
-                    );
-
-                    CameraPosition cameraPosition = CameraPosition(
-                        zoom: 15,
-                        target: LatLng(value.latitude, value.longitude));
-
-                    // GoogleMapController controller =await _controller.future;
-                    googleMapController.animateCamera(
-                        CameraUpdate.newCameraPosition(cameraPosition));
-                    setState(() {});
-                  });
-                },
-                child: const Icon(
-                  Icons.location_on,
-                  color: ColorPalette.primaryColor,
+                  },
+                  child: const Icon(
+                    Icons.location_on,
+                    color: ColorPalette.primaryColor,
+                  ),
                 ),
               ),
-            ),
 
-          if (!showSearchField)
+
             Positioned(
-              bottom: 80,
+              bottom: 30,
               left: 10,
               child: ElevatedButton(
                 onPressed: () {
@@ -805,7 +856,139 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                 ),
               ),
             ),
-        ],
+
+            if (!showSearchField)
+              Positioned(
+                top: 30,
+                left: 10,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isLegendOpen =
+                      !isLegendOpen; // Toggles the isLegendOpen boolean
+                    });
+                  },
+
+                  child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text('Legend',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.normal)),
+                        if (isLegendOpen) ...[
+                          // Only show these widgets if isLegendOpen is true
+                          const Divider(),
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/park.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text(
+                                  'Tourist Attraction'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/gas-station.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Gas Station'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/restaurant.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Restaurant'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/cafe.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Cafe'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/hospital.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Hospital'),
+                            ],
+                          ),
+                          const Divider(),
+
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/airport.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Airport'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/atm-card.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('ATM'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/parking-area.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Parking'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/police-station.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Police station'),
+                            ],
+                          ),
+                          const Divider(),
+
+
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/stadium.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Stadium'),
+                            ],
+                          ),
+                          const Divider(),
+                          // Row(
+                          //   children: <Widget>[
+                          //     Image.asset('assets/markers/atm-card.png', width: 24, height: 24), // Default icon for 'Others'
+                          //     const SizedBox(width: 10),
+                          //     const Text('Others'),
+                          //   ],
+                          // ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

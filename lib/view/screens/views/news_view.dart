@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/helper/newsdata.dart';
 import 'package:google_maps_basics/model/newsmodel.dart';
+
 import '../../../helper/newsdata_from_rapidApi.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -72,53 +73,51 @@ class _NewsScreenState extends State<NewsScreen> {
     mergedList.addAll(rapidNews);
     mergedList.shuffle();
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'News',
-          ),
-          centerTitle: true,
-          foregroundColor: ColorPalette.primaryColor,
-          backgroundColor: ColorPalette.secondaryColor,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'News',
         ),
-        body: _loading
-            ? const Center(
-          child: CircularProgressIndicator(),
-        )
-            : SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            color: Colors.white,
-            child: Column(
-              children: [
-                Container(
-                  child: ListView.builder(
-                    itemCount: _currentMaxIndex < mergedList.length
-                        ? _currentMaxIndex
-                        : mergedList.length,
-                    physics: const ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      if (mergedList[index] is NewsModel) {
-                        return NewsTemplate(
-                          urlToImage: mergedList[index].urlToImage,
-                          title: mergedList[index].title,
-                          description: mergedList[index].description,
-                        );
-                      } else {
-                        return RapidNewsTemplate(
-                          urlToImage: mergedList[index].urlToImage,
-                          title: mergedList[index].title,
-                          description: mergedList[index].description,
-                          url: mergedList[index].url,
-                        );
-                      }
-                    },
-                  ),
+        centerTitle: true,
+        foregroundColor: ColorPalette.primaryColor,
+        backgroundColor: ColorPalette.secondaryColor,
+      ),
+      body: _loading
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
+          : SingleChildScrollView(
+        controller: _scrollController,
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              Container(
+                child: ListView.builder(
+                  itemCount: _currentMaxIndex < mergedList.length
+                      ? _currentMaxIndex
+                      : mergedList.length,
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    if (mergedList[index] is NewsModel) {
+                      return NewsTemplate(
+                        urlToImage: mergedList[index].urlToImage,
+                        title: mergedList[index].title,
+                        description: mergedList[index].description,
+                      );
+                    } else {
+                      return RapidNewsTemplate(
+                        urlToImage: mergedList[index].urlToImage,
+                        title: mergedList[index].title,
+                        description: mergedList[index].description,
+                        url: mergedList[index].url,
+                      );
+                    }
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

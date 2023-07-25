@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.google_maps_basics">
-
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
@@ -12,9 +13,7 @@
         android:icon="@mipmap/ic_launcher">
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBYc1_Xgb0gVA1GtZO3jAd7D3a3aRTzUBY"/>
-<!--            android:value="AIzaSyBlWPakD86fto9qWr28G5V8UPTYsM3P45Y"/>-->
-<!--       android:value="AIzaSyCFGTU8W2PhSKjk5QK4y6Pmtt5k4QrWPFs"/>-->
+            android:value="AIzaSyBIT-tnK9i6HDxOwcQAtxXdT8lsJtkkQ50"/>
 
 
         <activity
