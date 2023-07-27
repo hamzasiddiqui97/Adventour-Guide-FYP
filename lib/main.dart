@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_basics/pages/transport_owner_dashboard_page.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:google_maps_basics/transport_owner_dummy_screen.dart';
 import 'package:google_maps_basics/view/screens/pages/main_page.dart';

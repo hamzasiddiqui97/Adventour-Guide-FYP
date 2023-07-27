@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-import '../helper/utils.dart';
+import '../newsServices/utils.dart';
 import '../provider/weatherProvider.dart';
 
-class WeeklyScreen extends StatelessWidget {
-  static const routeName = '/weeklyScreen';
+class HourlyScreen extends StatelessWidget {
+  static const routeName = '/hourlyScreen';
 
   Widget dailyWidget(dynamic weather, BuildContext context) {
-    final dayOfWeek = DateFormat('EEEEE').format(weather.date);
-
+    final time = weather.date;
+    final hours = DateFormat.Hm().format(time);
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      padding: EdgeInsets.symmetric(horizontal: 15),
-      decoration: BoxDecoration(
+      margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+      child: Material(
+        elevation: 5,
         color: Colors.white,
-      ),
-      child: Column(
-        children: [
-          Row(
+        borderRadius: BorderRadius.circular(15.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
             children: [
               Text(
-                dayOfWeek,
+                hours,
                 style: TextStyle(
-                  color: Colors.orange,
+                  color: Colors.black,
                   fontSize: 20,
                   fontWeight: FontWeight.w400,
                 ),
@@ -37,15 +36,11 @@ class WeeklyScreen extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15, bottom: 15),
-                child:
-                    MapString.mapStringToIcon(context, weather.condition, 25),
-              ),
+              const SizedBox(width: 16.0),
+              MapString.mapStringToIcon(context, weather.condition, 25),
             ],
           ),
-          Divider(color: Colors.orange),
-        ],
+        ),
       ),
     );
   }
@@ -54,22 +49,22 @@ class WeeklyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final weatherData = Provider.of<WeatherProvider>(context);
     final mediaQuery = MediaQuery.of(context);
-
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.transparent,
           title: Text(
-            'Next 7 Days',
+            'Next 24 Hours',
             style: TextStyle(color: Colors.orange),
           ),
         ),
         body: Container(
           height: mediaQuery.size.height,
           width: mediaQuery.size.width,
-          child: Column(
-            children: weatherData.sevenDayWeather
+          child: ListView(
+            physics: BouncingScrollPhysics(),
+            children: weatherData.hourly24Weather
                 .map((item) => dailyWidget(item, context))
                 .toList(),
           ),

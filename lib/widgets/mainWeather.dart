@@ -3,7 +3,8 @@ import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../helper/utils.dart';
+import '../newsServices/utils.dart';
+
 
 class MainWeather extends StatelessWidget {
   final TextStyle _style1 = TextStyle(

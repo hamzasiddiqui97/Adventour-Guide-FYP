@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_basics/Screens/hourlyWeatherScreen.dart';
 import 'package:google_maps_basics/provider/weatherProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../helper/utils.dart';
-
+import '../newsServices/utils.dart';
+import '../weatherScreens/hourlyWeatherScreen.dart';
 class HourlyForecast extends StatelessWidget {
   Widget hourlyWidget(dynamic weather, BuildContext context) {
     final currentTime = weather.date;

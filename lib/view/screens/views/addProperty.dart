@@ -4,22 +4,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/controllers/mainController.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/hotel_owner_dummy_screen.dart';
 import 'package:google_maps_basics/model/firebase_reference.dart';
-import 'package:google_maps_basics/models/PropertyModel.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
 import 'package:google_maps_basics/widgets/customButton.dart';
 import 'package:google_maps_basics/widgets/myContainer.dart';
 import 'package:google_maps_basics/widgets/myTextField.dart';
-import 'package:google_maps_basics/widgets/roundBackButton.dart';
-import 'package:google_maps_basics/widgets/topWithBackButton.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+
+import '../../../model/PropertyModel.dart';
 
 class PropertyAdd extends StatefulWidget {
   String title;

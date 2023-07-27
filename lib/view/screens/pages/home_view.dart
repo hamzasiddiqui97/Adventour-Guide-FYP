@@ -9,19 +9,19 @@ import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/controllers/mainController.dart';
 import 'package:google_maps_basics/controllers/tranportOwnerController.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/core/widgets/custom_grid_view.dart';
 import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/view/screens/views/addProperty.dart';
 import 'package:google_maps_basics/view/screens/views/hotelOwnerHistory.dart';
 import 'package:google_maps_basics/view/screens/views/touristHistory.dart';
 import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
-import '../../../helper/utils.dart';
 import '../../../model/vehicle.dart';
-import '../../../models/weather.dart';
-import '../../../pages/add_new_vehicle_page.dart';
-import '../../../pages/vehicle_details_page.dart';
+import '../../../model/weather.dart';
+import '../../../newsServices/utils.dart';
 import '../../../snackbar_utils.dart';
+import '../../../transportPages/add_new_vehicle_page.dart';
+import '../../../transportPages/vehicle_details_page.dart';
+import '../../../widgets/custom_grid_view.dart';
 import '../views/hotel_post_detail_page.dart';
 import '../views/hotel_post_details_tourist_view.dart';
 import '../views/vehiclePostingDetails.dart';
@@ -299,8 +299,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                     SizedBox(
                       width: MediaQuery
                           .of(context)
-                          .size
-                          .width,
+                          .size.width,
                       height: 300,
                       child: Obx(
                             () =>
@@ -351,7 +350,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                             MediaQuery
                                                 .of(context)
                                                 .size
-                                                .width,
+                                                .width * 0.7,
                                             height: 65.w,
                                             child: Image.network(
                                               property.coverImage!,
@@ -461,7 +460,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                         width: MediaQuery
                                             .of(context)
                                             .size
-                                            .width,
+                                            .width* 0.7,
                                         height: 65.w,
                                         child: Image.network(
                                           vehicle.imageUrl,

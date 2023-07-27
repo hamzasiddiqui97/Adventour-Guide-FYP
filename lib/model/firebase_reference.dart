@@ -1,13 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:google_directions_api/google_directions_api.dart';
 import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
-import 'package:google_maps_basics/models/resquestModel.dart';
+import 'package:google_maps_basics/model/resquestModel.dart';
 
 import '../controllers/tranportOwnerController.dart';
-import '../models/PropertyModel.dart';
+import 'PropertyModel.dart';
 
 class AddPlacesToFirebaseDb {
   static final database = FirebaseDatabase.instance;
@@ -41,26 +40,6 @@ class AddPlacesToFirebaseDb {
     }
   }
 
-
-
-  // Future<void> addVehicleToDatabase(String ownerId, VehicleModel newVehicle) async {
-  //   try {
-  //     await database
-  //         .ref()
-  //         .child('users')
-  //         .child('transport owner')
-  //         .child(ownerId)
-  //         .child('vehicle')
-  //         .push()
-  //         .set(newVehicle.toMap());
-  //
-  //
-  //     getVehiclesForTransporter(ownerId);
-  //   } catch (e) {
-  //     print('Error adding vehicle: $e');
-  //   }
-  // }
-
   Future<void> saveUserCredentials(
       String uid, String email, String role) async {
     try {
@@ -91,65 +70,6 @@ class AddPlacesToFirebaseDb {
     }
   }
 
-  //
-  // Future<void> saveHotelOwnerPost(
-  //   String role,
-  //   String uid,
-  //   String title,
-  //   String description,
-  //   String bedroom,
-  //   String washroom,
-  //   String carParking,
-  //   String kitchen,
-  //   int floorArea,
-  //   String tapAvailable,
-  //   String airConditioner,
-  //   String quarterAvailable,
-  //   int price,
-  //   String coverImage,
-  //   String file1,
-  //   String file2,
-  //   String file3,
-  //   String file4,
-  //   String file5,
-  //   String file6,
-  //   String streetName,
-  //   String fullAddress,
-  // ) async {
-  //   try {
-  //     await database
-  //         .ref()
-  //         .child('users')
-  //         .child("hotel owner")
-  //         .child(uid)
-  //         .child('postData')
-  //         .push()
-  //         .set({
-  //       'title': title,
-  //       'description': description,
-  //       'bedroom': bedroom,
-  //       'washroom': washroom,
-  //       'carParking': carParking,
-  //       'kitchen': kitchen,
-  //       'floorArea': floorArea,
-  //       'tapAvailable': tapAvailable,
-  //       'airConditioner': airConditioner,
-  //       'quarterAvailable': quarterAvailable,
-  //       'price': price,
-  //       'coverImage': coverImage,
-  //       'file1': file1,
-  //       'file2': file2,
-  //       'file3': file3,
-  //       'file4': file4,
-  //       'file5': file5,
-  //       'file6': file6,
-  //       'streetName': streetName,
-  //       'fullAddress': fullAddress,
-  //     });
-  //   } catch (e) {
-  //     print('Error saving user credentials: $e');
-  //   }
-  // }
 
   Future<void> saveHotelOwnerPost(
     String role,

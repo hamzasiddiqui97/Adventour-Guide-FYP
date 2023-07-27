@@ -13,7 +13,6 @@ import 'package:lottie/lottie.dart';
 
 import '../../../controllers/mainController.dart';
 import '../../../hotel_owner_dummy_screen.dart';
-import '../../../pages/transport_owner_dashboard_page.dart';
 import '../../../transport_owner_dummy_screen.dart';
 
 class SignIn extends StatefulWidget {
