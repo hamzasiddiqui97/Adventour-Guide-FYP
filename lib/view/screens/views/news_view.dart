@@ -2,10 +2,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/helper/newsdata.dart';
 import 'package:google_maps_basics/model/newsmodel.dart';
 
-import '../../../helper/newsdata_from_rapidApi.dart';
+import '../../../newsServices/newsdata.dart';
+import '../../../newsServices/newsdata_from_rapidApi.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({Key? key}) : super(key: key);

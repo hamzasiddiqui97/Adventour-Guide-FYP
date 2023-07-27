@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_basics/pages/transport_owner_dashboard_page.dart';
-import 'package:google_maps_basics/pages/vehicle_list_page.dart';
 import 'package:google_maps_basics/provider/auth_provider.dart';
+import 'package:google_maps_basics/transportPages/vehicle_list_page.dart';
 import 'package:provider/provider.dart';
 
 import '../transport_owner_dummy_screen.dart';

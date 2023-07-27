@@ -1,10 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_basics/core/widgets/prompts.dart';
 import 'package:google_maps_basics/view/screens/views/pictures_details.dart';
 import '../../../core/constant/color_constants.dart';
-import '../../../models/PropertyModel.dart';
+import '../../../model/PropertyModel.dart';
 
 class HotelPostDetailsPage extends StatelessWidget {
   final Property property;

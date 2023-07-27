@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_basics/core/widgets/prompts.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
-import '../../../models/PropertyModel.dart';
 import '../../../core/constant/color_constants.dart';
 import 'package:google_maps_basics/view/screens/views/pictures_details.dart';
+
+import '../../../model/PropertyModel.dart';
+import '../../../widgets/prompts.dart';
 
 class HotelPostDetailsTouristPage extends StatelessWidget {
   final Property property;

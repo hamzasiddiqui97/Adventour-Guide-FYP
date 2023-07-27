@@ -11,9 +11,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../../core/widgets/customInfoWindowGoogleMaps.dart';
 import '../../../distanceWrapper.dart';
+import '../../../widgets/customInfoWindowGoogleMaps.dart';
 
 class ViewMapForTrip extends StatefulWidget {
   const ViewMapForTrip(

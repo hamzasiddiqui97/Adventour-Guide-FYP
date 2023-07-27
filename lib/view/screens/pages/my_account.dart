@@ -1,15 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_basics/controllers/mainController.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
-import 'package:google_maps_basics/core/widgets/bottom_underlined_custom_button.dart';
-import 'package:google_maps_basics/core/widgets/rounded_button.dart';
-import 'package:google_maps_basics/main.dart';
-import 'package:google_maps_basics/view/screens/views/hotelOwnerPosting.dart';
+import 'package:google_maps_basics/widgets/bottom_underlined_custom_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import '../../../controllers/hotelOwnerController.dart';
+import '../../../widgets/rounded_button.dart';
 import '../views/aboutApp/contact_us.dart';
 import '../views/aboutApp/delete_account.dart';
 import '../views/aboutApp/privacy.dart';

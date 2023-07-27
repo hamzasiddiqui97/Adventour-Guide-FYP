@@ -2,7 +2,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
-import 'package:google_maps_basics/services/vehicle_service.dart';
+
+import '../vehicleServices/vehicle_service.dart';
 
 
 class VehicleProvider extends ChangeNotifier {
