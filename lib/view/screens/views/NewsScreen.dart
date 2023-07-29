@@ -11,6 +11,8 @@ import 'package:google_maps_basics/widgets/weatherDetail.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../../widgets/searchBar.dart';
+
 class NewsScreen extends StatefulWidget {
   const NewsScreen({ Key?key }): super(key:key);
   @override
@@ -62,7 +64,7 @@ class _NewsScreenState extends State<NewsScreen> {
             }
             return Column(
               children: [
-                SearchBar(),
+                SearchBarWeather(),
                 Center(
                   child: SmoothPageIndicator(
                     controller: _pageController,
