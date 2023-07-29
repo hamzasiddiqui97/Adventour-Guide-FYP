@@ -63,7 +63,7 @@ class _NewsScreenState extends State<NewsScreen> {
             }
             return Column(
               children: [
-                SearchBar(),
+                SearchBarWeather(),
                 Center(
                   child: SmoothPageIndicator(
                     controller: _pageController,

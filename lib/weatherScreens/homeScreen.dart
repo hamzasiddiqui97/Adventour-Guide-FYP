@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
             return Column(
               children: [
-                SearchBar(),
+                SearchBarWeather(),
                 Center(
                   child: SmoothPageIndicator(
                     controller: _pageController,

@@ -3,12 +3,12 @@ import 'package:provider/provider.dart';
 
 import '../provider/weatherProvider.dart';
 
-class SearchBar extends StatefulWidget {
+class SearchBarWeather extends StatefulWidget {
   @override
   _SearchBarState createState() => _SearchBarState();
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _SearchBarState extends State<SearchBarWeather> {
   final _textController = TextEditingController();
   bool _validate = false;
 
