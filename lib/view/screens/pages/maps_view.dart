@@ -563,7 +563,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                SearchBar(
+                                SearchBarMaps(
                                     width: MediaQuery.of(context).size.width *
                                         0.81,
                                     suffixIcon: IconButton(
@@ -624,7 +624,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                                       child: Row(
                                         children: [
                                           Expanded(
-                                            child: SearchBar(
+                                            child: SearchBarMaps(
                                               width: MediaQuery.of(context)
                                                   .size
                                                   .width *

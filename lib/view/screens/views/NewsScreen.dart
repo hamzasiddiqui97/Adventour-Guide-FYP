@@ -6,7 +6,6 @@ import 'package:google_maps_basics/widgets/hourlyForecast.dart';
 import 'package:google_maps_basics/widgets/locationError.dart';
 import 'package:google_maps_basics/widgets/mainWeather.dart';
 import 'package:google_maps_basics/widgets/requestError.dart';
-import 'package:google_maps_basics/widgets/searchBar.dart';
 import 'package:google_maps_basics/widgets/sevenDayForecast.dart';
 import 'package:google_maps_basics/widgets/weatherDetail.dart';
 import 'package:provider/provider.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 
-class SearchBar extends StatelessWidget {
+class SearchBarMaps extends StatelessWidget {
 
   VoidCallback? onPress;
   String? hintText;
@@ -14,7 +14,7 @@ class SearchBar extends StatelessWidget {
 
 
 
-  SearchBar({
+  SearchBarMaps({
     this.onPress,
     this.icon,
     this.hintText,
