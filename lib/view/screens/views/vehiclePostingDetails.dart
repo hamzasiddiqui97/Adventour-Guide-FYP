@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
+import 'package:google_maps_basics/snackbar_utils.dart';
+import 'package:google_maps_basics/widgets/prompts.dart';
 
 import '../../../model/vehicle.dart';
 
@@ -71,9 +74,57 @@ class VehiclePostDetails extends StatelessWidget {
               ),
             ),
             // Description Section
-            InformationSection(
-              title: 'Description',
-              content: vehicle.description,
+            Row(
+              children: [
+                InformationSection(
+                  title: 'Description',
+                  content: vehicle.description,
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                    onTap: (){
+                      // print(property.uid);
+                      if(vehicle.id==null){
+                        Utils.showSnackBar("No UID", false);
+                      }
+                      else{
+                        final uid = FirebaseAuth.instance.currentUser!.uid;
+
+                        Prompts.bookNow(vehicle.id,true);
+                        print(vehicle.id);
+                        print(uid);
+
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        right: 10,
+                      ),
+                      height: 40,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: ColorPalette.secondaryColor,
+                        border: Border.all(color: ColorPalette.secondaryColor, width: 2),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(
+                            20,
+                          ),
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Book Now",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: ColorPalette.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             // Vehicle Details Section
             InformationSection(
@@ -102,7 +153,7 @@ class InformationSection extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: SizedBox(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.of(context).size.width *0.6,
         child: Card(
           margin: const EdgeInsets.all(8),
           child: Padding(

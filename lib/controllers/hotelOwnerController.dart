@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:google_maps_basics/model/hotelBookingRequestModel.dart';
 import 'package:google_maps_basics/model/resquestModel.dart';
 
 import '../model/PropertyModel.dart';
@@ -9,4 +10,8 @@ class HotelOwnerController extends GetxController {
   RxList<VehicleModel> vehicleList = <VehicleModel>[].obs;
   RxList<RequestModel> hotelOwnerRequestList = <RequestModel>[].obs;
   RxMap dataList = {}.obs;
+  RxList<HotelBookingRequestModel> propertyRequestList = <HotelBookingRequestModel>[].obs;
+  RxList titleList = [].obs;
+
+
 }

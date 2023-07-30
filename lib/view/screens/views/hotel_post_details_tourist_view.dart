@@ -109,7 +109,7 @@ class HotelPostDetailsTouristPage extends StatelessWidget {
                                     Utils.showSnackBar("No UID", false);
                                   }
                                   else{
-                                  Prompts.bookNow(property.uid!);}
+                                  Prompts.bookNow(property.uid!,false);}
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(

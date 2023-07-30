@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_basics/controllers/hotelOwnerController.dart';
+import 'package:google_maps_basics/model/hotelBookingRequestModel.dart';
 import 'package:google_maps_basics/model/vehicle.dart';
 import 'package:google_maps_basics/model/resquestModel.dart';
 
@@ -166,7 +167,9 @@ class AddPlacesToFirebaseDb {
     }
   }
 
-  Future<void> sendBookingRequest(
+
+  /// for hotel booking
+  Future<void> sendHotelBookingRequest(
       String ownerUid,
       String posterUid,
       String date,
@@ -194,6 +197,45 @@ class AddPlacesToFirebaseDb {
           .child("tourist")
           .child(posterUid)
           .child('sentRequests')
+          .child(postId!)
+          .set({
+        'uid': ownerUid,
+        'date': date,
+      });
+    } catch (e) {
+      print('Error saving user credentials: $e');
+    }
+  }
+
+  /// for transport booking
+  Future<void> sendTransportBookingRequest(
+      String ownerUid,
+      String posterUid,
+      String date,
+      ) async {
+    try {
+      final postRef = database
+          .ref()
+          .child('users')
+          .child("transport owner")
+          .child(ownerUid)
+          .child('unconfirmedData')
+          .push();
+      final postId = postRef.key;
+
+      // Save the post data under hotel owner node
+      await postRef.set({
+        'uid': posterUid,
+        'date': date,
+      });
+
+      // Save the post data under tourist node
+      await database
+          .ref()
+          .child('users')
+          .child("tourist")
+          .child(posterUid)
+          .child('sentTransportRequests')
           .child(postId!)
           .set({
         'uid': ownerUid,
@@ -320,7 +362,7 @@ class AddPlacesToFirebaseDb {
   }
 
 
-  ///working krni hai ispr
+  ///working hogyi ab
   static Future<Map<String, dynamic>?> getTouristHistory(String uid) async {
     final HotelOwnerController hotelOwnerController = Get.find();
 
@@ -346,6 +388,91 @@ class AddPlacesToFirebaseDb {
       var result = Map<String, dynamic>.from(dataSnapshot.value as Map);
       Map<String, dynamic> map =
           Map<String, dynamic>.from(dataSnapshot.value as Map);
+
+      // Creating a list to hold the data
+      // Creating a list to hold the converted data
+      // List<Property> propertyList = [];
+
+      // Converting each entry to a Property object and adding to the list
+      map.forEach((key, value) {
+        HotelBookingRequestModel property = HotelBookingRequestModel(
+          // id: key,
+          date: value['date'],
+          uid: value['uid'],
+        );
+        hotelOwnerController.propertyRequestList.clear();
+        hotelOwnerController.propertyRequestList.add(property);
+        print(hotelOwnerController.propertyRequestList);
+
+      });
+      // print("Result :"+hotelOwnerController.propertyRequestList.value[0].uid);
+
+      // return result;
+
+      // hotelOwnerController.propertyList.clear();
+      // map.forEach((key, value) {
+      //   hotelOwnerController.propertyList
+      //       .add(Property.fromMap(Map<String, dynamic>.from(value as Map)));
+      // });
+      //
+      // if (kDebugMode) {
+      //   print(
+      //       "PropertyList getPersonalHotelPost: ${hotelOwnerController.propertyList}");
+      // }
+    } else {
+      if (kDebugMode) {
+        print("No data found");
+      }
+    }
+
+  }
+
+  /// ye find out krega title hotel ka by uid
+  static Future<Map<String, dynamic>?> getHotelTitleByUid(String uid) async {
+    final HotelOwnerController hotelOwnerController = Get.find();
+    print(uid);
+
+    if (hotelOwnerController == null) {
+      Get.put(HotelOwnerController());
+    }
+
+    var postRef = database
+        .ref()
+        .child('users')
+        .child('hotel owner')
+        .child(uid)
+        .child('postData');
+
+    DatabaseEvent event = await postRef.once();
+    DataSnapshot dataSnapshot = event.snapshot;
+
+    if (kDebugMode) {
+      print("DataSnapshot getPersonalHotelPost: ${dataSnapshot.ref}");
+    }
+
+    if (dataSnapshot.value != null) {
+      var result = Map<String, dynamic>.from(dataSnapshot.value as Map);
+      Map<String, dynamic> map =
+      Map<String, dynamic>.from(dataSnapshot.value as Map);
+      print(map);
+      List<String> keyList = map.keys.toList();
+      for( var i = 0 ; i < keyList.length; i++ ) {
+        // factorial *= i ;
+        String? title = map[keyList[i]]?['title'];
+        hotelOwnerController.titleList.clear();
+
+        hotelOwnerController.titleList.add(title!);
+      }
+      print(hotelOwnerController.titleList);
+
+
+      // Creating a list to hold the data
+      // Creating a list to hold the converted data
+      // List<Property> propertyList = [];
+
+      // Converting each entry to a Property object and adding to the lis
+      // print("Result :"+hotelOwnerController.propertyRequestList.value[0].uid);
+
       return result;
 
       // hotelOwnerController.propertyList.clear();
@@ -353,7 +480,7 @@ class AddPlacesToFirebaseDb {
       //   hotelOwnerController.propertyList
       //       .add(Property.fromMap(Map<String, dynamic>.from(value as Map)));
       // });
-
+      //
       // if (kDebugMode) {
       //   print(
       //       "PropertyList getPersonalHotelPost: ${hotelOwnerController.propertyList}");
@@ -364,6 +491,72 @@ class AddPlacesToFirebaseDb {
       }
     }
   }
+
+
+  ///ye krna hai pehle posting krte hai
+  static Future<Map<String, dynamic>?> getTransportHistory(String uid) async {
+    final TransportOwnerController transportOwnerController = Get.find();
+
+    if (transportOwnerController == null) {
+      Get.put(TransportOwnerController());
+    }
+
+    var postRef = database
+        .ref()
+        .child('users')
+        .child('tourist')
+        .child(uid)
+        .child('sentTransportRequests');
+
+    DatabaseEvent event = await postRef.once();
+    DataSnapshot dataSnapshot = event.snapshot;
+
+    if (kDebugMode) {
+      print("DataSnapshot getPersonalHotelPost: $dataSnapshot");
+    }
+
+    if (dataSnapshot.value != null) {
+      var result = Map<String, dynamic>.from(dataSnapshot.value as Map);
+      Map<String, dynamic> map =
+      Map<String, dynamic>.from(dataSnapshot.value as Map);
+
+      // Creating a list to hold the data
+      // Creating a list to hold the converted data
+      // List<Property> propertyList = [];
+
+      // Converting each entry to a Property object and adding to the list
+      map.forEach((key, value) {
+        HotelBookingRequestModel vehicle = HotelBookingRequestModel(
+          // id: key,
+          date: value['date'],
+          uid: value['uid'],
+        );
+        transportOwnerController.transportRequestList.clear();
+        transportOwnerController.transportRequestList.add(vehicle);
+      });
+
+      print("Result od transport idiot:"+  transportOwnerController.transportRequestList[0].uid);
+
+      return result;
+
+      // hotelOwnerController.propertyList.clear();
+      // map.forEach((key, value) {
+      //   hotelOwnerController.propertyList
+      //       .add(Property.fromMap(Map<String, dynamic>.from(value as Map)));
+      // });
+      //
+      // if (kDebugMode) {
+      //   print(
+      //       "PropertyList getPersonalHotelPost: ${hotelOwnerController.propertyList}");
+      // }
+    } else {
+      if (kDebugMode) {
+        print("No data found");
+      }
+    }
+  }
+
+
 
   static Future<void> getAllHotelPosts() async {
     final HotelOwnerController hotelOwnerController = Get.find();

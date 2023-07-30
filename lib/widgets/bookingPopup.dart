@@ -4,16 +4,19 @@ import 'package:get/get.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/firebase_reference.dart';
 import 'package:google_maps_basics/snackbar_utils.dart';
+import 'package:google_maps_basics/view/screens/pages/home_view.dart';
+import 'package:google_maps_basics/view/screens/pages/main_page.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class BookNow extends StatefulWidget {
-  const BookNow({Key? key, required this.hotelOwnerUID}) : super(key: key);
+  const BookNow({Key? key, required this.hotelOwnerUID, required this.isTransport}) : super(key: key);
   final String hotelOwnerUID;
+  final bool isTransport;
 
   @override
-  State<BookNow> createState() => _BookNowState(hotelOwnerUID);
+  State<BookNow> createState() => _BookNowState(hotelOwnerUID,isTransport);
 }
 
 class _BookNowState extends State<BookNow> {
@@ -22,8 +25,9 @@ class _BookNowState extends State<BookNow> {
   String dateCount = '';
   String range = '';
   String rangeCount = '';
+  final bool isTransport;
 
-  _BookNowState(this.hotelOwnerUID);
+  _BookNowState(this.hotelOwnerUID, this.isTransport);
 
   /// The method for [DateRangePickerSelectionChanged] callback, which will be
   /// called whenever a selection changed on the date picker widget.
@@ -95,9 +99,11 @@ class _BookNowState extends State<BookNow> {
                       Utils.showSnackBar(
                           "Request Sent! Wait for the response.", true);
                       String uid = FirebaseAuth.instance.currentUser!.uid;
-
-                      AddPlacesToFirebaseDb().sendBookingRequest(
+                      isTransport==true? AddPlacesToFirebaseDb().sendTransportBookingRequest(
+                          hotelOwnerUID, uid, range):
+                      AddPlacesToFirebaseDb().sendHotelBookingRequest(
                           hotelOwnerUID, uid, range);
+                      Get.offAll( NavigationPage(uid: uid,));
                     }
                     if (range == '') {
                       Get.back();
@@ -107,7 +113,7 @@ class _BookNowState extends State<BookNow> {
                   child: Container(
                     height: 35,
                     width: 100,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: ColorPalette.secondaryColor,
                       borderRadius: BorderRadius.all(
                         Radius.circular(
