@@ -14,6 +14,7 @@ import 'package:google_maps_basics/view/screens/views/addProperty.dart';
 import 'package:google_maps_basics/view/screens/views/hotelOwnerHistory.dart';
 import 'package:google_maps_basics/view/screens/views/touristHistory.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../../model/vehicle.dart';
 import '../../../model/weather.dart';
@@ -37,9 +38,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
   final MainController mainController = Get.put(MainController());
   final HotelOwnerController hotelOwnerController =
   Get.put(HotelOwnerController());
-  TransportOwnerController transportOwnerController = Get.put(
-      TransportOwnerController());
-
+  TransportOwnerController transportOwnerController =
+  Get.put(TransportOwnerController());
 
   // weather api
   String apiKey = '97f6f37816c2c554f9f209bd1b7b7afe';
@@ -149,8 +149,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
         await AddPlacesToFirebaseDb.getAllTouristVehiclePosts();
       } else if (userRole == 'Transport Owner') {
         await AddPlacesToFirebaseDb.getVehiclesForTransporter(uid);
-      }
-      else if (userRole == 'Hotel Owner') {
+      } else if (userRole == 'Hotel Owner') {
         await AddPlacesToFirebaseDb.getPersonalHotelPost(uid);
       }
       setState(() {
@@ -167,8 +166,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    final HotelOwnerController hotelOwnerController = Get.put(
-        HotelOwnerController());
+    final HotelOwnerController hotelOwnerController =
+    Get.put(HotelOwnerController());
 
     const TextStyle myTextStyle = TextStyle(
       fontSize: 25,
@@ -189,7 +188,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                 ? RefreshIndicator(
               onRefresh: () async {
                 await AddPlacesToFirebaseDb.getAllHotelPosts();
-                await AddPlacesToFirebaseDb.getAllTouristVehiclePosts();
+                await AddPlacesToFirebaseDb
+                    .getAllTouristVehiclePosts();
                 Utils.showSnackBar('Refreshed', true);
               },
               child: SingleChildScrollView(
@@ -258,7 +258,8 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                       height: 30,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           'Explore More',
@@ -273,7 +274,7 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                             Get.to(() => TouristHistory());
                           },
                           child: Text(
-                            "View History",
+                            "View Bookings",
                             style: TextStyle(
                               color: ColorPalette.secondaryColor,
                               fontSize: 18,
@@ -296,25 +297,30 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                     ),
                     // Text(hotelOwnerController.propertyList.length
                     //     .toString()),
-                    SizedBox(
-                      width: MediaQuery
-                          .of(context)
-                          .size.width,
-                      height: 300,
-                      child: Obx(
-                            () =>
-                            ListView.builder(
+                    Obx(() {
+                      return Column(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
+                            height: hotelOwnerController.propertyList.isEmpty
+                                ? 40
+                                : 300,
+                            child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount:
-                              hotelOwnerController.propertyList.length,
-                              itemBuilder: (BuildContext context, int index) {
+                              itemCount: hotelOwnerController
+                                  .propertyList.length,
+                              itemBuilder:
+                                  (BuildContext context, int index) {
                                 if (kDebugMode) {
                                   print(
                                       'hotelOwnerController propertyList length: ${hotelOwnerController
                                           .propertyList.length}');
                                 }
-                                var property =
-                                hotelOwnerController.propertyList[index];
+                                var property = hotelOwnerController
+                                    .propertyList[index];
                                 return GestureDetector(
                                   onTap: () {
                                     // hotelOwnerController.propertyList[0].uid;
@@ -329,11 +335,12 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 4, horizontal: 8),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(14),
+                                      borderRadius:
+                                      BorderRadius.circular(14),
                                       boxShadow: [
                                         BoxShadow(
-                                          color:
-                                          Colors.grey.withOpacity(0.15),
+                                          color: Colors.grey
+                                              .withOpacity(0.15),
                                           blurRadius: 5.0,
                                           spreadRadius: 0.0,
                                           offset: const Offset(0, 2),
@@ -346,14 +353,16 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                           // Display the image
                                           property.coverImage != null
                                               ? SizedBox(
-                                            width:
-                                            MediaQuery
-                                                .of(context)
+                                            width: MediaQuery
+                                                .of(
+                                                context)
                                                 .size
-                                                .width * 0.7,
+                                                .width *
+                                                0.7,
                                             height: 65.w,
                                             child: Image.network(
-                                              property.coverImage!,
+                                              property
+                                                  .coverImage!,
                                               fit: BoxFit.cover,
                                             ),
                                           )
@@ -369,20 +378,25 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                               },
                                               child: Container(
                                                 width: MediaQuery
-                                                    .of(context)
+                                                    .of(
+                                                    context)
                                                     .size
                                                     .width,
                                                 padding:
-                                                const EdgeInsets.all(8.0),
+                                                const EdgeInsets
+                                                    .all(8.0),
                                                 color: Colors.white,
                                                 child: Text(
                                                   property.title,
-                                                  style: const TextStyle(
+                                                  style:
+                                                  const TextStyle(
                                                     overflow:
-                                                    TextOverflow.ellipsis,
+                                                    TextOverflow
+                                                        .ellipsis,
                                                     fontSize: 30,
                                                     fontWeight:
-                                                    FontWeight.normal,
+                                                    FontWeight
+                                                        .normal,
                                                     color: Colors.black,
                                                   ),
                                                 ),
@@ -396,8 +410,15 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                 );
                               },
                             ),
-                      ),
-                    ),
+                          ),
+                          Visibility(
+                              visible: hotelOwnerController
+                                  .propertyList.isEmpty,
+                              child: Lottie.asset(
+                                  "assets/splash_screen_animation/noDataAnimation.json"))
+                        ],
+                      );
+                    }),
 
                     const SizedBox(
                       height: 30,
@@ -411,99 +432,123 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                       ),
                     ),
 // Transport posts
-                    SizedBox(
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                      height: 300,
-                      child: Obx(() {
-                        return ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: transportOwnerController.vehiclePostList
-                              .length,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (kDebugMode) {
-                              print(
-                                  'transportOwnerController vehicleList length: ${transportOwnerController
-                                      .vehiclePostList.length}');
-                            }
+                    Obx(() {
+                      return Column(
+                        children: [
+                          SizedBox(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
+                              height: transportOwnerController.vehiclePostList.isEmpty?40:300,
+                              child:
+                              ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: transportOwnerController
+                                    .vehiclePostList.length,
+                                itemBuilder:
+                                    (BuildContext context, int index) {
+                                  if (kDebugMode) {
+                                    print(
+                                        'transportOwnerController vehicleList length: ${transportOwnerController
+                                            .vehiclePostList.length}');
+                                  }
 
-                            var vehicle = transportOwnerController
-                                .vehiclePostList[index];
+                                  var vehicle = transportOwnerController
+                                      .vehiclePostList[index];
 
-                            return GestureDetector(
-                              onTap: () {
-                                Get.to(() =>
-                                    VehiclePostDetails(vehicle: vehicle));
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.15),
-                                      blurRadius: 5.0,
-                                      spreadRadius: 0.0,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Card(
-                                  child: Stack(
-                                    children: [
-                                      // Display the image
-                                      vehicle.imageUrl != null
-                                          ? SizedBox(
-                                        width: MediaQuery
-                                            .of(context)
-                                            .size
-                                            .width* 0.7,
-                                        height: 65.w,
-                                        child: Image.network(
-                                          vehicle.imageUrl,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                          : const SizedBox.shrink(),
-                                      // Display the vehicle name at the bottom
-                                      Positioned(
-                                        bottom: 0,
-                                        left: 0,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Utils.showSnackBar('Tap', true);
-                                          },
-                                          child: Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width,
-                                            padding: const EdgeInsets.all(8.0),
-                                            color: Colors.white,
-                                            child: Text(
-                                              vehicle.name,
-                                              style: const TextStyle(
-                                                overflow: TextOverflow.ellipsis,
-                                                fontSize: 30,
-                                                fontWeight: FontWeight.normal,
-                                                color: Colors.black,
+                                  return GestureDetector(
+                                    onTap: () {
+                                      print(vehicle.id);
+                                      Get.to(() =>
+                                          VehiclePostDetails(
+                                              vehicle: vehicle));
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 4, horizontal: 8),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(14),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey
+                                                .withOpacity(0.15),
+                                            blurRadius: 5.0,
+                                            spreadRadius: 0.0,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Card(
+                                        child: Stack(
+                                          children: [
+                                            // Display the image
+                                            vehicle.imageUrl != null
+                                                ? SizedBox(
+                                              width: MediaQuery
+                                                  .of(
+                                                  context)
+                                                  .size
+                                                  .width *
+                                                  0.7,
+                                              height: 65.w,
+                                              child: Image.network(
+                                                vehicle.imageUrl,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                                : const SizedBox.shrink(),
+                                            // Display the vehicle name at the bottom
+                                            Positioned(
+                                              bottom: 0,
+                                              left: 0,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Utils.showSnackBar(
+                                                      'Tap', true);
+                                                },
+                                                child: Container(
+                                                  width:
+                                                  MediaQuery
+                                                      .of(context)
+                                                      .size
+                                                      .width,
+                                                  padding:
+                                                  const EdgeInsets.all(
+                                                      8.0),
+                                                  color: Colors.white,
+                                                  child: Text(
+                                                    vehicle.name,
+                                                    style: const TextStyle(
+                                                      overflow: TextOverflow
+                                                          .ellipsis,
+                                                      fontSize: 30,
+                                                      fontWeight:
+                                                      FontWeight.normal,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }),
-                    ),
+                                    ),
+                                  );
+                                },
+                              )
+
+                          ),
+                          Visibility(
+                              visible: transportOwnerController
+                                  .vehiclePostList.isEmpty,
+                              child: Lottie.asset(
+                                  "assets/splash_screen_animation/noDataAnimation.json"))
+                        ],
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -636,15 +681,19 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                             style: ButtonStyle(
                                 backgroundColor:
                                 MaterialStateProperty.all(
-                                    ColorPalette.secondaryColor),
+                                    ColorPalette
+                                        .secondaryColor),
                                 foregroundColor:
                                 MaterialStateProperty.all(
-                                    ColorPalette.primaryColor)),
+                                    ColorPalette
+                                        .primaryColor)),
                             child: const Text(
                               'List Your Hotel',
                             ),
                           ),
-                          SizedBox(width: 10.w,),
+                          SizedBox(
+                            width: 10.w,
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               Get.to(
@@ -654,10 +703,12 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                             style: ButtonStyle(
                                 backgroundColor:
                                 MaterialStateProperty.all(
-                                    ColorPalette.secondaryColor),
+                                    ColorPalette
+                                        .secondaryColor),
                                 foregroundColor:
                                 MaterialStateProperty.all(
-                                    ColorPalette.primaryColor)),
+                                    ColorPalette
+                                        .primaryColor)),
                             child: const Text(
                               'View History',
                             ),
@@ -685,24 +736,32 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                     Expanded(
                       child: Obx(() {
                         // final vehicleList = Get.find<HotelOwnerController>().vehicleList;
-                        if (hotelOwnerController.vehicleList.isEmpty) {
-                          return Center(child: Text(
-                              "No posts found")); // Show "No posts found" when the list is empty
+                        if (hotelOwnerController
+                            .vehicleList.isEmpty) {
+                          return Center(
+                              child: Text(
+                                  "No posts found")); // Show "No posts found" when the list is empty
                         } else {
                           return ListView.builder(
-                            itemCount: hotelOwnerController.vehicleList.length,
+                            itemCount: hotelOwnerController
+                                .vehicleList.length,
                             itemBuilder: (context, index) {
                               return ListTile(
                                 leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                      hotelOwnerController.vehicleList[index]
+                                  backgroundImage:
+                                  NetworkImage(
+                                      hotelOwnerController
+                                          .vehicleList[
+                                      index]
                                           .imageUrl),
                                 ),
                                 title: Text(
-                                    hotelOwnerController.vehicleList[index]
+                                    hotelOwnerController
+                                        .vehicleList[index]
                                         .name),
-                                subtitle: Text('Brand: ${hotelOwnerController
-                                    .vehicleList[index].brand}'),
+                                subtitle: Text(
+                                    'Brand: ${hotelOwnerController
+                                        .vehicleList[index].brand}'),
                                 onTap: () {
                                   // Navigate to VehicleDetailsPage
                                   Navigator.push(
@@ -710,8 +769,10 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           VehicleDetailsPage(
-                                              vehicle: hotelOwnerController
-                                                  .vehicleList[index]),
+                                              vehicle:
+                                              hotelOwnerController
+                                                  .vehicleList[
+                                              index]),
                                     ),
                                   );
                                 },
@@ -721,7 +782,6 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                         }
                       }),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.all(14),
                       child: Align(
@@ -729,31 +789,32 @@ class _HomePageNavBarState extends State<HomePageNavBar> {
                         child: ElevatedButton(
                           onPressed: () {
                             Get.to(
-                                  () => AddNewVehiclePage(uid: uid),
+                                  () =>
+                                  AddNewVehiclePage(uid: uid),
                             );
                           },
                           style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.all(
-                                  ColorPalette.secondaryColor),
+                                  ColorPalette
+                                      .secondaryColor),
                               foregroundColor:
                               MaterialStateProperty.all(
-                                  ColorPalette.primaryColor)),
+                                  ColorPalette
+                                      .primaryColor)),
                           child: const Text(
                             'Add Your Vehicle',
                           ),
                         ),
                       ),
                     ),
-
                   ],
                 ),
               ),
             )
                 : const Center(
               child: Text(
-                  'An error Occurred please try logging in again.'
-              ),
+                  'An error Occurred please try logging in again.'),
             ),
           ),
         ),

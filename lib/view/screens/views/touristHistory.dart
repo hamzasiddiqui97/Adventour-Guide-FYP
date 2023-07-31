@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_basics/core/constant/color_constants.dart';
 import 'package:google_maps_basics/model/firebase_reference.dart';
+import 'package:google_maps_basics/widgets/touristHotelBookingList.dart';
+import 'package:google_maps_basics/widgets/touristTransportBookingLIst.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TouristHistory extends StatefulWidget {
@@ -10,12 +13,29 @@ class TouristHistory extends StatefulWidget {
   State<TouristHistory> createState() => _TouristHistoryState();
 }
 
-class _TouristHistoryState extends State<TouristHistory> {
+class _TouristHistoryState extends State<TouristHistory> with TickerProviderStateMixin{
+  final List<Tab> myTabs = <Tab>[
+    Tab(text: 'Hotel'),
+    Tab(text: 'Transport'),
+    // Tab(text: 'RIGHT'),
+  ];
+
+  TabController? _tabController;
+
   @override
   void initState() {
-    // TODO: implement initState
-    // AddPlacesToFirebaseDb.getTouristHistory(uid)
     super.initState();
+    _tabController = TabController(length: myTabs.length, vsync: this);
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    AddPlacesToFirebaseDb.getTouristHistory(uid);
+    AddPlacesToFirebaseDb.getTransportHistory(uid);
+
+  }
+
+  @override
+  void dispose() {
+    _tabController!.dispose();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -23,89 +43,24 @@ class _TouristHistoryState extends State<TouristHistory> {
       appBar: AppBar(
         backgroundColor: ColorPalette.secondaryColor,
         foregroundColor: ColorPalette.primaryColor,
-        title: const Text("Your History"),
+        title: const Text("Your Bookings"),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.lime,
+          indicatorWeight: 5.0,
+          labelColor: Colors.white,
+          labelPadding: EdgeInsets.only(top: 10.0),
+          unselectedLabelColor: Colors.grey,
+          tabs:myTabs
+        ),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(15),
-          shrinkWrap: true,
-          itemCount: 2,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                Center(
-                  child: Container(
-                    height: 10.h,
-                    width: 95.w,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(
-                          20,
-                        ),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 2.0, // soften the shadow
-                          spreadRadius: 1.0, //extend the shadow
-                          offset: Offset(
-                            0.0, // Move to right 5  horizontally
-                            2.0, // Move to bottom 5 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        const Text(
-                          "Name",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700, fontSize: 22),
-                        ),
-                        SizedBox(
-                          width: 45.w,
-                        ),
-                        Container(
-                          height: 5.h,
-                          width: 10.w,
-                          decoration: const BoxDecoration(
-                            color: Colors.green,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 2.w,
-                        ),
-                        Container(
-                          height: 5.h,
-                          width: 10.w,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.cancel,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-              ],
-            );
-          }),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          TouristHotelBookingList(),
+          TouristTransportBookingList()
+        ],
+      ),
     );
   }
 }
