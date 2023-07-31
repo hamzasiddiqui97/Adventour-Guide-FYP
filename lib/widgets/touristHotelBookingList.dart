@@ -56,14 +56,14 @@ class TouristHotelBookingList extends StatelessWidget {
                         SizedBox(
                           width: 5.w,
                         ),
-                        SizedBox(
-                          width: 50.w,
-                          child: Text(
-                          hotelOwnerController.titleList[index],
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700, fontSize: 22),
-                          ),
-                        ),
+                        // SizedBox(
+                        //   width: 50.w,
+                        //   child: Text(
+                        //   hotelOwnerController.titleList[index],
+                        //     style: TextStyle(
+                        //         fontWeight: FontWeight.w700, fontSize: 22),
+                        //   ),
+                        // ),
                         SizedBox(
                           width: 5.w,
                         ),

@@ -1,10 +1,48 @@
 {
   "project_info": {
     "project_number": "356008560595",
+    "firebase_url": "https://adventour-fyp-default-rtdb.firebaseio.com",
     "project_id": "adventour-fyp",
     "storage_bucket": "adventour-fyp.appspot.com"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:356008560595:android:fc1443315cc35a20315126",
+        "android_client_info": {
+          "package_name": "com.adventour.google_maps_basics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "356008560595-im8l2dm1ggjgiqvbed7igf8uhpm19g1r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adventour.google_maps_basics",
+            "certificate_hash": "95c3af2c07c91e8530bb742198b69c132665860d"
+          }
+        },
+        {
+          "client_id": "356008560595-s1n9pmaf6fknt1se5uthu10g8qcp8mo2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA372g7lR18xEK4FBVb5NANDhzZHxtEg_Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "356008560595-s1n9pmaf6fknt1se5uthu10g8qcp8mo2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:356008560595:android:e98f800d336624a6315126",
@@ -14,11 +52,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "356008560595-r6d8u4o69m8vbnkggkvtqp7q8pcj8dkm.apps.googleusercontent.com",
+          "client_id": "356008560595-avlplamjr1kga50bvcim4t99d44d561h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.google_maps_basics",
             "certificate_hash": "0318cf9f0ba360d4a148869299baee2a2c379b66"
+          }
+        },
+        {
+          "client_id": "356008560595-hnfi3vlo3el7cne8dbcrebotu5l5m89k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.google_maps_basics",
+            "certificate_hash": "d892ce7c425bbd2f917030ec9e074a5ee5b91e67"
+          }
+        },
+        {
+          "client_id": "356008560595-qoqmkep8ksu6ac3jnjg09tp08l2jlkp6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.google_maps_basics",
+            "certificate_hash": "95c3af2c07c91e8530bb742198b69c132665860d"
           }
         },
         {
