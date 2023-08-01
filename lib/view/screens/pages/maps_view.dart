@@ -34,7 +34,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
   final List<Marker> _attractionMarkers = [];
 
   final List<String> _placeTypes = [
-    "All",
+    // "All",
     "tourist_attraction",
     "gas_station",
     "restaurant",
@@ -183,7 +183,12 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         );
       },
     ).then((value) {
-      if (value == null || !value) {
+      if (value == true) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Success'),
+          backgroundColor: Colors.green,
+        ));
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('No places found'),
           backgroundColor: ColorPalette.secondaryColor,
@@ -205,13 +210,20 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
         // Use cached results if available
         getTouristAttractionsAlongPolyline(
             polylineCoordinates, places, [placeType], context);
+        setState(() {
+
+        });
       } else {
         // Get new results and store them in the cache
         getTouristAttractionsAlongPolyline(
             polylineCoordinates, places, [placeType], context)
             .then((result) {
           _placesCache[placeType] = result;
+          setState(() {
+
+          });
         });
+
       }
     }
 
@@ -267,7 +279,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
     }
 
     // Close the fetching dialog
-    Navigator.pop(context);
+    Navigator.pop(context, touristAttractions.isNotEmpty);
 
     return touristAttractions.toList();
   }
@@ -964,13 +976,20 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
                           ),
                           const Divider(),
 
-
-
                           Row(
                             children: <Widget>[
                               Image.asset('assets/markers/stadium.png', width: 24, height: 24),
                               const SizedBox(width: 10),
                               const Text('Stadium'),
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
+                            children: <Widget>[
+                              Image.asset('assets/markers/default-marker.png', width: 24, height: 24),
+                              const SizedBox(width: 10),
+                              const Text('Source-Destination'),
                             ],
                           ),
                           const Divider(),
