@@ -344,7 +344,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(color: ColorPalette.primaryColor),
             )),
-        components: [Component(Component.country, "pk")]);
+        components: [Component(Component.country, "in")]);
 
     if (p != null) {
       displayPredictionSource(p, homeScaffoldKey.currentState);
@@ -408,7 +408,7 @@ class _HomePageGoogleMapsState extends State<HomePageGoogleMaps> {
               borderRadius: BorderRadius.circular(20),
               borderSide: const BorderSide(color: ColorPalette.primaryColor),
             )),
-        components: [Component(Component.country, "pk")]);
+        components: [Component(Component.country, "in")]);
 
     if (p != null) {
       displayPredictionDestination(p, homeScaffoldKey.currentState, index);
