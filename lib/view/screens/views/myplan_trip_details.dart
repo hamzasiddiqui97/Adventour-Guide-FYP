@@ -50,7 +50,6 @@ class _TripPlacesDetailsState extends State<TripPlacesDetails> {
   final List<LatLng> ListofLatLong = [];
   Dio dio = Dio();
 
-  //// AIzaSyCqIl--QAPbgr_cRpLTwtvDWjS31Dkgin4       muneeb's Google Api key
   Future<DistanceWrapper?> distance(
       {double? sourcelat,
       double? sourcelong,
